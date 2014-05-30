@@ -1,21 +1,24 @@
-from scrim import scrim_app, oid, db
+from scrim import scrim_app, oid, db, models
+from models import User
+from flask import redirect, session, g, json, render_template, flash
+import urllib
 import urllib2
 import re
 
 def get_steam_userinfo(steam_id):
     options = {
-        'key': app.config['STEAM_API_KEY'],
+        'key': scrim_app.config['STEAM_API_KEY'],
         'steamids': steam_id
     }
     url = 'http://api.steampowered.com/ISteamUser/' \
-          'GetPlayerSummaries/v0001/?%s' % url_encode(options)
+          'GetPlayerSummaries/v0001/?%s' % urllib.urlencode(options)
     rv = json.load(urllib2.urlopen(url))
     return rv['response']['players']['player'][0] or {}
 
 @scrim_app.route('/')
 @scrim_app.route('/index')
 def index():
-    return "Hello, World badudu!"
+    return render_template('index.html')
 
 _steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
 
