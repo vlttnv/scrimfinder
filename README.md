@@ -1,7 +1,7 @@
 scrimfinder
 =======
 
-A web service for competitive gamers to find teams to scrim with.
+A web service for finding competitive e-sports teams to scrim with.
 
 Requirements
 =======
