@@ -5,7 +5,7 @@ A web service for finding competitive e-sports teams to scrim with.
 
 Issue legend
 =======
-core - needed for MVP
+core - needed for MVP  
 basic - after core is 100%~ working  
 advanced - after basic is 100%~ working  
 database - data storage and manipulation  
