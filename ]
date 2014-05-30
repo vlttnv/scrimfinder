@@ -1,2 +1,0 @@
-from scrim import scrim_app
-scrim_app.run()
