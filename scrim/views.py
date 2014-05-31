@@ -17,6 +17,9 @@ def get_steam_userinfo(steam_id):
 
     return user_info['response']['players'][0] or {}
 
+"""
+    Home page. empty for now.
+"""
 @scrim_app.route('/')
 @scrim_app.route('/index')
 def index():
@@ -24,6 +27,9 @@ def index():
 
 _steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
 
+"""
+    Logs in using steam.
+"""
 @scrim_app.route('/login')
 @oid.loginhandler
 def login():
@@ -31,6 +37,10 @@ def login():
         return redirect(oid.get_next_url())
     return oid.try_login('http://steamcommunity.com/openid')
 
+"""
+    Called after successful log in.
+    Creates a new user or gets the existing one
+"""
 @oid.after_login
 def create_or_login(resp):
     match = _steam_id_re.search(resp.identity_url)
@@ -45,6 +55,10 @@ def create_or_login(resp):
     flash('You are logged in as %s' % g.user.nickname)
     return redirect(oid.get_next_url())
 
+"""
+    This gets called before each request and checks the session.
+    Will probably do more stuff.
+"""
 @scrim_app.before_request
 def before_request():
     g.user = None
