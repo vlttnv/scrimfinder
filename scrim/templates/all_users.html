@@ -7,12 +7,25 @@
     {% endfor %}
     </ul>
 
-    <!-- previous pages -->
+    <!-- previous page -->
     {% if users_list.has_prev %}
       <a href="{{ url_for('show_all_users', page=users_list.prev_num) }}">Previous</a>
     {% endif %}
 
-    <!-- next pages -->
+    <!-- all page numbers -->
+    {% for page_num in users_list.iter_pages() %}
+      {% if page_num %}
+        {% if page_num != users_list.page %}
+          <a href="{{ url_for('show_all_users', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <strong>{{ page_num }}</strong>
+      {% endif %}
+      {% else %}
+        <span class=ellipsis>…</span>
+      {% endif %}
+    {% endfor %}
+
+    <!-- next page -->
     {% if users_list.has_next %}
       <a href="{{ url_for('show_all_users', page=users_list.next_num) }}">Next</a>
     {% endif %}

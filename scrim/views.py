@@ -124,7 +124,7 @@ def create_test_bots():
     from datetime import datetime as dt
     
     time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
-    bot_steam_id = 'BOT_STEAM_ID'
+    bot_steam_id = 'BOT_STEAM_ID_' + time_in_milliseconds
     bot_nickname = 'BOT_' + time_in_milliseconds
 
     for i in range(100):
