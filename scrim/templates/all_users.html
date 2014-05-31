@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if users_list %}
+    <ul>
+    {% for user in users_list %}
+      <li>name: {{ user.nickname }}, steam_id: {{ user.steam_id }}, <a href="{{ url_for('user_page', steam_id=user.steam_id) }}">go to profile page</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

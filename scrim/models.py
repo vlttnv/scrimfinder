@@ -15,3 +15,7 @@ class User(db.Model):
             rv.steam_id = steam_id
             db.session.add(rv)
         return rv
+
+    @staticmethod
+    def get_all_users():
+        return User.query.all()

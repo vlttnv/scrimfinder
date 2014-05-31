@@ -11,8 +11,6 @@ def get_steam_userinfo(steam_id):
         'format': json
     }
 
-
-
     url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
     response = requests.get(url=url, params=get_player_summaries_api)
     user_info = response.json()
@@ -47,7 +45,6 @@ def login():
 
 @oid.after_login
 def create_or_login(resp):
-
     """
     Called after successful log in.
     Creates a new user or gets the existing one
@@ -87,14 +84,23 @@ def logout():
     
     return redirect(oid.get_next_url())
 
-@scrim_app.route('/user/<id>')
-def user_page(id):
-    user = User.query.filter_by(steam_id = id).first()
+@scrim_app.route('/user/<steam_id>')
+def user_page(steam_id):
+    user = User.query.filter_by(steam_id=steam_id).first()
     if user == None:
         flash('User not found')
         return redirect(url_for('index'))
     return render_template('user.html',
-            id = user.steam_id,
-            nick = user.nickname,
-            profile_url = user.profile_url,
-            avatar = user.avatar_url)
+            id=user.steam_id,
+            nick=user.nickname,
+            profile_url=user.profile_url,
+            avatar=user.avatar_url)
+
+@scrim_app.route('/all_users')
+def all_users_page():
+    """
+    """
+    users_list = User.get_all_users()
+
+    return render_template('all_users.html', users_list=users_list)
+
