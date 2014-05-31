@@ -11,6 +11,8 @@ def get_steam_userinfo(steam_id):
         'format': json
     }
 
+
+
     url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
     response = requests.get(url=url, params=get_player_summaries_api)
     user_info = response.json()
@@ -25,8 +27,8 @@ def index():
     """
 
     if g.user is not None:
-        flash('You are logged in as %s' % g.user.personaname)
-    
+        flash('You are logged in as %s' % g.user.nickname)
+
     return render_template('index.html')
 
 @scrim_app.route('/login')
@@ -35,6 +37,7 @@ def login():
     """
     Logs in using steam.
     """
+
     if g.user is not None:
         return redirect(oid.get_next_url())
     else:
@@ -42,6 +45,7 @@ def login():
 
 @oid.after_login
 def create_or_login(resp):
+
     """
     Called after successful log in.
     Creates a new user or gets the existing one
@@ -52,11 +56,12 @@ def create_or_login(resp):
     
     g.user = User.get_or_create(match_steam_id.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
-    g.user.personaname = steam_data['personaname']
-    
+    g.user.nickname = steam_data['personaname']
+    db.session.add(g.user)
     db.session.commit()
+
     session['user_id'] = g.user.id
-    flash('You are logged in as %s' % g.user.personaname)
+    flash('You are logged in as %s' % g.user.nickname)
     
     return redirect(oid.get_next_url())
 
@@ -69,8 +74,6 @@ def before_request():
 
     g.user = None
     if 'user_id' in session:
-        user_object = User.query.get(session['user_id'])
-        print user_object
         g.user = User.query.filter_by(id=session['user_id']).first()
 
 @scrim_app.route('/logout')
@@ -79,3 +82,13 @@ def logout():
     flash('Your are logged out.')
     
     return redirect(oid.get_next_url())
+
+@scrim_app.route('/user/<id>')
+def user_page(id):
+    user = User.query.filter_by(steam_id = id).first()
+    if user == None:
+        flash('User not found')
+        return redirect(url_for('index'))
+    return render_template('user.html',
+            id = user.steam_id,
+            nick = user.nickname)
