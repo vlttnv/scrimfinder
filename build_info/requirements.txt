@@ -1,6 +1,6 @@
-pip install sqlalchemy
-pip install sqlalchemy-migrate
-pip install flask-sqlalchemy
-pip install flask
-pip install requests
-pip install flask-openid
+sqlalchemy
+sqlalchemy-migrate
+flask-sqlalchemy
+flask
+requests
+flask-openid
