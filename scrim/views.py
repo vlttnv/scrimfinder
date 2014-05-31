@@ -3,6 +3,7 @@ from models import User
 from flask import redirect, session, g, json, render_template, flash, url_for
 import requests
 import re
+from sqlalchemy import func
 
 def get_steam_userinfo(steam_id):
     get_player_summaries_api = {
@@ -98,14 +99,20 @@ def user_page(steam_id):
             avatar=user.avatar_url)
 
 @scrim_app.route('/all_users')
-def all_users_page():
+@scrim_app.route('/all_users/page/<int:page>')
+def show_all_users(page=1):
     """
     Retrieve all users of the application, 50 results per page
     """
 
-    users_list = User.get_all_users()
+    if page < 1:
+        abort(404)
 
-    return render_template('all_users.html', users_list=users_list)
+    from config import USERS_PER_PAGE
+    users_list = User.query.paginate(page, USERS_PER_PAGE, False)
+    
+    return render_template('all_users.html',
+        users_list=users_list)
 
 # Use with care
 @scrim_app.route('/create_test_bots')

@@ -2,9 +2,19 @@
 {% block body %}
   {% if users_list %}
     <ul>
-    {% for user in users_list %}
+    {% for user in users_list.items %}
       <li>name: {{ user.nickname }}, steam_id: {{ user.steam_id }}, <a href="{{ url_for('user_page', steam_id=user.steam_id) }}">go to profile page</a></li>
     {% endfor %}
     </ul>
+
+    <!-- previous pages -->
+    {% if users_list.has_prev %}
+      <a href="{{ url_for('show_all_users', page=users_list.prev_num) }}">Previous</a>
+    {% endif %}
+
+    <!-- next pages -->
+    {% if users_list.has_next %}
+      <a href="{{ url_for('show_all_users', page=users_list.next_num) }}">Next</a>
+    {% endif %}
   {% endif %}
 {% endblock %}
