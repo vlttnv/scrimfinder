@@ -1,6 +1,6 @@
 from scrim import scrim_app, oid, db, models
 from models import User
-from flask import redirect, session, g, json, render_template, flash
+from flask import redirect, session, g, json, render_template, flash, url_for
 import requests
 import re
 
@@ -56,7 +56,9 @@ def create_or_login(resp):
     
     g.user = User.get_or_create(match_steam_id.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
-    g.user.nickname = steam_data['personaname']
+    g.user.nickname     = steam_data['personaname']
+    g.user.profile_url  = steam_data['profileurl']
+    g.user.avatar_url   = steam_data['avatar']
     db.session.add(g.user)
     db.session.commit()
 
@@ -91,4 +93,6 @@ def user_page(id):
         return redirect(url_for('index'))
     return render_template('user.html',
             id = user.steam_id,
-            nick = user.nickname)
+            nick = user.nickname,
+            profile_url = user.profile_url,
+            avatar = user.avatar_url)
