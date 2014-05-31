@@ -32,18 +32,16 @@ def index():
         print ('You are logged in as %s' % g.user.steam_id)
     return render_template('index.html')
 
-_steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
-
 @scrim_app.route('/login')
 @oid.loginhandler
 def login():
     """
     Logs in using steam.
     """
-
     if g.user is not None:
         return redirect(oid.get_next_url())
-    return oid.try_login('http://steamcommunity.com/openid')
+    else:
+        return oid.try_login('http://steamcommunity.com/openid')
 
 @oid.after_login
 def create_or_login(resp):
@@ -53,13 +51,16 @@ def create_or_login(resp):
     Creates a new user or gets the existing one
     """
 
-    match = _steam_id_re.search(resp.identity_url)
-    g.user = User.get_or_create(match.group(1))
+    steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
+    match_steam_id = steam_id_re.search(resp.identity_url)
+    
+    g.user = User.get_or_create(match_steam_id.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
     g.user.nickname = steam_data['personaname']
     print g.user.steam_id
     db.session.add(g.user)
     db.session.commit()
+    
     session['user_id'] = g.user.id
     flash('You are logged in as %s' % g.user.nickname)
     return redirect(oid.get_next_url())
@@ -79,6 +80,7 @@ def before_request():
 def logout():
     session.pop('user_id', None)
     flash('Your are logged out.')
+    
     return redirect(oid.get_next_url())
 
 @scrim_app.route('/user/<id>')
