@@ -25,11 +25,13 @@ def index():
     """
     Home page. empty for now.
     """
-
+    nname = None
     if g.user is not None:
-        flash('You are logged in as %s' % g.user.nickname)
+    #    flash('You are logged in as %s' % g.user.nickname)
+        nname = g.user.nickname
 
-    return render_template('index.html')
+    return render_template('index.html',
+            user = nname)
 
 @scrim_app.route('/login')
 @oid.loginhandler
