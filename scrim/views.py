@@ -1,19 +1,21 @@
 from scrim import scrim_app, oid, db, models
 from models import User
 from flask import redirect, session, g, json, render_template, flash
-import urllib
-import urllib2
+import requests
 import re
 
 def get_steam_userinfo(steam_id):
-    options = {
+    get_player_summaries_api = {
         'key': scrim_app.config['STEAM_API_KEY'],
-        'steamids': steam_id
+        'steamids': steam_id,
+        'format': json
     }
-    url = 'http://api.steampowered.com/ISteamUser/' \
-          'GetPlayerSummaries/v0001/?%s' % urllib.urlencode(options)
-    rv = json.load(urllib2.urlopen(url))
-    return rv['response']['players']['player'][0] or {}
+
+    url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
+    response = requests.get(url=url, params=get_player_summaries_api)
+    user_info = response.json()
+
+    return user_info['response']['players'][0] or {}
 
 @scrim_app.route('/')
 @scrim_app.route('/index')
@@ -33,6 +35,9 @@ def login():
 def create_or_login(resp):
     match = _steam_id_re.search(resp.identity_url)
     g.user = User.get_or_create(match.group(1))
+
+    print 'steam idddddddddddddd' + g.user.steam_id
+
     steamdata = get_steam_userinfo(g.user.steam_id)
     g.user.nickname = steamdata['personaname']
     db.session.commit()
