@@ -1,4 +1,5 @@
 from scrim import db
+from flask.ext.admin.contrib.sqla import ModelView
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,7 +14,6 @@ class User(db.Model):
         if rv is None:
             rv = User()
             rv.steam_id = steam_id
-            db.session.add(rv)
         return rv
 
     @staticmethod

@@ -23,6 +23,7 @@ def index():
     """
     Home page. empty for now.
     """
+
     nname = None
     if g.user is not None:
     #    flash('You are logged in as %s' % g.user.nickname)
@@ -58,9 +59,9 @@ def create_or_login(resp):
     g.user.nickname     = steam_data['personaname']
     g.user.profile_url  = steam_data['profileurl']
     g.user.avatar_url   = steam_data['avatar']
+    
     db.session.add(g.user)
     db.session.commit()
-
     session['user_id'] = g.user.id
     flash('You are logged in as %s' % g.user.nickname)
     
@@ -99,8 +100,32 @@ def user_page(steam_id):
 @scrim_app.route('/all_users')
 def all_users_page():
     """
+    Retrieve all users of the application, 50 results per page
     """
+
     users_list = User.get_all_users()
 
     return render_template('all_users.html', users_list=users_list)
 
+# Use with care
+@scrim_app.route('/create_test_bots')
+def create_test_bots():
+    """
+    Create 100 test bots.
+    """
+
+    from datetime import datetime as dt
+    
+    time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
+    bot_steam_id = 'BOT_STEAM_ID'
+    bot_nickname = 'BOT_' + time_in_milliseconds
+
+    for i in range(100):
+        new_bot = User.get_or_create(bot_steam_id)
+        new_bot.nickname = bot_nickname + ' ' + str(i)
+        new_bot.profile_url = 'BOT_PROFILE_URL'
+        new_bot.avatar_url = 'BOT_AVATAR_URL'
+        db.session.add(new_bot)
+    db.session.commit()
+
+    return 'Created bots named after ' + bot_nickname, 200
