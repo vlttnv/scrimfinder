@@ -11,6 +11,8 @@ def get_steam_userinfo(steam_id):
         'format': json
     }
 
+
+
     url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
     response = requests.get(url=url, params=get_player_summaries_api)
     user_info = response.json()
@@ -25,8 +27,9 @@ def index():
     """
 
     if 'user_id' in session:
-        g.user = User.query.get(session['user_id'])
-        flash('You are logged in as %s' % g.user.personaname)
+        g.user = User.query.filter_by(id=session['user_id']).first()
+    #    g.user = User.query.get(session['user_id'])
+        print ('You are logged in as %s' % g.user.steam_id)
     return render_template('index.html')
 
 _steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
@@ -44,6 +47,7 @@ def login():
 
 @oid.after_login
 def create_or_login(resp):
+
     """
     Called after successful log in.
     Creates a new user or gets the existing one
@@ -52,10 +56,12 @@ def create_or_login(resp):
     match = _steam_id_re.search(resp.identity_url)
     g.user = User.get_or_create(match.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
-    g.user.personaname = steam_data['personaname']
+    g.user.nickname = steam_data['personaname']
+    print g.user.steam_id
+    db.session.add(g.user)
     db.session.commit()
     session['user_id'] = g.user.id
-    flash('You are logged in as %s' % g.user.personaname)
+    flash('You are logged in as %s' % g.user.nickname)
     return redirect(oid.get_next_url())
 
 @scrim_app.before_request
@@ -74,3 +80,13 @@ def logout():
     session.pop('user_id', None)
     flash('Your are logged out.')
     return redirect(oid.get_next_url())
+
+@scrim_app.route('/user/<id>')
+def user_page(id):
+    user = User.query.filter_by(steam_id = id).first()
+    if user == None:
+        flash('User not found')
+        return redirect(url_for('index'))
+    return render_template('user.html',
+            id = user.steam_id,
+            nick = user.nickname)
