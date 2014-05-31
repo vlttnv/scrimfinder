@@ -30,12 +30,12 @@ def index():
 
 _steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
 
-"""
-    Logs in using steam.
-"""
 @scrim_app.route('/login')
 @oid.loginhandler
 def login():
+    """
+    Logs in using steam.
+    """
     if g.user is not None:
         return redirect(oid.get_next_url())
     return oid.try_login('http://steamcommunity.com/openid')
