@@ -24,8 +24,7 @@ def index():
     Home page. empty for now.
     """
 
-    if 'user_id' in session:
-        g.user = User.query.get(session['user_id'])
+    if g.user is not None:
         flash('You are logged in as %s' % g.user.personaname)
     
     return render_template('index.html')
@@ -54,8 +53,8 @@ def create_or_login(resp):
     g.user = User.get_or_create(match_steam_id.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
     g.user.personaname = steam_data['personaname']
-    db.session.commit()
     
+    db.session.commit()
     session['user_id'] = g.user.id
     flash('You are logged in as %s' % g.user.personaname)
     
@@ -70,7 +69,9 @@ def before_request():
 
     g.user = None
     if 'user_id' in session:
-        g.user = User.query.get(session['user_id'])
+        user_object = User.query.get(session['user_id'])
+        print user_object
+        g.user = User.query.filter_by(id=session['user_id']).first()
 
 @scrim_app.route('/logout')
 def logout():
