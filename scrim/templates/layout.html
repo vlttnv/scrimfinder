@@ -11,8 +11,9 @@
 			<a href="{{ url_for('show_all_users') }}">Users</a>
 	{% if current_user.is_authenticated() %}
 	<strong><a  href="{{ url_for('user_page', steam_id=g.user.steam_id)}}">{{g.user.nickname}}</a></strong>
+	<a href='{{ url_for('logout') }}'>Log out</a>
 	{% else %}
-	<a href="{{ url_for('login')  }}">Log In</a>
+	<a href="{{ url_for('login')  }}"><img src='http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png' /></a>
 	{% endif %}
 	</div>
 	<div style="width: 100%">
