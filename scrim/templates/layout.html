@@ -7,8 +7,8 @@
 	</head>
 	<body>
 	<div style="width: 100%; text-align: right;">
-	{% if user %}
-	<strong>{{user}}</strong>
+	{% if current_user.is_authenticated() %}
+	<strong>{{g.user.nickname}}</strong>
 	{% else %}
 	<a href="{{ url_for('login')  }}">Log In</a>
 	{% endif %}

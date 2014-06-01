@@ -65,6 +65,7 @@ def create_or_login(resp):
     db.session.add(g.user)
     db.session.commit()
     session['user_id'] = g.user.id
+    login_user(g.user)
     flash('You are logged in as %s' % g.user.nickname)
     
     return redirect(oid.get_next_url())
