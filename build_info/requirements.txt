@@ -4,3 +4,5 @@ flask-sqlalchemy
 flask
 requests
 flask-openid
+flask-login
+flask-admin
