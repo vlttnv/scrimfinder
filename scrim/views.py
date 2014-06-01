@@ -1,6 +1,7 @@
-from scrim import scrim_app, oid, db, models
+from scrim import scrim_app, oid, db, models, lm
 from models import User
 from flask import redirect, session, g, json, render_template, flash, url_for
+from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
 from sqlalchemy import func
@@ -81,8 +82,11 @@ def before_request():
 
 @scrim_app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    flash('Your are logged out.')
+    logout_user()
+    flash("Logged out")
+    return redirect(url_for('index'))
+    #session.pop('user_id', None)
+    #flash('Your are logged out.')
     
     return redirect(oid.get_next_url())
 
@@ -136,3 +140,7 @@ def create_test_bots():
     db.session.commit()
 
     return 'Created bots named after ' + bot_nickname, 200
+
+@lm.user_loader
+def load_user(id):
+        return User.query.get(int(id))

@@ -1,17 +1,29 @@
-<!doctype html>
-<title>My Application</title>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-{% if user %}
-<h1>{{user}}</h1>
-{% else %}
-<h1>not logged in</h1>
-{% endif %}
-{% block body %}{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<title>title</title>
+	<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+	<div style="width: 100%; text-align: right;">
+	{% if user %}
+	<strong>{{user}}</strong>
+	{% else %}
+	<a href="{{ url_for('login')  }}">Log In</a>
+	{% endif %}
+	</div>
+	<div style="width: 100%">
+			{% with messages = get_flashed_messages() %}
+
+			{% if messages  %}
+			{% for message in messages %}
+			<p>{{ message }} </p>
+			{% endfor %}
+			{% endif %}
+			{% endwith %}
+	</div>
+
+	{% block body %} {% endblock %}
+	</body>
+</html>

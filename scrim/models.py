@@ -7,6 +7,18 @@ class User(db.Model):
     nickname    = db.Column(db.String(80))
     profile_url = db.Column(db.String(80))
     avatar_url  = db.Column(db.String(80))
+    
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
 
     @staticmethod
     def get_or_create(steam_id):
