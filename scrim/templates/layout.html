@@ -7,8 +7,10 @@
 	</head>
 	<body>
 	<div style="width: 100%; text-align: right;">
+			<a href="{{ url_for('index') }}">Home</a>
+			<a href="{{ url_for('show_all_users') }}">Users</a>
 	{% if current_user.is_authenticated() %}
-	<strong>{{g.user.nickname}}</strong>
+	<strong><a  href="{{ url_for('user_page', steam_id=g.user.steam_id)}}">{{g.user.nickname}}</a></strong>
 	{% else %}
 	<a href="{{ url_for('login')  }}">Log In</a>
 	{% endif %}
