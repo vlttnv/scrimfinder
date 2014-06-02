@@ -2,11 +2,15 @@ from scrim import db
 from flask.ext.admin.contrib.sqla import ModelView
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    steam_id    = db.Column(db.String(40))
-    nickname    = db.Column(db.String(80))
-    profile_url = db.Column(db.String(80))
-    avatar_url  = db.Column(db.String(80))
+    id                  = db.Column(db.Integer, primary_key=True)
+    steam_id            = db.Column(db.String(40), unique=True)
+    nickname            = db.Column(db.String(80))
+    profile_url         = db.Column(db.String(80))
+    avatar_url          = db.Column(db.String(80))
+    team_skill_level    = db.Column(db.Integer)
+    team_time_zone      = db.Column(db.Integer)
+    team_availability   = db.relationship('Available', backref='user',
+            lazy='dynamic')
     
     def is_authenticated(self):
         return True
@@ -31,3 +35,9 @@ class User(db.Model):
     @staticmethod
     def get_all_users():
         return User.query.all()
+
+class Available(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    time_from   = db.Column(db.String)
+    time_to     = db.Column(db.String)
+    user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))
