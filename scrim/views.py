@@ -5,6 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func
+from forms import EditForm
 
 def get_steam_userinfo(steam_id):
     get_player_summaries_api = {
@@ -148,3 +149,20 @@ def create_test_bots():
 @lm.user_loader
 def load_user(id):
         return User.query.get(int(id))
+
+@scrim_app.route('/edit', methods = ['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditForm()
+    if form.validate_on_submit():
+        g.user.team_skill_level = form.team_skill_level.data
+        g.user.team_time_zone = form.team_time_zone.data
+        db.session.add(g.user)
+        db.session.commit()
+        flash('Your changes have been saved')
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+    else:
+        form.team_skill_level.data = g.user.team_skill_level
+        form.team_time_zone.data = g.user.team_time_zone
+    return render_template('edit_profile.html',
+            form = form)

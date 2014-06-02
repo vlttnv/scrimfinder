@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Edit Your Profile</h1>
+<form action="" method="post" name="edit">
+    {{form.hidden_tag()}}
+    <table>
+        <tr>
+            <td>Team Skill Level:</td>
+            <td>{{form.team_skill_level(size = 24)}}</td>
+        </tr>
+        <tr>
+            <td>Team Time Zone:</td>
+            <td>{{form.team_time_zone(size = 24)}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Save Changes"></td>
+        </tr>
+    </table>
+</form>
+{% endblock %}
