@@ -7,18 +7,37 @@ import re
 from sqlalchemy import func
 from forms import EditForm
 
+# Steam Web APIs...
+
 def get_steam_userinfo(steam_id):
-    get_player_summaries_api = {
+    get_player_summaries_api = \
+    'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
+
+    params = {
         'key': scrim_app.config['STEAM_API_KEY'],
         'steamids': steam_id,
         'format': json
     }
 
-    url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
-    response = requests.get(url=url, params=get_player_summaries_api)
+    response = requests.get(url=get_player_summaries_api, params=params)
     user_info = response.json()
 
     return user_info['response']['players'][0] or {}
+
+def get_recently_played_games(steam_id):
+    get_recently_played_games_api = \
+    'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?'
+
+    params = {
+        'key': scrim_app.config['STEAM_API_KEY'],
+        'steamid': steam_id, 
+        'format': json
+    }
+
+    response = requests.get(url=get_recently_played_games_api, params=params)
+    recently_played_games = response.json()
+
+    return recently_played_games['response'] or {}
 
 @scrim_app.route('/')
 @scrim_app.route('/index')
@@ -99,8 +118,11 @@ def user_page(steam_id):
         flash('User not found')
         return redirect(url_for('index'))
     
-    from datetime import datetime as dt
+    recently_played_games = get_recently_played_games(steam_id)
 
+    print recently_played_games['total_count']
+
+    from datetime import datetime as dt
     current_time = dt.utcnow()
 
     return render_template('user.html',
@@ -108,7 +130,8 @@ def user_page(steam_id):
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
-            current_time=current_time)
+            current_time=current_time,
+            recently_played_games=recently_played_games)
 
 @scrim_app.route('/all_users')
 @scrim_app.route('/all_users/page/<int:page>')
