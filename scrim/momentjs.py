@@ -14,7 +14,7 @@ class momentjs(object):
         return self.render("format(\"%s\")" % fmt)
 
     def formatTimezone(self, timezone, fmt):
-        return self.renderTimezone("\"%s\"" % timezone, "format(\"%s\")" % fmt)
+        return self.renderTimezone(timezone, "format(\"%s\")" % fmt)
 
     def calendar(self):
         return self.render("calendar()")
