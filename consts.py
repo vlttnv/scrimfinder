@@ -1,13 +1,13 @@
-UGC_PLTAINUM    = 1
-UGC_GOLD        = 2
-UGC_SILVER      = 3
-UGC_STEEL       = 4
-UCG_IRON        = 5
+UGC_PLATINUM    = "UGC Platinum"
+UGC_GOLD        = "UGC Gold"
+UGC_SILVER      = "UGC Silver"
+UGC_STEEL       = "UGC Steel"
+UGC_IRON        = "UGC Iron"
 
-ETF_PREMIERSHIP = 11
-ETF_DIVISION_1  = 12
-ETF_DIVISION_2  = 13
-ETF_DIVISION_3  = 14
-ETF_DIVISION_4  = 15
-ETF_DIVISION_5  = 16
-ETF_DIVISION_6  = 17
+ETF_PREMIERSHIP = "ETF2L Premiership"
+ETF_DIVISION_1  = "ETF2L Division 1"
+ETF_DIVISION_2  = "ETF2L Division 2"
+ETF_DIVISION_3  = "ETF2L Division 3"
+ETF_DIVISION_4  = "ETF2L Division 4"
+ETF_DIVISION_5  = "ETF2L Division 5"
+ETF_DIVISION_6  = "ETF2L Division 6"
