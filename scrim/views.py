@@ -57,9 +57,6 @@ def create_or_login(resp):
     steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
     match_steam_id = steam_id_re.search(resp.identity_url)
     
-    #
-    # 
-    #
     g.user = User.get_or_create(match_steam_id.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
     g.user.nickname     = steam_data['personaname']
@@ -101,11 +98,17 @@ def user_page(steam_id):
     if user == None:
         flash('User not found')
         return redirect(url_for('index'))
+    
+    from datetime import datetime as dt
+
+    current_time = dt.utcnow()
+
     return render_template('user.html',
             id=user.steam_id,
             nick=user.nickname,
             profile_url=user.profile_url,
-            avatar=user.avatar_url)
+            avatar=user.avatar_url,
+            current_time=current_time)
 
 @scrim_app.route('/all_users')
 @scrim_app.route('/all_users/page/<int:page>')

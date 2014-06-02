@@ -14,8 +14,10 @@ oid     = OpenID(scrim_app)
 admin   = Admin(scrim_app, name='Scrim Finder')
 #lm.init_app(scrim_app)
 
-from scrim import views, models
+from scrim import views, models, momentjs
 from models import User
+from momentjs import momentjs
 
 admin.add_view(ModelView(User, db.session))
 lm.init_app(scrim_app)
+scrim_app.jinja_env.globals['momentjs'] = momentjs
