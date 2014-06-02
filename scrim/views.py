@@ -56,6 +56,9 @@ def create_or_login(resp):
     steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
     match_steam_id = steam_id_re.search(resp.identity_url)
     
+    #
+    # 
+    #
     g.user = User.get_or_create(match_steam_id.group(1))
     steam_data = get_steam_userinfo(g.user.steam_id)
     g.user.nickname     = steam_data['personaname']
@@ -64,9 +67,9 @@ def create_or_login(resp):
     
     db.session.add(g.user)
     db.session.commit()
-    session['user_id'] = g.user.id
+    #session['user_id'] = g.user.id
     login_user(g.user)
-    flash('You are logged in as %s' % g.user.nickname)
+    #flash('You are logged in as %s' % g.user.nickname)
     
     return redirect(oid.get_next_url())
 
