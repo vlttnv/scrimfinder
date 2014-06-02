@@ -6,3 +6,4 @@ requests
 flask-openid
 flask-login
 flask-admin
+flask-wtf
