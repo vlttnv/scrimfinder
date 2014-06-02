@@ -8,7 +8,7 @@ class momentjs(object):
         return Markup("<script>\ndocument.write(moment(\"%s\").%s);\n</script>" % (self.timestamp.strftime("%Y-%m-%dT%H:%M:%S Z"), format))
 
     def renderTimezone(self, timezone, format):
-        return Markup("<script>\ndocument.write(moment.tz(\"%s\", \"%s\").%s);\n</script>" % (self.timestamp.strftime("%Y-%m-%dT%H:%M:%S Z"), timezone, format))
+        return Markup("<script>\ndocument.write(moment.(\"%s\").tz(\"%s\").%s);\n</script>" % (self.timestamp.strftime("%Y-%m-%dT%H:%M:%S Z"), timezone, format))
 
     def format(self, fmt):
         return self.render("format(\"%s\")" % fmt)
