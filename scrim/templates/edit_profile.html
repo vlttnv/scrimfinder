@@ -7,7 +7,7 @@
     <table>
         <tr>
             <td>Team Skill Level:</td>
-            <td>{{form.team_skill_level(size = 24)}}</td>
+            <td>{{form.team_skill_level()}}</td>
         </tr>
         <tr>
             <td>Team Time Zone:</td>
@@ -19,4 +19,5 @@
         </tr>
     </table>
 </form>
+<a href="{{ url_for('user_page', steam_id = g.user.steam_id)}}"> Back to profile</a>
 {% endblock %}

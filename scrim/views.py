@@ -176,7 +176,7 @@ def create_test_bots():
 def load_user(id):
         return User.query.get(int(id))
 
-@scrim_app.route('/edit', methods = ['GET', 'POST'])
+@scrim_app.route('/edit_profile', methods = ['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditForm()
