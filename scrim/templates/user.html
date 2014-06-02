@@ -7,4 +7,5 @@
 <p>Unique profile views: 90,000+</p>
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><em>Your local time: {{momentjs(current_time).format('LLLL')}}</em></p>
+<p><em>America/Toronto: {{momentjs(current_time).formatTimezone('America/Toronto', 'LLLL')}}</em></p>
 {% endblock %}
