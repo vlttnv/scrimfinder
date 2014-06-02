@@ -7,5 +7,11 @@
 <p>Unique profile views: 90,000+</p>
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><em>Your local time: {{momentjs(current_time).format('LLLL')}}</em></p>
-<p><em>America/Toronto: {{momentjs(current_time).formatTimezone('America/Toronto', 'LLLL')}}</em></p>
+<p><em>Asia/Seoul: {{momentjs(current_time).formatTimezone('Asia/Seoul', 'LLLL')}}</em></p>
+<p><em>Australia/Perth: {{momentjs(current_time).formatTimezone('Australia/Perth', 'LLLL')}}</em></p>
+<p><em>CET: {{momentjs(current_time).formatTimezone('CET', 'LLLL')}}</em></p>
+<p><em>EST: {{momentjs(current_time).formatTimezone('EST', 'LLLL')}}</em></p>
+<p><em>EST5EDT: {{momentjs(current_time).formatTimezone('EST5EDT', 'LLLL')}}</em></p>
+<p><em>Etc/GMT: {{momentjs(current_time).formatTimezone('Etc/GMT', 'LLLL')}}</em></p>
+<p><em>Pacific/Auckland: {{momentjs(current_time).formatTimezone('Pacific/Auckland', 'LLLL')}}</em></p>
 {% endblock %}
