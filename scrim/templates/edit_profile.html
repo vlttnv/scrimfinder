@@ -5,17 +5,42 @@
 <form action="" method="post" name="edit">
     {{form.hidden_tag()}}
     <table>
+		<tr>
+			<td>Team Name</td>
+			<td>{{form.team_name()}}</td>
+		</tr>
         <tr>
             <td>Team Skill Level:</td>
             <td>{{form.team_skill_level()}}</td>
         </tr>
         <tr>
             <td>Team Time Zone:</td>
-            <td>{{form.team_time_zone(size = 24)}}</td>
+            <td>{{form.team_time_zone()}}</td>
         </tr>
         <tr>
             <td></td>
             <td><input type="submit" value="Save Changes"></td>
+        </tr>
+    </table>
+</form>
+<form action="" method="post" name="edit">
+    {{time.hidden_tag()}}
+    <table>
+		<tr>
+			<td>Day</td>
+			<td>{{time.day()}}</td>
+		</tr>
+        <tr>
+            <td>From:</td>
+            <td>{{time.time_from()}}</td>
+        </tr>
+        <tr>
+			<td>To:</td>
+            <td>{{time.time_to()}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Add"></td>
         </tr>
     </table>
 </form>
