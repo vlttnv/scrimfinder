@@ -10,7 +10,8 @@
 <p>Team name: {{ team_name }} </p>
 <p>Skill level: {{skill_level }} </p>
 <p>Time zone: {{ time_zone }} </p>
-<p><a href='{{profile_url}}'>Go to steam profile</a></p
+<p><a href='{{profile_url}}'>Go to steam profile</a></p>
+<p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
 <p><em>Your local time: <span class="time"></span></em></p>
 
 <li><em>Asia/Seoul: <span class="time-zone" zone="Asia/Seoul"></span></em></li>
@@ -29,13 +30,13 @@
     var time = $('.time');
     var timeZone = $('.time-zone');
     console.log(timeZone);
-    var momentTime = moment(new Date());
     var update = function() {
-      time.html(momentTime.format('LLLL'));
+      console.log('sup');
+      time.html(moment().format('LLLL'));
     };
     var updateTimeZone = function() {
       timeZone.each(function(i) {
-        $(this).html(momentTime.tz($(this).attr('zone')).format('LLLL'));
+        $(this).html(moment().tz($(this).attr('zone')).format('LLLL'));
       });
     };
     update();
