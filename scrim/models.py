@@ -7,6 +7,7 @@ class User(db.Model):
     nickname            = db.Column(db.String(80))
     profile_url         = db.Column(db.String(80))
     avatar_url          = db.Column(db.String(80))
+    team_name           = db.Column(db.String(80))
     team_skill_level    = db.Column(db.String(80))
     team_time_zone      = db.Column(db.String(80))
     team_availability   = db.relationship('Available', backref='user',

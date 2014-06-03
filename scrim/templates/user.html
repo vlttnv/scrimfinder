@@ -1,13 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
 <img src='{{avatar}}' />
-<p><a href="{{ url_for('edit_profile') }}">Edit</a>
+{% if g.user.steam_id in request.path  %}<p><a href="{{ url_for('edit_profile') }}">Edit</a>{% endif %}
 <p>User: {{id}}!</p>
 <p>Name: {{nick}}!</p>
 <p>Most recently played game: {{recently_played_games['games'][0]['name']}}</p>
 <p>Unique profile views: 90,000+</p>
-<p>Skill level: {{ g.user.team_skill_level }} </p>
-<p>Time zone: {{ g.user.team_time_zone }} </p>
+<p>Team name: {{ team_name }} </p>
+<p>Skill level: {{skill_level }} </p>
+<p>Time zone: {{ time_zone }} </p>
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><em>Your local time: {{momentjs(current_time).format('LLLL')}}</em></p>
 <p><em>Asia/Seoul: {{momentjs(current_time).formatTimezone('Asia/Seoul', 'LLLL')}}</em></p>
