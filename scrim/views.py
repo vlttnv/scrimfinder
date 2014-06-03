@@ -1,11 +1,11 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User
+from models import User, Available
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
 from sqlalchemy import func
-from forms import EditForm
+from forms import EditForm, AvailabilityForm
 
 # Steam Web APIs...
 
@@ -183,6 +183,11 @@ def load_user(id):
 @login_required
 def edit_profile():
     form = EditForm()
+    times = AvailabilityForm()
+    aval = Available.query.filter_by(user_id=g.user.id).first()
+    if aval == None:
+        aval = Available()
+
     if form.validate_on_submit():
         g.user.team_name = form.team_name.data
         g.user.team_skill_level = form.team_skill_level.data
@@ -191,9 +196,23 @@ def edit_profile():
         db.session.commit()
         flash('Your changes have been saved')
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
+    elif times.validate_on_submit():
+        aval.day = times.day.data
+        aval.time_from = times.time_from.data
+        aval.time_to = times.time_to.data
+        aval.user_id = g.user.id
+        db.session.add(aval)
+        db.session.commit()
+        flash('Saved')
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
         form.team_name.data = g.user.team_name
         form.team_skill_level.data = g.user.team_skill_level
         form.team_time_zone.data = g.user.team_time_zone
+        times.day.data = aval.day
+        times.time_from.data = aval.time_from
+        times.time_to.data = aval.time_to
+
     return render_template('edit_profile.html',
-            form = form)
+            form = form,
+            time = times)

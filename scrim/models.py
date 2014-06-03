@@ -39,7 +39,7 @@ class User(db.Model):
 
 class Available(db.Model):
     id          = db.Column(db.Integer, primary_key=True)
-    day         = db.Column(db.Integer)
-    time_from   = db.Column(db.String)
-    time_to     = db.Column(db.String)
+    day         = db.Column(db.String(80))
+    time_from   = db.Column(db.String(80))
+    time_to     = db.Column(db.String(80))
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))

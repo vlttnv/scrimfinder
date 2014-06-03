@@ -23,5 +23,26 @@
         </tr>
     </table>
 </form>
+<form action="" method="post" name="edit">
+    {{time.hidden_tag()}}
+    <table>
+		<tr>
+			<td>Day</td>
+			<td>{{time.day()}}</td>
+		</tr>
+        <tr>
+            <td>From:</td>
+            <td>{{time.time_from()}}</td>
+        </tr>
+        <tr>
+			<td>To:</td>
+            <td>{{time.time_to()}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Add"></td>
+        </tr>
+    </table>
+</form>
 <a href="{{ url_for('user_page', steam_id = g.user.steam_id)}}"> Back to profile</a>
 {% endblock %}
