@@ -120,17 +120,11 @@ def user_page(steam_id):
     
     recently_played_games = get_recently_played_games(steam_id)
 
-    print recently_played_games['total_count']
-
-    from datetime import datetime as dt
-    current_time = dt.utcnow()
-
     return render_template('user.html',
             id=user.steam_id,
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
-            current_time=current_time,
             recently_played_games=recently_played_games,
             team_name=user.team_name,
             skill_level=user.team_skill_level,

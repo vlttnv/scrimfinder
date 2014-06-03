@@ -16,7 +16,6 @@ admin   = Admin(scrim_app, name='Scrim Finder')
 
 from scrim import views, models, momentjs
 from models import User
-from momentjs import momentjs
 
 admin.add_view(ModelView(User, db.session))
 lm.init_app(scrim_app)

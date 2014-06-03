@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+
 <img src='{{avatar}}' />
 {% if g.user.steam_id in request.path  %}<p><a href="{{ url_for('edit_profile') }}">Edit</a>{% endif %}
 <p>User: {{id}}!</p>
@@ -9,13 +10,38 @@
 <p>Team name: {{ team_name }} </p>
 <p>Skill level: {{skill_level }} </p>
 <p>Time zone: {{ time_zone }} </p>
-<p><a href='{{profile_url}}'>Go to steam profile</a></p>
-<p><em>Your local time: {{momentjs(current_time).format('LLLL')}}</em></p>
-<p><em>Asia/Seoul: {{momentjs(current_time).formatTimezone('Asia/Seoul', 'LLLL')}}</em></p>
-<p><em>Australia/Perth: {{momentjs(current_time).formatTimezone('Australia/Perth', 'LLLL')}}</em></p>
-<p><em>CET: {{momentjs(current_time).formatTimezone('CET', 'LLLL')}}</em></p>
-<p><em>EST: {{momentjs(current_time).formatTimezone('EST', 'LLLL')}}</em></p>
-<p><em>EST5EDT: {{momentjs(current_time).formatTimezone('EST5EDT', 'LLLL')}}</em></p>
-<p><em>Etc/GMT: {{momentjs(current_time).formatTimezone('Etc/GMT', 'LLLL')}}</em></p>
-<p><em>Pacific/Auckland: {{momentjs(current_time).formatTimezone('Pacific/Auckland', 'LLLL')}}</em></p>
+<p><a href='{{profile_url}}'>Go to steam profile</a></p
+<p><em>Your local time: <span class="time"></span></em></p>
+
+<li><em>Asia/Seoul: <span class="time-zone" zone="Asia/Seoul"></span></em></li>
+<li><em>Australia/Perth: <span class="time-zone" zone="Australia/Perth"></span></em></li>
+<li><em>CET: <span class="time-zone" zone="CET"></span></em></li>
+<li><em>EST: <span class="time-zone" zone="EST"></span></em></li>
+<li><em>EST5EDT: <span class="time-zone" zone="EST5EDT"></span></em></li>
+<li><em>Etc/GMT: <span class="time-zone" zone="Etc/GMT"></span></em></li>
+<li><em>Pacific/Auckland: <span class="time-zone" zone="Pacific/Auckland"></span></em></li>
+
+<script src="/static/js/moment.min.js"></script>
+<script src="/static/js/moment-timezone.min.js"></script>
+<script src="/static/js/moment-timezone-data.js"></script>
+<script>
+  $(document).ready(function(){
+    var time = $('.time');
+    var timeZone = $('.time-zone');
+    console.log(timeZone);
+    var momentTime = moment(new Date());
+    var update = function() {
+      time.html(momentTime.format('LLLL'));
+    };
+    var updateTimeZone = function() {
+      timeZone.each(function(i) {
+        $(this).html(momentTime.tz($(this).attr('zone')).format('LLLL'));
+      });
+    };
+    update();
+    updateTimeZone();
+    setInterval(update, 60000);
+    setInterval(updateTimeZone, 60000);
+  });
+</script>
 {% endblock %}
