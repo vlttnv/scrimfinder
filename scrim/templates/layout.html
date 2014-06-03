@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 	<head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,14 +23,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Scrimfinder</a>
+		  <a class="navbar-brand" href="{{url_for('index')}}">Scrimfinder</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-				  <li class="active"><a href="{{ url_for('index') }}">Home</a></li>
-				  <li><a href="{{ url_for('show_all_users')  }}">Users</a></li>
+				  <li {% if request.path == "/index" %} class="active"{% endif %}><a href="{{ url_for('index') }}">Home</a></li>
+				  <li {% if request.path == "/all_users" %}class="active"{% endif %}><a href="{{ url_for('show_all_users')  }}">Users</a></li>
 			     {% if current_user.is_authenticated() %}
-				 <li><a href="{{ url_for('user_page', steam_id=g.user.steam_id)  }}">{{g.user.nickname}}</a></li>
+				 <li {% if "/user/" in request.path %}class="active"{% endif %}><a href="{{ url_for('user_page', steam_id=g.user.steam_id)  }}">{{g.user.nickname}}</a></li>
 				 <li><a href="{{ url_for('logout') }}">Log out</a></li>
 				 {% else %}
 				 
