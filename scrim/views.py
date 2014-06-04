@@ -75,15 +75,14 @@ def after_login(resp):
 
     from datetime import datetime as dt
 
-    id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
-    steam_id_group = id_re.search(resp.identity_url)
-    steam_id = steam_id_group.group(1)
+    steam_id_regex = re.compile('steamcommunity.com/openid/id/(.*?)$')
+    steam_id = steam_id_regex.search(resp.identity_url).group(1)
 
     g.user = User.get_record(steam_id)
 
     if g.user is None:
         g.user = User()
-        steam_data = get_steam_user_info(g.user.steam_id)
+        steam_data = get_steam_user_info(steam_id)
         g.user.steam_id     = steam_id
         g.user.nickname     = steam_data['personaname']
         g.user.profile_url  = steam_data['profileurl']
