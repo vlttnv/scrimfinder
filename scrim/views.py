@@ -9,7 +9,7 @@ from forms import EditForm, AvailabilityForm
 
 # Steam Web APIs...
 
-def get_steam_userinfo(steam_id):
+def get_steam_user_info(steam_id):
     get_player_summaries_api = \
     'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
 
@@ -64,30 +64,38 @@ def login():
     if g.user is not None:
         return redirect(oid.get_next_url())
     else:
-        return oid.try_login('http://steamcommunity.com/openid')
+        return oid.try_login('http://tsteamcommunity.com/openid')
 
 @oid.after_login
-def create_or_login(resp):
+def after_login(resp):
     """
     Called after successful log in.
     Creates a new user or gets the existing one
     """
 
-    steam_id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
-    match_steam_id = steam_id_re.search(resp.identity_url)
-    
-    g.user = User.get_or_create(match_steam_id.group(1))
-    steam_data = get_steam_userinfo(g.user.steam_id)
-    g.user.nickname     = steam_data['personaname']
-    g.user.profile_url  = steam_data['profileurl']
-    g.user.avatar_url   = steam_data['avatar']
-    
-    db.session.add(g.user)
+    from datetime import datetime as dt
+
+    id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
+    steam_id = id_re.search(resp.identity_url)
+
+    g.user = User.get_record(steam_id)
+
+    if g.user is None:
+        g.user = User()
+        steam_data = get_steam_user_info(g.user.steam_id)
+        g.user.steam_id     = steam_id
+        g.user.nickname     = steam_data['personaname']
+        g.user.profile_url  = steam_data['profileurl']
+        g.user.avatar_url   = steam_data['avatar']
+        g.joined_date       = dt.utcnow()
+        db.session.add(g.user)
+    else:
+        last_online = g.user.last_online
+        # do something
+
+    g.user.last_online = dt.utcnow()
     db.session.commit()
-    #session['user_id'] = g.user.id
     login_user(g.user)
-    #flash('You are logged in as %s' % g.user.nickname)
-    
     return redirect(oid.get_next_url())
 
 @scrim_app.before_request

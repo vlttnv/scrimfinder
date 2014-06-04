@@ -1,3 +1,4 @@
+from datetime import datetime
 from scrim import db
 from flask.ext.admin.contrib.sqla import ModelView
 
@@ -12,6 +13,8 @@ class User(db.Model):
     team_time_zone      = db.Column(db.String(80))
     team_availability   = db.relationship('Available', backref='user',
             lazy='dynamic')
+    joined_date         = db.Column(db.DateTime)
+    last_online         = db.Column(db.DateTime)
     
     def is_authenticated(self):
         return True
@@ -26,12 +29,9 @@ class User(db.Model):
         return unicode(self.id)
 
     @staticmethod
-    def get_or_create(steam_id):
-        rv = User.query.filter_by(steam_id=steam_id).first()
-        if rv is None:
-            rv = User()
-            rv.steam_id = steam_id
-        return rv
+    def get_record(steam_id):
+        user = User.query.filter_by(steam_id=steam_id).first()
+        return user
 
     @staticmethod
     def get_all_users():
