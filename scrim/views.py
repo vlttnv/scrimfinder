@@ -64,7 +64,7 @@ def login():
     if g.user is not None:
         return redirect(oid.get_next_url())
     else:
-        return oid.try_login('http://tsteamcommunity.com/openid')
+        return oid.try_login('http://steamcommunity.com/openid')
 
 @oid.after_login
 def after_login(resp):
@@ -76,7 +76,8 @@ def after_login(resp):
     from datetime import datetime as dt
 
     id_re = re.compile('steamcommunity.com/openid/id/(.*?)$')
-    steam_id = id_re.search(resp.identity_url)
+    steam_id_group = id_re.search(resp.identity_url)
+    steam_id = steam_id_group.group(1)
 
     g.user = User.get_record(steam_id)
 

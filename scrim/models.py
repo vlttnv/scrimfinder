@@ -12,7 +12,7 @@ class User(db.Model):
     team_skill_level    = db.Column(db.String(80))
     team_time_zone      = db.Column(db.String(80))
     team_availability   = db.relationship('Available', backref='user',
-            lazy='dynamic')
+                            lazy='dynamic')
     joined_date         = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
     
