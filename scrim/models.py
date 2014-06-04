@@ -10,7 +10,7 @@ class User(db.Model):
     avatar_url          = db.Column(db.String(80))
     team_name           = db.Column(db.String(80))
     team_skill_level    = db.Column(db.String(80))
-    team_time_zone      = db.Column(db.String(80))
+    team_time_zone      = db.Column(db.String(40))
     team_availability   = db.relationship('Available', backref='user',
                             lazy='dynamic')
     joined_date         = db.Column(db.DateTime)
@@ -43,3 +43,11 @@ class Available(db.Model):
     time_from   = db.Column(db.String(80))
     time_to     = db.Column(db.String(80))
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class Team(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    name        = db.Column(db.String(80))
+    timezone    = db.Column(db.String(40))
+
+class Scrim(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
