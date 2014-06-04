@@ -12,11 +12,14 @@ lm      = LoginManager()
 db      = SQLAlchemy(scrim_app)
 oid     = OpenID(scrim_app)
 admin   = Admin(scrim_app, name='Scrim Finder')
-#lm.init_app(scrim_app)
 
-from scrim import views, models, momentjs
+lm.init_app(scrim_app)
+
+from scrim import views, models
 from models import User
 
 admin.add_view(ModelView(User, db.session))
-lm.init_app(scrim_app)
-scrim_app.jinja_env.globals['momentjs'] = momentjs
+
+# Blueprints
+from scrim.mod_teams.views import mod_teams as teams_module
+scrim_app.register_blueprint(teams_module, url_prefix='/teams')

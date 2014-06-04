@@ -1,6 +1,5 @@
 from datetime import datetime
 from scrim import db
-from flask.ext.admin.contrib.sqla import ModelView
 
 class User(db.Model):
     id                  = db.Column(db.Integer, primary_key=True)
@@ -43,11 +42,6 @@ class Available(db.Model):
     time_from   = db.Column(db.String(80))
     time_to     = db.Column(db.String(80))
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-class Team(db.Model):
-    id          = db.Column(db.Integer, primary_key=True)
-    name        = db.Column(db.String(80))
-    timezone    = db.Column(db.String(40))
 
 class Scrim(db.Model):
     id          = db.Column(db.Integer, primary_key=True)
