@@ -1,11 +1,12 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User
+from models import User, Team
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
 from sqlalchemy import func
-from forms import EditForm, AvailabilityForm
+from forms import EditForm, CreateTeamForm
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 # Steam Web APIs...
 
@@ -120,15 +121,26 @@ def user_page(steam_id):
     
     recently_played_games = get_recently_played_games(steam_id)
 
+    if g.user.team_id is not None:
+        try:
+            team = Team.query.filter_by(id=g.user.team_id).one()
+            a_team_name = team.name
+            a_team_skill = team.skill_level
+            a_team_zone = team.time_zone
+        except MultipleResultsFound, e:
+            print e
+        except NoResultFound, e:
+            print e
+
     return render_template('user.html',
             id=user.steam_id,
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
             recently_played_games=recently_played_games,
-            team_name=user.team_name,
-            skill_level=user.team_skill_level,
-            time_zone=user.team_time_zone)
+            team_name=a_team_name,
+            skill_level=a_team_skill,
+            time_zone=a_team_zone)
 
 @scrim_app.route('/all_users')
 @scrim_app.route('/all_users/page/<int:page>')
@@ -193,3 +205,22 @@ def edit_profile():
         #times.time_from.data = aval.time_from
         #times.time_to.data = aval.time_to
         return render_template('edit_profile.html', form = form)
+
+@scrim_app.route('/create_team', methods = ['GET', 'POST'])
+@login_required
+def create_team():
+    create_team_form = CreateTeamForm()
+
+    if create_team_form.validate_on_submit():
+        new_team = Team()
+        new_team.name = create_team_form.team_name.data
+        new_team.skill_level = create_team_form.team_skill_level.data
+        new_team.time_zone = create_team_form.team_time_zone.data
+        db.session.add(new_team)
+        db.session.commit()
+        g.user.team_id = new_team.id
+        db.session.add(g.user)
+        db.session.commit()
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+    else:
+        return render_template('create_team.html', create_team_form=create_team_form)

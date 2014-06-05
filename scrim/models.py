@@ -3,6 +3,7 @@ from flask.ext.admin.contrib.sqla import ModelView
 
 class User(db.Model):
     id                  = db.Column(db.Integer, primary_key=True)
+    role                = db.Column(db.Integer)
     steam_id            = db.Column(db.String(40), unique=True)
     nickname            = db.Column(db.String(80))
     profile_url         = db.Column(db.String(80))
@@ -10,6 +11,7 @@ class User(db.Model):
     team_id             = db.Column(db.Integer, db.ForeignKey('team.id'))
     join_date           = db.Column(db.String(80))
     last_online         = db.Column(db.String(80))
+    team_leader         = db.Column(db.Integer)
 
     def is_authenticated(self):
         return True
