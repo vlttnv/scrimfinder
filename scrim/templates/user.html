@@ -2,18 +2,21 @@
 {% block body %}
 
 <img src='{{avatar}}' />
-{% if g.user is not none and g.user.steam_id in request.path %}<p><a href="{{ url_for('edit_profile') }}">Edit</a>{% endif %}
+{% if g.user is not none and g.user.steam_id in request.path %}
+  <p><a href="{{ url_for('edit_profile') }}">Edit</a>
+{% endif %}
 <p>User: {{id}}!</p>
 <p>Name: {{nick}}!</p>
-{% if 'games' in recently_played_games %}
-<p>Most recently played game: {{recently_played_games['games'][0]['name']}}</p>
-{% endif %}
-<p>Unique profile views: 90,000+</p>
-<p>Team name: {{ team_name }} </p>
-<p>Skill level: {{skill_level }} </p>
-<p>Time zone: {{ time_zone }} </p>
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
+
+{% if id in team_info %}
+  <p>wwwwwwwwwwwwwww{{ team_info.id }}</p>
+  <p>Team name: <a href="{{ url_for('team', team_id=team_info.id) }}">{{ team_info.name }}</a></p>
+  <p>Skill level: {{ team_info.skill }}</p>
+  <p>Time zone: {{ team_info.time_zone }} </p>
+{% endif %}
+
 <p><em>Your local time: <span class="time"></span></em></p>
 
 <li><em>Asia/Seoul: <span class="time-zone" zone="Asia/Seoul"></span></em></li>
