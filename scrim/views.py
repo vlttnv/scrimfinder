@@ -211,6 +211,10 @@ def edit_profile():
 def create_team():
     create_team_form = CreateTeamForm()
 
+    if g.user.team_id is not None:
+        flash("You already have a team")
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+
     if create_team_form.validate_on_submit():
         new_team = Team()
         new_team.name = create_team_form.team_name.data
