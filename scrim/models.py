@@ -7,12 +7,10 @@ class User(db.Model):
     nickname            = db.Column(db.String(80))
     profile_url         = db.Column(db.String(80))
     avatar_url          = db.Column(db.String(80))
-    team_name           = db.Column(db.String(80))
-    team_skill_level    = db.Column(db.String(80))
-    team_time_zone      = db.Column(db.String(80))
-    team_availability   = db.relationship('Available', backref='user',
-            lazy='dynamic')
-    
+    team_id             = db.Column(db.Integer, db.ForeignKey('team.id'))
+    join_date           = db.Column(db.String(80))
+    last_online         = db.Column(db.String(80))
+
     def is_authenticated(self):
         return True
 
@@ -37,9 +35,10 @@ class User(db.Model):
     def get_all_users():
         return User.query.all()
 
-class Available(db.Model):
-    id          = db.Column(db.Integer, primary_key=True)
-    day         = db.Column(db.String(80))
-    time_from   = db.Column(db.String(80))
-    time_to     = db.Column(db.String(80))
-    user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    skill_level = db.Column(db.String(80))
+    time_zone = db.Column(db.String(80))
+    reputation = db.Column(db.Integer)
+    user =  db.relationship('User', backref='team', lazy='dynamic')
