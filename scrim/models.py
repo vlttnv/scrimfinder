@@ -9,8 +9,8 @@ class User(db.Model):
     profile_url         = db.Column(db.String(80))
     avatar_url          = db.Column(db.String(80))
     team_id             = db.Column(db.Integer, db.ForeignKey('team.id'))
-    join_date           = db.Column(db.String(80))
-    last_online         = db.Column(db.String(80))
+    join_date           = db.Column(db.DateTime)
+    last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Integer)
 
     def is_authenticated(self):

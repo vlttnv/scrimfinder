@@ -117,20 +117,22 @@ def logout():
 
 @scrim_app.route('/user/<steam_id>')
 def user_page(steam_id):
-    user = User.query.filter_by(steam_id=steam_id).one()
-    if user == None:
+    try:
+        user = User.query.filter_by(steam_id=steam_id).one()
+    except NoResultFound:
         flash('User not found')
         return redirect(url_for('index'))
 
     team_info = {}
 
-    if g.user.team_id is not None:
+    if user.team_id is not None:
+        print user.team_id
         try:
-            team = Team.query.filter_by(id=g.user.team_id).one()
-            team_info.id = team.id
-            team_info.name = team.name
-            team_info.skill = team.skill_level
-            team_info.time_zone = team.time_zone
+            team = Team.query.filter_by(id=user.team_id).one()
+            team_info['id'] = team.id
+            team_info['name'] = team.name
+            team_info['skill'] = team.skill_level
+            team_info['time_zone'] = team.time_zone
         except MultipleResultsFound as e:
             print e
         except NoResultFound as e:
@@ -156,31 +158,7 @@ def show_all_users(page=1):
     from config import USERS_PER_PAGE
     users_list = User.query.paginate(page, USERS_PER_PAGE, False)
     
-    return render_template('all_users.html',
-        users_list=users_list)
-
-# Use with care
-@scrim_app.route('/create_test_bots')
-def create_test_bots():
-    """
-    Create 100 test bots.
-    """
-
-    from datetime import datetime as dt
-    
-    time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
-    bot_steam_id = 'BOT_STEAM_ID_' + time_in_milliseconds
-    bot_nickname = 'BOT_' + time_in_milliseconds
-
-    for i in range(100):
-        new_bot = User.get_or_create(bot_steam_id)
-        new_bot.nickname = bot_nickname + ' ' + str(i)
-        new_bot.profile_url = 'BOT_PROFILE_URL'
-        new_bot.avatar_url = 'BOT_AVATAR_URL'
-        db.session.add(new_bot)
-    db.session.commit()
-
-    return 'Created bots named after ' + bot_nickname, 200
+    return render_template('all_users.html', users_list=users_list)
 
 @lm.user_loader
 def load_user(id):
@@ -231,7 +209,7 @@ def create_team():
         return render_template('create_team.html', create_team_form=create_team_form)
 
 @scrim_app.route('/team/<team_id>')
-def team(team_id):
+def team_page(team_id):
     try:
         team = Team.query.filter_by(id=team_id).one()
     except NoResultFound, e:

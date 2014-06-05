@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if teams_list %}
+    <ul>
+    {% for team in teams_list.items %}
+      <li>name: {{ team.name }}, skill_level: {{ team.skill_level }}, time_zone: {{ team.time_zone }} <a href="{{ url_for('team_page', team_id=team.id) }}">go to team page</a></li>
+    {% endfor %}
+    </ul>
+
+    <!-- previous page -->
+    {% if teams_list.has_prev %}
+      <a href="{{ url_for('show_all_users', page=teams_list.prev_num) }}">Previous</a>
+    {% endif %}
+
+    <!-- all page numbers -->
+    {% for page_num in teams_list.iter_pages() %}
+      {% if page_num %}
+        {% if page_num != teams_list.page %}
+          <a href="{{ url_for('show_all_users', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <strong>{{ page_num }}</strong>
+      {% endif %}
+      {% else %}
+        <span class=ellipsis>…</span>
+      {% endif %}
+    {% endfor %}
+
+    <!-- next page -->
+    {% if teams_list.has_next %}
+      <a href="{{ url_for('show_all_users', page=teams_list.next_num) }}">Next</a>
+    {% endif %}
+  {% endif %}
+{% endblock %}

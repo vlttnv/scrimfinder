@@ -21,5 +21,8 @@ from models import User
 admin.add_view(ModelView(User, db.session))
 
 # Blueprints
-from scrim.mod_teams.views import mod_teams as teams_module
+from scrim.teams.views import teams as teams_module
 scrim_app.register_blueprint(teams_module, url_prefix='/teams')
+
+from scrim.bots.views import bots as bots_module
+scrim_app.register_blueprint(bots_module, url_prefix='/bots')

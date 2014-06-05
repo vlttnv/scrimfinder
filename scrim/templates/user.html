@@ -10,9 +10,8 @@
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
 
-{% if id in team_info %}
-  <p>wwwwwwwwwwwwwww{{ team_info.id }}</p>
-  <p>Team name: <a href="{{ url_for('team', team_id=team_info.id) }}">{{ team_info.name }}</a></p>
+{% if 'id' in team_info %}
+  <p>Team name: <a href="{{ url_for('team_page', team_id=team_info.id) }}">{{ team_info.name }}</a></p>
   <p>Skill level: {{ team_info.skill }}</p>
   <p>Time zone: {{ team_info.time_zone }} </p>
 {% endif %}
