@@ -114,7 +114,7 @@ def logout():
 
 @scrim_app.route('/user/<steam_id>')
 def user_page(steam_id):
-    user = User.query.filter_by(steam_id=steam_id).first()
+    user = User.query.filter_by(steam_id=steam_id).one()
     if user == None:
         flash('User not found')
         return redirect(url_for('index'))
@@ -127,6 +127,7 @@ def user_page(steam_id):
             a_team_name = team.name
             a_team_skill = team.skill_level
             a_team_zone = team.time_zone
+            a_team_id = team.id
         except MultipleResultsFound, e:
             print e
         except NoResultFound, e:
@@ -140,7 +141,8 @@ def user_page(steam_id):
             recently_played_games=recently_played_games,
             team_name=a_team_name,
             skill_level=a_team_skill,
-            time_zone=a_team_zone)
+            time_zone=a_team_zone,
+            teamid=a_team_id)
 
 @scrim_app.route('/all_users')
 @scrim_app.route('/all_users/page/<int:page>')
@@ -228,3 +230,16 @@ def create_team():
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
         return render_template('create_team.html', create_team_form=create_team_form)
+
+@scrim_app.route('/team/<team_id>')
+def team(team_id):
+    try:
+        team = Team.query.filter_by(id=team_id).one()
+    except NoResultFound, e:
+        flash("Team not found")
+        return redirect(url_for('index'))
+    return render_template('team.html',
+          team_name=team.name,
+          team_skill=team.skill_level,
+          team_zone=team.time_zone)
+
