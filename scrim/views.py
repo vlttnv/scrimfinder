@@ -173,6 +173,8 @@ def show_all_teams(page=1):
     query = Team.query
     form = FilterTeamForm()
     if form.validate_on_submit():
+        if form.team_name != "":
+            query = query.filter(Team.name.like('%'+form.team_name.data+'%'))
         if form.team_skill_level.data != "ALL":
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
