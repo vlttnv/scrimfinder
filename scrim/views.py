@@ -160,6 +160,17 @@ def show_all_users(page=1):
     
     return render_template('all_users.html', users_list=users_list)
 
+@scrim_app.route('/teams')
+@scrim_app.route('/teams/page/<int:page>')
+def show_all_teams(page=1):
+    if page < 1:
+        abort(404)
+
+    from config import TEAMS_PER_PAGE
+    teams_list = Team.query.paginate(page, TEAMS_PER_PAGE, False)
+    
+    return render_template('all_teams.html', teams_list=teams_list)
+
 @lm.user_loader
 def load_user(id):
         return User.query.get(int(id))
