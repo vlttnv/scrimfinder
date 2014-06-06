@@ -1,3 +1,5 @@
+ALL 			= "ALL"
+
 UGC_PLATINUM    = "UGC Platinum"
 UGC_GOLD        = "UGC Gold"
 UGC_SILVER      = "UGC Silver"
@@ -11,3 +13,7 @@ ETF_DIVISION_3  = "ETF2L Division 3"
 ETF_DIVISION_4  = "ETF2L Division 4"
 ETF_DIVISION_5  = "ETF2L Division 5"
 ETF_DIVISION_6  = "ETF2L Division 6"
+
+SKILL_LEVEL = [UGC_PLATINUM, UGC_GOLD, UGC_SILVER, UGC_STEEL, UGC_IRON]
+
+TIME_ZONE = ["CET", "EST"]

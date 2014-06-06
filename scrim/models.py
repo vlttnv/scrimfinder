@@ -39,4 +39,4 @@ class Team(db.Model):
     skill_level = db.Column(db.String(80))
     time_zone = db.Column(db.String(80))
     reputation = db.Column(db.Integer)
-    user =  db.relationship('User', backref='team', lazy='dynamic')
+    user = db.relationship('User', backref='team', lazy='dynamic')

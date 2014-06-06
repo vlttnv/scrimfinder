@@ -5,8 +5,9 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func
-from forms import EditForm, CreateTeamForm
+from forms import EditForm, CreateTeamForm, FilterTeamForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from sqlalchemy.exc import OperationalError
 
 # Steam Web APIs...
 
@@ -145,8 +146,8 @@ def user_page(steam_id):
             avatar=user.avatar_url,
             team_info=team_info)
 
-@scrim_app.route('/all_users')
-@scrim_app.route('/all_users/page/<int:page>')
+@scrim_app.route('/users')
+@scrim_app.route('/users/page/<int:page>')
 def show_all_users(page=1):
     """
     Retrieve all users of the application, 50 results per page
@@ -156,24 +157,38 @@ def show_all_users(page=1):
         abort(404)
 
     from config import USERS_PER_PAGE
-    users_list = User.query.paginate(page, USERS_PER_PAGE, False)
+    try:
+        users_list = User.query.paginate(page, per_page=USERS_PER_PAGE)
+    except OperationalError: # no user in db
+        users_list = None
     
     return render_template('all_users.html', users_list=users_list)
 
-@scrim_app.route('/teams')
-@scrim_app.route('/teams/page/<int:page>')
+@scrim_app.route('/teams', methods=['GET', 'POST'])
+@scrim_app.route('/teams/page/<int:page>', methods=['GET', 'POST'])
 def show_all_teams(page=1):
     if page < 1:
         abort(404)
 
-    from config import TEAMS_PER_PAGE
-    teams_list = Team.query.paginate(page, TEAMS_PER_PAGE, False)
-    
-    return render_template('all_teams.html', teams_list=teams_list)
+    query = Team.query
+    form = FilterTeamForm()
+    if form.validate_on_submit():
+        if form.team_skill_level.data != "ALL":
+            query = query.filter_by(skill_level=form.team_skill_level.data)
+        if form.team_time_zone.data != "ALL":
+            query = query.filter_by(time_zone=form.team_time_zone.data)
 
+    from config import TEAMS_PER_PAGE
+    try:
+        teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
+    except OperationalError: # no team in db
+        teams_list = None
+    
+    return render_template('all_teams.html', teams_list=teams_list, form=form)
+    
 @lm.user_loader
 def load_user(id):
-        return User.query.get(int(id))
+    return User.query.get(int(id))
 
 @scrim_app.route('/edit_profile', methods = ['GET', 'POST'])
 @login_required
@@ -231,18 +246,19 @@ def team_page(team_id):
           team_skill=team.skill_level,
           team_zone=team.time_zone)
 
-@scrim_app.route('/bots/create_users')
+@scrim_app.route('/bots/boom')
 def bots_create_users():
     """
     Create 100 bot users.
     """
 
     from datetime import datetime as dt
+    import random
     
     time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
     fake_steam_id = 'BotSteamID_' + time_in_milliseconds
     fake_name = 'BotUser_' + time_in_milliseconds
-    fake_team = bots_create_fake_team()
+    fake_team_ids = bots_create_fake_teams()
 
     for i in range(100):
         bot_user = User()
@@ -251,7 +267,7 @@ def bots_create_users():
         bot_user.nickname = fake_name + '_' + str(i)
         bot_user.profile_url = 'BotProfileURL'
         bot_user.avatar_url = 'BotAvatarURL'
-        bot_user.team_id = fake_team.id
+        bot_user.team_id = random.choice(fake_team_ids)
         bot_user.join_date = dt.utcnow()
         bot_user.last_online = dt.utcnow()
         bot_user.team_leader = 1
@@ -260,34 +276,27 @@ def bots_create_users():
     db.session.commit()
     return 'Created bots named after ' + fake_name, 200
 
-def bots_create_fake_team():
-    fake_team = Team()
-    fake_team.name = 'BotFakeTeam'
-    fake_team.skill_level = "BotSkillLevel"
-    fake_team.time_zone = "BotTimeZone"
-    fake_team.reputation = 1
-    db.session.add(fake_team)
+def bots_create_fake_teams():
+    """
+    Create 10 fake teams
+    """
+
+    from consts import SKILL_LEVEL, TIME_ZONE
+    import random
+
+    fake_name = 'BotTeam'
+    fake_team_ids = []
+
+    for skill in SKILL_LEVEL:
+        for time in TIME_ZONE:
+            bot_team = Team()
+            bot_team.name = fake_name + '_' + str(skill) + '_' + str(time)
+            bot_team.skill_level = skill
+            bot_team.time_zone = time
+            bot_team.reputation = '42'
+            db.session.add(bot_team)
+            db.session.flush()
+            fake_team_ids.append(bot_team.id)
     db.session.commit()
-    return Team.query.filter_by(name='BotFakeTeam').first()
-
-@scrim_app.route('/bots/create_teams')
-def bots_create_teams():
-    """
-    Create 100 bot teams
-    """
-
-    from datetime import datetime as dt
     
-    time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
-    fake_name = 'BotTeam_' + time_in_milliseconds
-
-    for i in range(100):
-        bot_team = Team()
-        bot_team.name = fake_name + '_' + str(i)
-        bot_team.skill_level = 'BotSkillLevel'
-        bot_team.time_zone = 'BotTimeZone'
-        bot_team.reputation = '-1'
-        db.session.add(bot_team)
-
-    db.session.commit()
-    return 'Created bots named after ' + fake_name, 200
+    return fake_team_ids
