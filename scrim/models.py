@@ -12,6 +12,7 @@ class User(db.Model):
     join_date           = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Integer)
+    rq                  = db.relationship('Request', backref='user', lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -32,6 +33,12 @@ class User(db.Model):
 
     def get_id(self):
         return unicode(self.id)
+
+class Request(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)

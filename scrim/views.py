@@ -1,5 +1,5 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team
+from models import User, Team, Request
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
@@ -228,6 +228,7 @@ def create_team():
         db.session.add(new_team)
         db.session.commit()
         g.user.team_id = new_team.id
+        g.user.team_leader = new_team.id
         db.session.add(g.user)
         db.session.commit()
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
@@ -238,13 +239,35 @@ def create_team():
 def team_page(team_id):
     try:
         team = Team.query.filter_by(id=team_id).one()
+        members = User.query.filter_by(team_id=team_id).all()
+        
+        pendings = User.query.join(Request).filter(User.id==Request.user_id).all()
+
     except NoResultFound, e:
         flash("Team not found")
         return redirect(url_for('index'))
     return render_template('team.html',
           team_name=team.name,
           team_skill=team.skill_level,
-          team_zone=team.time_zone)
+          team_zone=team.time_zone,
+          members=members,
+          team_id=team.id,
+          pendings=pendings)
+
+@scrim_app.route('/team/join/<team_id>')
+@login_required
+def team_join(team_id):
+    try:
+        user = User.query.filter_by(id=g.user.id).one()
+    except NoResultFound, e:
+        flash("User not found")
+        return redirect(url_for('index'))
+    
+    user.team_id=team_id
+    db.session.add(user)
+    db.session.commit()
+    flash("You joined the team")
+    return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/bots/boom')
 def bots_create_users():

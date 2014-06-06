@@ -1,10 +1,25 @@
 {% extends "layout.html" %}
 
 {% block body %}
-
 <h1>{{team_name}}</h1>
+{% if not g.user.team_id==team_id %}
+<p><a href="{{url_for('team_join', team_id=team_id)}}">Join team</a></p>
+{% endif %}
 <p>{{team_skill}}</p>
+
 <p>{{team_zone}}</p>
-
-
+<h1>Members</h1>
+{% for member in members %}
+<p>
+  {{member.nickname}}</b>
+</p>
+{% endfor %}
+<h1>Pending</h1>
+{% if g.user.team_leader==team_id %}
+{% for pending in pendings %}
+<p>
+  {{pending.nickname}}
+</p> 
+{% endfor %}
+{% endif %}
 {% endblock %}
