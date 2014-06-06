@@ -1,5 +1,5 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team
+from models import User, Team, Request
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
@@ -225,6 +225,13 @@ def team_page(team_id):
     try:
         team = Team.query.filter_by(id=team_id).one()
         members = User.query.filter_by(team_id=team_id).all()
+        
+        pendings = User.query.join(Request).filter(User.id==Request.user_id).all()
+
+
+
+
+
     except NoResultFound, e:
         flash("Team not found")
         return redirect(url_for('index'))
@@ -233,7 +240,8 @@ def team_page(team_id):
           team_skill=team.skill_level,
           team_zone=team.time_zone,
           members=members,
-          team_id=team.id)
+          team_id=team.id,
+          pendings=pendings)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
