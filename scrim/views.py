@@ -4,7 +4,7 @@ from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from forms import EditForm, CreateTeamForm, FilterTeamForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
@@ -243,8 +243,10 @@ def team_page(team_id):
         team = Team.query.filter_by(id=team_id).one()
         members = User.query.filter_by(team_id=team_id).all()
         
+        #
+        #   This can be optimized by first filtering then joining
+        #
         pendings = User.query.join(Request).filter(User.id==Request.user_id).filter(Request.team_id==team_id).all()
-        #pendings = lol.query.filter_by
 
     except NoResultFound, e:
         flash("Team not found")
@@ -279,6 +281,34 @@ def team_join(team_id):
     db.session.commit()
     flash("Request made")
     return redirect(url_for('team_page', team_id=team_id))
+
+@scrim_app.route('/team/<team_id>/accept_user/<user_id>')
+@login_required
+def team_accept_user(team_id, user_id):
+    try:
+        user = Request.query.filter(and_(Request.team_id==team_id, Request.user_id==user_id)).one()
+    except NoResultFound, e:
+        flash("No user")
+        return redirect(url_for('index'))
+
+    db.session.delete(user)
+    db.session.commit()
+
+    try:
+        new_user = User.query.filter_by(id=user_id).one()
+    except NoResultFound, e:
+        flash("No user")
+        return redirect(url_for('index'))
+
+    new_user.team_id = team_id
+    db.session.add(new_user)
+    db.session.commit()
+    
+    flash("Accepted")
+    return redirect(url_for('team_page', team_id=team_id))
+
+
+               
 
 @scrim_app.route('/bots/boom')
 def bots_create_users():

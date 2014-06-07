@@ -17,7 +17,7 @@
 <h1>Pending</h1>
 {% for pending in pendings %}
 <p>
-  {{pending.nickname}}
+{{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team_id, user_id=pending.id  )}}"> Accept user</a>
 </p> 
 {% endfor %}
 {% endblock %}
