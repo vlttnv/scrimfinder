@@ -15,11 +15,9 @@
 </p>
 {% endfor %}
 <h1>Pending</h1>
-{% if g.user.team_leader==team_id %}
 {% for pending in pendings %}
 <p>
   {{pending.nickname}}
 </p> 
 {% endfor %}
-{% endif %}
 {% endblock %}

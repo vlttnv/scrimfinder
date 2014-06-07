@@ -243,7 +243,8 @@ def team_page(team_id):
         team = Team.query.filter_by(id=team_id).one()
         members = User.query.filter_by(team_id=team_id).all()
         
-        pendings = User.query.join(Request).filter(User.id==Request.user_id).all()
+        pendings = User.query.join(Request).filter(User.id==Request.user_id).filter(Request.team_id==team_id).all()
+        #pendings = lol.query.filter_by
 
     except NoResultFound, e:
         flash("Team not found")
@@ -265,10 +266,18 @@ def team_join(team_id):
         flash("User not found")
         return redirect(url_for('index'))
     
-    user.team_id=team_id
-    db.session.add(user)
+    req = Request()
+    req.team_id = team_id
+    req.user_id = user.id
+
+
+
+
+
+    #user.team_id=team_id
+    db.session.add(req)
     db.session.commit()
-    flash("You joined the team")
+    flash("Request made")
     return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/bots/boom')
