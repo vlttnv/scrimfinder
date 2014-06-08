@@ -9,11 +9,13 @@
 <p>Name: {{nick}}!</p>
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
-
-{% if 'id' in team_info %}
-  <p>Team name: <a href="{{ url_for('team_page', team_id=team_info.id) }}">{{ team_info.name }}</a></p>
-  <p>Skill level: {{ team_info.skill }}</p>
-  <p>Time zone: {{ team_info.time_zone }} </p>
+{% if mems %}
+{% for mem in mems %}
+<h3><a href="{{ url_for('team_page', team_id=mem.id) }}">{{mem.name }}</a></h3>
+<p>Skill level: {{mem.skill_level }} </p>
+<p>Time zone:  {{ mem.time_zone }}</p>
+<br>
+  {% endfor %}
 {% else %}
   <p><a href="{{url_for("create_team")}}">Create a team</a></p>
   <p><a href="#">Join a team</a></p>

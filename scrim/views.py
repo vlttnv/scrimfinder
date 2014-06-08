@@ -1,5 +1,5 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team, Request
+from models import User, Team, Request, Membership
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
@@ -126,6 +126,8 @@ def user_page(steam_id):
 
     team_info = {}
 
+    teams = Team.query.join(Membership).filter_by(user_id=user.id).all()
+
     if user.team_id is not None:
         print user.team_id
         try:
@@ -144,7 +146,7 @@ def user_page(steam_id):
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
-            team_info=team_info)
+            mems=teams)
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
@@ -294,14 +296,20 @@ def team_accept_user(team_id, user_id):
     db.session.delete(user)
     db.session.commit()
 
-    try:
-        new_user = User.query.filter_by(id=user_id).one()
-    except NoResultFound, e:
-        flash("No user")
-        return redirect(url_for('index'))
+    #try:
+    #    new_user = User.query.filter_by(id=user_id).one()
+    #    
+    #except NoResultFound, e:
+    #    flash("No user")
+    #    return redirect(url_for('index'))
 
-    new_user.team_id = team_id
-    db.session.add(new_user)
+    new_membership = Membership()
+    new_membership.user_id = user_id
+    new_membership.team_id = team_id
+    new_membership.role = "Member"
+
+    #new_user.team_id = team_id
+    db.session.add(new_membership)
     db.session.commit()
     
     flash("Accepted")

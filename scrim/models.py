@@ -13,6 +13,7 @@ class User(db.Model):
     last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Integer)
     rq                  = db.relationship('Request', backref='user', lazy='dynamic')
+    membership          = db.relationship('Membership', backref='user', lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -47,3 +48,23 @@ class Team(db.Model):
     time_zone = db.Column(db.String(80))
     reputation = db.Column(db.Integer)
     user = db.relationship('User', backref='team', lazy='dynamic')
+    membership = db.relationship('Membership', backref='team', lazy='dynamic')
+    scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id1', backref='team', lazy='dynamic')
+    scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id2', backref='team', lazy='dynamic')
+
+class Membership(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    role = db.Column(db.String(80))
+
+class Scrim(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    start_time = db.Column(db.String(80))
+    time_zone = db.Column(db.String(80))
+    map1 = db.Column(db.String(80))
+    map2 = db.Column(db.String(80))
+    connection_info = db.Column(db.String(80))
+    team_id1 = db.Column(db.Integer, db.ForeignKey('team.id'))
+    team_id2 = db.Column(db.Integer, db.ForeignKey('team.id'))
+    scrim_type = db.Column(db.String(80))
