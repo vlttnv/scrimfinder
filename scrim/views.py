@@ -231,9 +231,11 @@ def create_team():
         new_team.time_zone = create_team_form.team_time_zone.data
         db.session.add(new_team)
         db.session.commit()
-        g.user.team_id = new_team.id
-        g.user.team_leader = new_team.id
-        db.session.add(g.user)
+        mem = Membership()
+        mem.team_id = new_team.id
+        mem.user_id = g.user.id
+        mem.role = "Leader"
+        db.session.add(mem)
         db.session.commit()
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
@@ -243,7 +245,7 @@ def create_team():
 def team_page(team_id):
     try:
         team = Team.query.filter_by(id=team_id).one()
-        members = User.query.filter_by(team_id=team_id).all()
+        members = User.query.join(Membership).filter_by(team_id=team_id).all()
         
         #
         #   This can be optimized by first filtering then joining

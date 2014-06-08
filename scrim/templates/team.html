@@ -2,7 +2,7 @@
 
 {% block body %}
 <h1>{{team_name}}</h1>
-{% if not g.user.team_id==team_id %}
+{% if g.user not in members %}
 <p><a href="{{url_for('team_join', team_id=team_id)}}">Join team</a></p>
 {% endif %}
 <p>{{team_skill}}</p>

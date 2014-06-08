@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
-
+<h1> {{nick}} </h1>
+<p> {{id}} </p>
 <img src='{{avatar}}' />
 {% if g.user is not none and g.user.steam_id in request.path %}
   <p><a href="{{ url_for('edit_profile') }}">Edit</a>
 {% endif %}
-<p>User: {{id}}!</p>
-<p>Name: {{nick}}!</p>
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
 {% if mems %}
+<h2>Teams</h2>
 {% for mem in mems %}
 <h3><a href="{{ url_for('team_page', team_id=mem.id) }}">{{mem.name }}</a></h3>
 <p>Skill level: {{mem.skill_level }} </p>
