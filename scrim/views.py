@@ -219,6 +219,10 @@ def load_user(id):
 @scrim_app.route('/edit_profile', methods = ['GET', 'POST'])
 @login_required
 def edit_profile():
+    """
+    This can be done once the user model is finalized
+    so that constat modifications are avoided
+    """
     form = EditForm()
     if form.validate_on_submit():
         #g.user.team_name = form.team_name.data
@@ -240,6 +244,11 @@ def edit_profile():
 @scrim_app.route('/create_team', methods = ['GET', 'POST'])
 @login_required
 def create_team():
+    """
+    A user creates a new team and sets some team parameters
+    The suer by default becomes the team leader
+    """
+
     create_team_form = CreateTeamForm()
 
     if g.user.team_id is not None:
@@ -265,6 +274,13 @@ def create_team():
 
 @scrim_app.route('/team/<team_id>')
 def team_page(team_id):
+    """
+    Currently shows a specific team, with team parameters, current members
+    and pending members
+
+    The pending members view will be restricted to the team leader
+    """
+
     try:
         team = Team.query.filter_by(id=team_id).one()
         members = User.query.join(Membership).filter_by(team_id=team_id).all()
@@ -288,6 +304,10 @@ def team_page(team_id):
 @scrim_app.route('/team/join/<team_id>')
 @login_required
 def team_join(team_id):
+    """
+    Makes a new request to join a certain team
+    """
+
     try:
         user = User.query.filter_by(id=g.user.id).one()
     except NoResultFound, e:
@@ -307,6 +327,10 @@ def team_join(team_id):
 @scrim_app.route('/team/<team_id>/accept_user/<user_id>')
 @login_required
 def team_accept_user(team_id, user_id):
+    """
+    Deletes the request and makes a new memebrship
+    """
+
     try:
         user = Request.query.filter(and_(Request.team_id==team_id, Request.user_id==user_id)).one()
     except NoResultFound, e:
@@ -316,19 +340,11 @@ def team_accept_user(team_id, user_id):
     db.session.delete(user)
     db.session.commit()
 
-    #try:
-    #    new_user = User.query.filter_by(id=user_id).one()
-    #    
-    #except NoResultFound, e:
-    #    flash("No user")
-    #    return redirect(url_for('index'))
-
     new_membership = Membership()
     new_membership.user_id = user_id
     new_membership.team_id = team_id
     new_membership.role = "Member"
 
-    #new_user.team_id = team_id
     db.session.add(new_membership)
     db.session.commit()
     
