@@ -152,8 +152,8 @@ def show_all_users(page=1):
     
     return render_template('all_users.html', users_list=users_list)
 
-@scrim_app.route('/teams', methods=['GET', 'POST'])
-@scrim_app.route('/teams/page/<int:page>', methods=['GET', 'POST'])
+@scrim_app.route('/teams', methods=['GET','POST'])
+@scrim_app.route('/teams/page/<int:page>', methods=['GET','POST'])
 def show_all_teams(page=1):
     if page < 1:
         abort(404)
@@ -175,7 +175,42 @@ def show_all_teams(page=1):
         teams_list = None
     
     return render_template('all_teams.html', teams_list=teams_list, form=form)
-    
+
+@scrim_app.route('/scrims', methods=['GET','POST'])
+@scrim_app.route('/scrims/page/<int:page>', methods=['GET','POST'])
+@login_required
+def show_all_scrims(page=1):
+    """
+    Scrim search page. Only visible for users who are part of a team
+    """
+
+    if page < 1:
+        abort(404)
+
+    user_membership = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(user_membership) == 0:
+        flash('You are not in a team. Cannot search for scrims.')
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+
+    query = Team.query
+    for membership in user_membership:
+        query = query.filter(Team.id != membership.team_id)
+
+    form = FilterTeamForm()
+    if form.validate_on_submit():
+        if form.team_skill_level.data != "ALL":
+            query = query.filter_by(skill_level=form.team_skill_level.data)
+        if form.team_time_zone.data != "ALL":
+            query = query.filter_by(time_zone=form.team_time_zone.data)
+
+    from config import TEAMS_PER_PAGE
+    try:
+        teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
+    except OperationalError: # no team in db
+        teams_list = None
+
+    return render_template('all_scrims.html', teams_list=teams_list, form=form)
+
 @lm.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -258,11 +293,11 @@ def create_team():
     """
 
     create_team_form = CreateTeamForm()
-    
-    # Multiple teams are ok
-    #if g.user.team_id is not None:
-    #    flash("You already have a team")
-    #    return redirect(url_for('user_page', steam_id=g.user.steam_id))
+
+    user_membership = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(user_membership) == 3:
+        flash('You are in three teams already. Chill.')
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
     if create_team_form.validate_on_submit():
         new_team = Team()
@@ -327,10 +362,6 @@ def team_join(team_id):
     req.team_id = team_id
     req.user_id = user.id
 
-
-
-
-
     #user.team_id=team_id
     db.session.add(req)
     db.session.commit()
@@ -362,10 +393,7 @@ def team_accept_user(team_id, user_id):
     db.session.commit()
     
     flash("Accepted")
-    return redirect(url_for('team_page', team_id=team_id))
-
-
-               
+    return redirect(url_for('team_page', team_id=team_id))         
 
 @scrim_app.route('/bots/boom')
 def bots_create_users():
