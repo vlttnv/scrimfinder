@@ -194,7 +194,7 @@ def show_all_scrims(page=1):
 
     query = Team.query
     for membership in user_membership:
-        query = query.filter(id != membership.team_id)
+        query = query.filter(Team.id != membership.team_id)
 
     form = FilterTeamForm()
     if form.validate_on_submit():
