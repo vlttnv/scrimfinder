@@ -187,17 +187,17 @@ def show_all_scrims(page=1):
     if page < 1:
         abort(404)
 
+    form = FilterTeamForm()
+
     user_membership = Membership.query.filter_by(user_id=g.user.id).all()
     if len(user_membership) == 0:
         flash('You are not in a team. Cannot search for scrims.')
-        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+        return render_template('all_scrims.html', teams_list=None, form=form)
 
     query = Team.query
-    for membership in user_membership:
-        query = query.filter(Team.id != membership.team_id)
-
-    form = FilterTeamForm()
     if form.validate_on_submit():
+        for membership in user_membership:
+            query = query.filter(Team.id != membership.team_id)
         if form.team_skill_level.data != "ALL":
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
@@ -240,7 +240,7 @@ def edit_profile():
         #times.time_to.data = aval.time_to
         return render_template('edit_profile.html', form = form)
 
-@scrim_app.route('/edit_team/<team_id>', methods = ['GET', 'POST'])
+@scrim_app.route('/edit_team/<int:team_id>', methods = ['GET', 'POST'])
 @login_required
 def edit_team(team_id):
     """
@@ -313,18 +313,30 @@ def create_team():
     The suer by default becomes the team leader
     """
 
-    create_team_form = CreateTeamForm()
+    form = CreateTeamForm()
 
     user_membership = Membership.query.filter_by(user_id=g.user.id).all()
     if len(user_membership) == 3:
         flash('You are in three teams already. Chill.')
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
-    if create_team_form.validate_on_submit():
+    if form.validate_on_submit():
         new_team = Team()
-        new_team.name = create_team_form.team_name.data
-        new_team.skill_level = create_team_form.team_skill_level.data
-        new_team.time_zone = create_team_form.team_time_zone.data
+        new_team.name = form.team_name.data
+        new_team.skill_level = form.team_skill_level.data
+        new_team.time_zone = form.team_time_zone.data
+
+        week = list("0000000")
+        week[0] = str(int(form.mon.data))
+        week[1] = str(int(form.tue.data))
+        week[2] = str(int(form.wed.data))
+        week[3] = str(int(form.thu.data))
+        week[4] = str(int(form.fri.data))
+        week[5] = str(int(form.sat.data))
+        week[6] = str(int(form.sun.data))
+        week = "".join(week)
+        new_team.week_days = week
+
         db.session.add(new_team)
         db.session.commit()
         mem = Membership()
@@ -335,7 +347,38 @@ def create_team():
         db.session.commit()
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
-        return render_template('create_team.html', create_team_form=create_team_form)
+        return render_template('create_team.html', create_team_form=form)
+
+@scrim_app.route('/quit_team/<int:team_id>', methods=['POST'])
+@login_required
+def quit_team(team_id):
+    if team_id < 1:
+        abort(404)
+
+    team_membership = None
+    user_membership = Membership.query.filter_by(user_id=g.user.id).all()
+    for membership in user_membership:
+        if membership.team_id == team_id:
+            team_membership = membership
+
+    if team_membership is None:
+        flash("Dude you are not in this team")
+        redirect(url_for('user_page'), steam_id=g.user.steam_id)
+    else:
+        db.session.delete(team_membership)
+        db.session.commit()
+
+        user_team = Team.query.filter_by(id=team_id).one()
+        user_team_name = user_team.name
+        members = Team.query.join(Membership).filter_by(team_id=team_id).all()
+        if len(members) == 0:
+            db.session.delete(user_team)
+            db.session.commit()
+            flash("You quit from team " + user_team_name + " , and since \
+                    there's no one left in the team, the team is deleted")
+        else:
+            flash("You quit from team " + user_team_name)
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
 @scrim_app.route('/team/<team_id>')
 def team_page(team_id):

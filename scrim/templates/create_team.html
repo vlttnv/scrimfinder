@@ -3,24 +3,53 @@
 {% block body %}
 <h1> Create a Team </h1>
 <form action="" method="post"  name="create_team">
-		{{create_team_form.hidden_tag()}}
-		<table>
-				<tr>
-						<td>Team Name</td>
-						<td>{{create_team_form.team_name()}}</td>
-				</tr>
-				<tr>
-						<td>Team Skill Level:</td>
-						<td>{{create_team_form.team_skill_level()}}</td>
-				</tr>
-				<tr>
-						<td>Time Zone</td>
-						<td>{{create_team_form.team_time_zone()}}</td>
-				</tr>
-				<tr>
-						<td></td>
-						<td><input type="submit" value="Create Team"></td>
-				</tr>
-		</table>
+	{{create_team_form.hidden_tag()}}
+	<table>
+		<tr>
+			<td>Team Name</td>
+			<td>{{create_team_form.team_name()}}</td>
+		</tr>
+		<tr>
+			<td>Team Skill Level:</td>
+			<td>{{create_team_form.team_skill_level()}}</td>
+		</tr>
+		<tr>
+			<td>Time Zone</td>
+			<td>{{create_team_form.team_time_zone()}}</td>
+		</tr>
+		<tr>
+			<td>Monday</td>
+			<td>{{create_team_form.mon()}}</td>
+		</tr>
+		<tr>
+		<tr>
+			<td>Tuesday</td>
+			<td>{{create_team_form.tue()}}</td>
+		</tr>
+		<tr>
+			<td>Wednesday</td>
+			<td>{{create_team_form.wed()}}</td>
+		</tr>
+		<tr>
+			<td>Thursday</td>
+			<td>{{create_team_form.thu()}}</td>
+		</tr>
+		<tr>
+			<td>Friday</td>
+			<td>{{create_team_form.fri()}}</td>
+		</tr>
+		<tr>
+			<td>Saturday</td>
+			<td>{{create_team_form.sat()}}</td>
+		</tr>
+		<tr>
+			<td>Sunday</td>
+			<td>{{create_team_form.sun()}}</td>
+		</tr>																
+		<tr>
+			<td></td>
+			<td><input type="submit" value="Create Team"></td>
+		</tr>
+	</table>
 </form>
 {% endblock %}

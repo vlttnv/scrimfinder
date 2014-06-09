@@ -49,6 +49,14 @@ class CreateTeamForm(Form):
             choices=[("CET","CET"),
                 ("EST","EST")])
 
+    mon = BooleanField('Monday')
+    tue = BooleanField('Tuesday')
+    wed = BooleanField('Wednesday')
+    thu = BooleanField('Thursday')
+    fri = BooleanField('Friday')
+    sat = BooleanField('Saturday')
+    sun = BooleanField('Sunday')
+
 class FilterTeamForm(Form):
     team_name           = TextField('team_name')
     team_skill_level    = SelectField(u'team_skill_level', 
@@ -63,6 +71,14 @@ class FilterTeamForm(Form):
                 ("CET","CET"),
                 ("EST","EST")])
 
+    mon = BooleanField('Monday')
+    tue = BooleanField('Tuesday')
+    wed = BooleanField('Wednesday')
+    thu = BooleanField('Thursday')
+    fri = BooleanField('Friday')
+    sat = BooleanField('Saturday')
+    sun = BooleanField('Sunday')
+
 class FilterScrimForm(Form):
     team_skill_level    = SelectField(u'team_skill_level', 
             choices=[(ALL, ALL),
@@ -75,3 +91,11 @@ class FilterScrimForm(Form):
             choices=[("ALL", "ALL"),
                 ("CET","CET"),
                 ("EST","EST")])
+
+    mon = BooleanField('Monday')
+    tue = BooleanField('Tuesday')
+    wed = BooleanField('Wednesday')
+    thu = BooleanField('Thursday')
+    fri = BooleanField('Friday')
+    sat = BooleanField('Saturday')
+    sun = BooleanField('Sunday')

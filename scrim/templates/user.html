@@ -10,15 +10,19 @@
 <p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
 {% if mems %}
 <h2>Teams</h2>
-{% for mem in mems %}
-<h3><a href="{{ url_for('team_page', team_id=mem.id) }}">{{mem.name }}</a></h3>
-<p>Skill level: {{mem.skill_level }} </p>
-<p>Time zone:  {{ mem.time_zone }}</p>
-<br>
+  {% for mem in mems %}
+    <h3><a href="{{ url_for('team_page', team_id=mem.id) }}">{{ mem.name }}</a></h3>
+    <p>Skill level: {{mem.skill_level }} </p>
+    <p>Time zone:  {{ mem.time_zone }} </p>
+
+    <form action="{{ url_for('quit_team', team_id=mem.id) }}" method="post" name="quit_team">
+    <input type="submit" value="Quit">
+    </form>
+    <br>
   {% endfor %}
 {% else %}
-  <p><a href="{{url_for("create_team")}}">Create a team</a></p>
-  <p><a href="{{url_for('show_all_teams' )}}">Join a team</a></p>
+  <p><a href="{{ url_for('create_team') }}">Create a team</a></p>
+  <p><a href="{{ url_for('show_all_teams') }}">Join a team</a></p>
 {% endif %}
 
 <p><em>Your local time: <span class="time"></span></em></p>
