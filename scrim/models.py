@@ -8,11 +8,10 @@ class User(db.Model):
     nickname            = db.Column(db.String(80))
     profile_url         = db.Column(db.String(80))
     avatar_url          = db.Column(db.String(80))
-    team_id             = db.Column(db.Integer, db.ForeignKey('team.id'))
     join_date           = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Boolean)
-    rq                  = db.relationship('Request', backref='user', lazy='dynamic')
+    request             = db.relationship('Request', backref='user', lazy='dynamic')
     membership          = db.relationship('Membership', backref='user', lazy='dynamic')
 
     def is_authenticated(self):
@@ -37,7 +36,7 @@ class User(db.Model):
 
 class Request(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
@@ -47,15 +46,14 @@ class Team(db.Model):
     skill_level = db.Column(db.String(80))
     time_zone = db.Column(db.String(80))
     reputation = db.Column(db.Integer)
-    user = db.relationship('User', backref='team', lazy='dynamic')
     membership = db.relationship('Membership', backref='team', lazy='dynamic')
     scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id1', backref='team', lazy='dynamic')
     scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id2', backref='team', lazy='dynamic')
 
 class Membership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     role = db.Column(db.String(80))
 
 class Scrim(db.Model):
