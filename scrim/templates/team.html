@@ -3,18 +3,27 @@
 {% block body %}
 <h1>{{team_name}}</h1>
 <p><a href="{{url_for('edit_team', team_id=team_id)}}">Edit team</a></p>
-{% if g.user not in members %}
+{% set in_team = False %}
+{% for user, role in members_roles %}
+{% if g.user == user %}
+{% set in_team = True %}
+{% endif %}
+{% endfor %}
+
+{% if in_team == False %}
 <p><a href="{{url_for('team_join', team_id=team_id)}}">Join team</a></p>
 {% endif %}
-<p>{{team_skill}}</p>
 
+<p>{{team_skill}}</p>
 <p>{{team_zone}}</p>
+
 <h1>Members</h1>
-{% for member in members %}
+{% for user, role in members_roles %}
 <p>
-  {{member.nickname}}</b>
+  Role: {{ role }}, {{user.nickname}} <a href="{{ url_for('user_page', steam_id=user.steam_id) }}">go to profile page</a></li> </b>
 </p>
 {% endfor %}
+
 <h1>Pending</h1>
 {% for pending in pendings %}
 <p>

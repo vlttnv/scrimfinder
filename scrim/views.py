@@ -394,8 +394,12 @@ def team_page(team_id):
 
     try:
         team = Team.query.filter_by(id=team_id).one()
-        members = User.query.join(Membership).filter_by(team_id=team_id).all()
-        
+        members = Membership.query.join(Team).filter_by(id=team_id).all()
+        members_roles = []
+        for mem in members:
+            user = User.query.filter_by(id=mem.user_id).one()
+            members_roles.append((user, mem.role))
+
         #
         #   This can be optimized by first filtering then joining
         #
@@ -408,7 +412,7 @@ def team_page(team_id):
           team_name=team.name,
           team_skill=team.skill_level,
           team_zone=team.time_zone,
-          members=members,
+          members_roles=members_roles,
           team_id=team.id,
           pendings=pendings)
 
