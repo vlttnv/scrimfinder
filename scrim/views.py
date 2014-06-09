@@ -189,9 +189,9 @@ def show_all_scrims(page=1):
 
     user_membership = Membership.query.filter_by(user_id=g.user.id).all()
 
-    if user_membership is None:
+    if len(user_membership) == 0:
         flash('You are not in a team. Cannot search for scrims.')
-        return redirect(request.current_url)
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
     query = Team.query
     for membership in user_membership:
