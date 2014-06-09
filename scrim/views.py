@@ -5,7 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func, and_
-from forms import EditForm, CreateTeamForm, FilterTeamForm
+from forms import EditForm, CreateTeamForm, FilterTeamForm, TeamEditForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -205,6 +205,50 @@ def edit_profile():
         #times.time_to.data = aval.time_to
         return render_template('edit_profile.html', form = form)
 
+@scrim_app.route('/edit_team/<team_id>', methods = ['GET', 'POST'])
+@login_required
+def edit_team(team_id):
+    """
+
+    """
+    has_right = False
+
+    # Need to check if the user has the right to edit this team
+    # Search through his memberships
+    #teams = Team.query.join(Membership).filter_by(user_id=g.user.id).all()
+    teams = Membership.query.filter_by(user_id=g.user.id).all()
+    for team in teams:
+        if team.team_id == int(team_id) and team.role == "Leader":
+            has_right = True
+    
+    # Kick him out if not
+    if not has_right:
+        flash("You should not be here")
+        return redirect(url_for('index'))
+
+    # Get the team the is being edited
+    try:
+        team_edit = Team.query.filter_by(id=team_id).one()
+    except NoResultFound, e:
+        flash("Team not found")
+        return redirect(url_for('index'))
+
+    form = TeamEditForm()
+    if form.validate_on_submit():
+        team_edit.name = form.team_name.data
+        team_edit.skill_level = form.team_skill_level.data
+        team_edit.time_zone = form.team_time_zone.data
+        print form.mon.data
+        db.session.add(team_edit)
+        db.session.commit()
+        return redirect(url_for('team_page', team_id=team_id))
+    else:
+        print "YOLO"
+        form.team_name.data = team_edit.name
+        form.team_skill_level.data = team_edit.skill_level
+        form.team_time_zone.data = team_edit.time_zone
+        return render_template('edit_team.html', form=form, team_id=team_id)
+
 @scrim_app.route('/create_team', methods = ['GET', 'POST'])
 @login_required
 def create_team():
@@ -214,10 +258,11 @@ def create_team():
     """
 
     create_team_form = CreateTeamForm()
-
-    if g.user.team_id is not None:
-        flash("You already have a team")
-        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+    
+    # Multiple teams are ok
+    #if g.user.team_id is not None:
+    #    flash("You already have a team")
+    #    return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
     if create_team_form.validate_on_submit():
         new_team = Team()

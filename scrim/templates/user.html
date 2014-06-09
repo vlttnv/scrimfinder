@@ -18,7 +18,7 @@
   {% endfor %}
 {% else %}
   <p><a href="{{url_for("create_team")}}">Create a team</a></p>
-  <p><a href="#">Join a team</a></p>
+  <p><a href="{{url_for('show_all_teams' )}}">Join a team</a></p>
 {% endif %}
 
 <p><em>Your local time: <span class="time"></span></em></p>

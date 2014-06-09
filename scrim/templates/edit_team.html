@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Edit Your Team Profile</h1>
+<form action="{{url_for('edit_team', team_id=team_id)}}" method="post" name="edit_team">
+    {{form.hidden_tag()}}
+    <table>
+		<tr>
+			<td>Team Name</td>
+			<td>{{form.team_name()}}</td>
+		</tr>
+        <tr>
+            <td>Team Skill Level:</td>
+            <td>{{form.team_skill_level()}}</td>
+        </tr>
+        <tr>
+            <td>Team Time Zone:</td>
+            <td>{{form.team_time_zone()}}</td>
+        </tr>
+		<tr>
+				<td>Monday</td>
+				<td>{{form.mon()}}</td>
+		</tr>
+        <tr>
+		<tr>
+				<td>Tuesday</td>
+				<td>{{form.tue()}}</td>
+		</tr>
+		<tr>
+				<td>Wednesday</td>
+				<td>{{form.wed()}}</td>
+		</tr>
+		<tr>
+				<td>Thursday</td>
+				<td>{{form.thu()}}</td>
+		</tr>
+		<tr>
+				<td>Friday</td>
+				<td>{{form.fri()}}</td>
+		</tr>
+		<tr>
+				<td>Saturday</td>
+				<td>{{form.sat()}}</td>
+		</tr>
+		<tr>
+				<td>Sunday</td>
+				<td>{{form.sun()}}</td>
+		</tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Save Changes"></td>
+        </tr>
+    </table>
+</form>
+{% endblock %}
