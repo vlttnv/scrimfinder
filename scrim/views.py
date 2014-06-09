@@ -344,7 +344,7 @@ def bots_create_users():
         bot_user.team_id = random.choice(fake_team_ids)
         bot_user.join_date = dt.utcnow()
         bot_user.last_online = dt.utcnow()
-        bot_user.team_leader = 1
+        bot_user.team_leader = False
         db.session.add(bot_user)
 
     db.session.commit()

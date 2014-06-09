@@ -11,7 +11,7 @@ class User(db.Model):
     team_id             = db.Column(db.Integer, db.ForeignKey('team.id'))
     join_date           = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
-    team_leader         = db.Column(db.Integer)
+    team_leader         = db.Column(db.Boolean)
     rq                  = db.relationship('Request', backref='user', lazy='dynamic')
     membership          = db.relationship('Membership', backref='user', lazy='dynamic')
 
