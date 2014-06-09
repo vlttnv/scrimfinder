@@ -124,15 +124,18 @@ def user_page(steam_id):
         flash('User not found')
         return redirect(url_for('index'))
 
-
-    teams = Team.query.join(Membership).filter_by(user_id=user.id).all()
+    teams_membership = []
+    memberships = Membership.query.filter_by(user_id=user.id).all()
+    for mem in memberships:
+        team = Team.query.filter_by(id=mem.team_id).one()
+        teams_membership.append((team, mem))
 
     return render_template('user.html',
             id=user.steam_id,
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
-            mems=teams)
+            teams_membership=teams_membership)
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
@@ -195,9 +198,9 @@ def show_all_scrims(page=1):
         return render_template('all_scrims.html', teams_list=None, form=form)
 
     query = Team.query
-    if form.validate_on_submit():
-        for membership in user_membership:
+    for membership in user_membership:
             query = query.filter(Team.id != membership.team_id)
+    if form.validate_on_submit():
         if form.team_skill_level.data != "ALL":
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":

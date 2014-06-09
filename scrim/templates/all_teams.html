@@ -55,7 +55,7 @@
   {% if teams_list %}
     <ul>
     {% for team in teams_list.items %}
-      <li>name: {{ team.name }}, skill_level: {{ team.skill_level }}, time_zone: {{ team.time_zone }} <a href="{{ url_for('team_page', team_id=team.id) }}">go to team page</a></li>
+      <li>name: {{ team.name }}, skill_level: {{ team.skill_level }}, time_zone: {{ team.time_zone }}, week_days: {{ team.week_days }} <a href="{{ url_for('team_page', team_id=team.id) }}">go to team page</a></li>
     {% endfor %}
     </ul>
 
