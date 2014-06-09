@@ -38,3 +38,16 @@ class FilterTeamForm(Form):
             choices=[("ALL", "ALL"),
                 ("CET","CET"),
                 ("EST","EST")])
+
+class FilterScrimForm(Form):
+    team_skill_level    = SelectField(u'team_skill_level', 
+            choices=[(ALL, ALL),
+                (UGC_IRON, UGC_IRON),
+                (UGC_STEEL, UGC_STEEL),
+                (UGC_SILVER, UGC_SILVER),
+                (UGC_GOLD, UGC_GOLD), 
+                (UGC_PLATINUM, UGC_PLATINUM)])
+    team_time_zone      = SelectField('team_time_zone', 
+            choices=[("ALL", "ALL"),
+                ("CET","CET"),
+                ("EST","EST")])

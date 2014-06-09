@@ -39,7 +39,6 @@ class Request(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
