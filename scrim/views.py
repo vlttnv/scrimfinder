@@ -124,18 +124,19 @@ def user_page(steam_id):
         flash('User not found')
         return redirect(url_for('index'))
 
-    teams_membership = []
+    # array of tuples of Team and role e.g. [(team,"Captain"),(team,"Coach")]
+    teams_roles = []
     memberships = Membership.query.filter_by(user_id=user.id).all()
     for mem in memberships:
         team = Team.query.filter_by(id=mem.team_id).one()
-        teams_membership.append((team, mem))
+        teams_roles.append((team, mem.role))
 
     return render_template('user.html',
             id=user.steam_id,
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
-            teams_membership=teams_membership)
+            teams_roles=teams_roles)
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
@@ -395,6 +396,7 @@ def team_page(team_id):
     try:
         team = Team.query.filter_by(id=team_id).one()
         members = Membership.query.join(Team).filter_by(id=team_id).all()
+        # an arry of tuples of User and role e.g. [(user,"Captain"),(user,"BenchPlayer")]
         members_roles = []
         for mem in members:
             user = User.query.filter_by(id=mem.user_id).one()
@@ -409,12 +411,12 @@ def team_page(team_id):
         flash("Team not found")
         return redirect(url_for('index'))
     return render_template('team.html',
-          team_name=team.name,
-          team_skill=team.skill_level,
-          team_zone=team.time_zone,
-          members_roles=members_roles,
-          team_id=team.id,
-          pendings=pendings)
+            team_id=team.id,
+            team_name=team.name,
+            team_skill=team.skill_level,
+            team_zone=team.time_zone,
+            members_roles=members_roles,
+            pendings=pendings)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required

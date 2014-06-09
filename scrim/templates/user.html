@@ -8,17 +8,17 @@
 {% endif %}
 <p><a href='{{profile_url}}'>Go to steam profile</a></p>
 <p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
-{% if teams_membership %}
+{% if teams_roles %}
 <h2>Teams</h2>
-  {% for team, mem in teams_membership %}
+  {% for team, role in teams_roles %}
     <h3><a href="{{ url_for('team_page', team_id=team.id) }}">{{ team.name }}</a></h3>
-    <p>Role: {{ mem.role }}</p>
+    <p>Role: {{ role }}</p>
     <p>Skill level: {{ team.skill_level }}</p>
     <p>Rep: {{team.reputation }}</p>
     <p>Time zone:  {{ team.time_zone }}</p>
     <p>Week days: {{ team.week_days }}</p>
 
-    <form action="{{ url_for('quit_team', team_id=mem.id) }}" method="post" name="quit_team">
+    <form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
     <input type="submit" value="Quit">
     </form>
     <br>
