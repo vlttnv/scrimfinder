@@ -65,6 +65,7 @@ class Team(db.Model):
     skill_level = db.Column(db.String(80))
     time_zone = db.Column(db.String(80))
     reputation = db.Column(db.Integer)
+    week_days = db.Column(db.String(7), default="0000000")
     membership = db.relationship('Membership', backref='team', lazy='dynamic')
     scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id1', backref='team', lazy='dynamic')
     scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id2', backref='team', lazy='dynamic')

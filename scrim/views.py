@@ -273,15 +273,36 @@ def edit_team(team_id):
         team_edit.name = form.team_name.data
         team_edit.skill_level = form.team_skill_level.data
         team_edit.time_zone = form.team_time_zone.data
-        print form.mon.data
+
+        # Make week string
+        week = list("0000000")
+        week[0] = str(int(form.mon.data))
+        week[1] = str(int(form.tue.data))
+        week[2] = str(int(form.wed.data))
+        week[3] = str(int(form.thu.data))
+        week[4] = str(int(form.fri.data))
+        week[5] = str(int(form.sat.data))
+        week[6] = str(int(form.sun.data))
+        week = "".join(week)
+        print week
+
+        team_edit.week_days = week
         db.session.add(team_edit)
         db.session.commit()
         return redirect(url_for('team_page', team_id=team_id))
     else:
-        print "YOLO"
+        wk = team_edit.week_days
+        print wk
         form.team_name.data = team_edit.name
         form.team_skill_level.data = team_edit.skill_level
         form.team_time_zone.data = team_edit.time_zone
+        form.mon.data = bool(int(wk[0]))
+        form.tue.data = bool(int(wk[1]))
+        form.wed.data = bool(int(wk[2]))
+        form.thu.data = bool(int(wk[3]))
+        form.fri.data = bool(int(wk[4]))
+        form.sat.data = bool(int(wk[5]))
+        form.sun.data = bool(int(wk[6]))
         return render_template('edit_team.html', form=form, team_id=team_id)
 
 @scrim_app.route('/create_team', methods = ['GET', 'POST'])
