@@ -124,22 +124,8 @@ def user_page(steam_id):
         flash('User not found')
         return redirect(url_for('index'))
 
-    team_info = {}
 
     teams = Team.query.join(Membership).filter_by(user_id=user.id).all()
-
-    if user.team_id is not None:
-        print user.team_id
-        try:
-            team = Team.query.filter_by(id=user.team_id).one()
-            team_info['id'] = team.id
-            team_info['name'] = team.name
-            team_info['skill'] = team.skill_level
-            team_info['time_zone'] = team.time_zone
-        except MultipleResultsFound as e:
-            print e
-        except NoResultFound as e:
-            print e
 
     return render_template('user.html',
             id=user.steam_id,
