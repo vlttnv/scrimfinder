@@ -238,9 +238,18 @@ def show_all_scrims(page=1):
         week[6] = str(int(form.sun.data))
         week = "".join(week)
         possible_weekdays = _get_bit_combinations(week)
-        print possible_weekdays
         query = query.filter(Team.week_days.in_(possible_weekdays))
+    else:
+        # set default values HACK - use user's first team
+        first_team = Team.query.filter_by(id=user_membership[0].team_id).one()
 
+        query = query.filter_by(skill_level=first_team.skill_level)
+        query = query.filter_by(time_zone=first_team.time_zone)
+        
+        # continue - set scrim time preferences
+        first_team_weekdays = first_team.week_days
+        possible_weekdays = _get_bit_combinations(first_team_weekdays)
+        query = query.filter(Team.week_days.in_(possible_weekdays))
 
     from config import TEAMS_PER_PAGE
     try:
