@@ -1,5 +1,6 @@
 from scrim import scrim_app, oid, db, models, lm
 from models import User, Team, Request, Membership
+from utils import utils
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
@@ -180,27 +181,6 @@ def show_all_teams(page=1):
     
     return render_template('all_teams.html', teams_list=teams_list, form=form)
 
-def _get_bit_combinations(bit_string):
-    import itertools as itools
-
-    result = []
-
-    all_ones = [i for i, ltr in enumerate(bit_string) if ltr == '1']
-
-    n = len(bit_string)
-    possiblities = ["".join(seq) for seq in itools.product("01", repeat=n)]
-    for p in possiblities:
-        s = []
-        for char in p:
-            s.append(char)
-        for ones_index in all_ones:
-            s[ones_index] = '1'
-        new_s = ''.join(s)
-        if new_s not in result:
-            result.append(new_s)
-
-    return result
-
 @scrim_app.route('/scrims', methods=['GET','POST'])
 @scrim_app.route('/scrims/page/<int:page>', methods=['GET','POST'])
 @login_required
@@ -237,7 +217,7 @@ def show_all_scrims(page=1):
         week[5] = str(int(form.sat.data))
         week[6] = str(int(form.sun.data))
         week = "".join(week)
-        possible_weekdays = _get_bit_combinations(week)
+        possible_weekdays = utils.get_bit_combinations(week)
         query = query.filter(Team.week_days.in_(possible_weekdays))
     else:
         # set default values HACK - use user's first team
@@ -248,7 +228,7 @@ def show_all_scrims(page=1):
         
         # continue - set scrim time preferences
         first_team_weekdays = first_team.week_days
-        possible_weekdays = _get_bit_combinations(first_team_weekdays)
+        possible_weekdays = utils.get_bit_combinations(first_team_weekdays)
         query = query.filter(Team.week_days.in_(possible_weekdays))
 
     from config import TEAMS_PER_PAGE
@@ -517,59 +497,18 @@ def team_accept_user(team_id, user_id):
     return redirect(url_for('team_page', team_id=team_id))         
 
 @scrim_app.route('/bots/boom')
-def bots_create_users():
+def bots_boom():
     """
-    Create 100 bot users.
-    """
+    Use for testing filters. Create 100 bot users and a number of teams.
 
-    from datetime import datetime as dt
-    import random
-    
-    time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
-    fake_steam_id = 'BotSteamID_' + time_in_milliseconds
-    fake_name = 'BotUser_' + time_in_milliseconds
-    fake_team_ids = _bots_create_fake_teams()
-
-    for i in range(100):
-        bot_user = User()
-        bot_user.role = 1
-        bot_user.steam_id = fake_steam_id + '_' + str(i)
-        bot_user.nickname = fake_name + '_' + str(i)
-        bot_user.profile_url = 'BotProfileURL'
-        bot_user.avatar_url = 'BotAvatarURL'
-        bot_user.join_date = dt.utcnow()
-        bot_user.last_online = dt.utcnow()
-        bot_user.team_leader = False
-        db.session.add(bot_user)
-
-    db.session.commit()
-    return 'Created bots named after ' + fake_name, 200
-
-def _bots_create_fake_teams():
-    """
-    Create enough fake teams - all possible combinations of skill level, 
-    time zone, scrim time, etc.
+    See bots.py
     """
 
-    from consts import SKILL_LEVEL, TIME_ZONE
-    import random
+    from scrim import bots
 
-    fake_name = 'BotTeam'
-    fake_team_ids = []
+    print bots
 
-    for skill in SKILL_LEVEL:
-        for time in TIME_ZONE:
-            possible_weekdays = _get_bit_combinations("0000000")
-            for weekday in possible_weekdays:
-                bot_team = Team()
-                bot_team.name = fake_name + '_' + str(skill) + '_' + str(time)
-                bot_team.skill_level = skill
-                bot_team.time_zone = time
-                bot_team.reputation = '42'
-                bot_team.week_days = weekday
-                db.session.add(bot_team)
-                db.session.flush()
-                fake_team_ids.append(bot_team.id)
-    db.session.commit()
-    
-    return fake_team_ids
+    bots.create_bot_users()
+    bots.create_bot_teams()
+
+    return 'Trust me. It worked.', 200

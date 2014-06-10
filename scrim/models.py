@@ -9,7 +9,6 @@ class User(db.Model):
     """
 
     id                  = db.Column(db.Integer, primary_key=True)
-    role                = db.Column(db.Integer)
     steam_id            = db.Column(db.String(40), unique=True)
     nickname            = db.Column(db.String(80))
     profile_url         = db.Column(db.String(80))
