@@ -2,15 +2,10 @@
 
 {% block body %}
 <h1>{{team_name}}</h1>
+{% if (g.user, "Leader") in members_roles %}
 <p><a href="{{url_for('edit_team', team_id=team_id)}}">Edit team</a></p>
-{% set in_team = False %}
-{% for user, role in members_roles %}
-{% if g.user == user %}
-{% set in_team = True %}
 {% endif %}
-{% endfor %}
-
-{% if in_team == False %}
+{% if not in_team %}
 <p><a href="{{url_for('team_join', team_id=team_id)}}">Join team</a></p>
 {% endif %}
 
@@ -24,10 +19,12 @@
 </p>
 {% endfor %}
 
+{% if (g.user,'Leader') in members_roles  %}
 <h1>Pending</h1>
 {% for pending in pendings %}
 <p>
 {{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team_id, user_id=pending.id  )}}"> Accept user</a>
 </p> 
 {% endfor %}
+{% endif %}
 {% endblock %}

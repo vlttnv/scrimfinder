@@ -5,7 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func, and_
-from forms import EditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm
+from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -427,7 +427,6 @@ def team_page(team_id):
 
     The pending members view will be restricted to the team leader
     """
-
     try:
         team = Team.query.filter_by(id=team_id).one()
         members = Membership.query.join(Team).filter_by(id=team_id).all()
@@ -441,6 +440,10 @@ def team_page(team_id):
         #   This can be optimized by first filtering then joining
         #
         pendings = User.query.join(Request).filter(User.id==Request.user_id).filter(Request.team_id==team_id).all()
+        
+        in_team = False
+        if g.user in (x[0] for x in members_roles):
+                in_team = True
 
     except NoResultFound, e:
         flash("Team not found")
@@ -451,7 +454,8 @@ def team_page(team_id):
             team_skill=team.skill_level,
             team_zone=team.time_zone,
             members_roles=members_roles,
-            pendings=pendings)
+            pendings=pendings,
+            in_team=in_team)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
