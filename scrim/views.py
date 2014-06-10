@@ -5,7 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func, and_
-from forms import EditForm, CreateTeamForm, FilterTeamForm, TeamEditForm
+from forms import EditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -180,6 +180,27 @@ def show_all_teams(page=1):
     
     return render_template('all_teams.html', teams_list=teams_list, form=form)
 
+def _get_bit_combinations(bit_string):
+    import itertools as itools
+
+    result = []
+
+    all_ones = [i for i, ltr in enumerate(bit_string) if ltr == '1']
+
+    n = len(bit_string)
+    possiblities = ["".join(seq) for seq in itools.product("01", repeat=n)]
+    for p in possiblities:
+        s = []
+        for char in p:
+            s.append(char)
+        for ones_index in all_ones:
+            s[ones_index] = '1'
+        new_s = ''.join(s)
+        if new_s not in result:
+            result.append(new_s)
+
+    return result
+
 @scrim_app.route('/scrims', methods=['GET','POST'])
 @scrim_app.route('/scrims/page/<int:page>', methods=['GET','POST'])
 @login_required
@@ -191,7 +212,7 @@ def show_all_scrims(page=1):
     if page < 1:
         abort(404)
 
-    form = FilterTeamForm()
+    form = FilterScrimForm()
 
     user_membership = Membership.query.filter_by(user_id=g.user.id).all()
     if len(user_membership) == 0:
@@ -206,6 +227,20 @@ def show_all_scrims(page=1):
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
             query = query.filter_by(time_zone=form.team_time_zone.data)
+        
+        week = list("0000000")
+        week[0] = str(int(form.mon.data))
+        week[1] = str(int(form.tue.data))
+        week[2] = str(int(form.wed.data))
+        week[3] = str(int(form.thu.data))
+        week[4] = str(int(form.fri.data))
+        week[5] = str(int(form.sat.data))
+        week[6] = str(int(form.sun.data))
+        week = "".join(week)
+        possible_weekdays = _get_bit_combinations(week)
+        print possible_weekdays
+        query = query.filter(Team.week_days.in_(possible_weekdays))
+
 
     from config import TEAMS_PER_PAGE
     try:
