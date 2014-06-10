@@ -528,7 +528,7 @@ def bots_create_users():
     time_in_milliseconds = dt.utcnow().strftime('%Y%m%d%H%M%S%f')
     fake_steam_id = 'BotSteamID_' + time_in_milliseconds
     fake_name = 'BotUser_' + time_in_milliseconds
-    fake_team_ids = bots_create_fake_teams()
+    fake_team_ids = _bots_create_fake_teams()
 
     for i in range(100):
         bot_user = User()
@@ -537,7 +537,6 @@ def bots_create_users():
         bot_user.nickname = fake_name + '_' + str(i)
         bot_user.profile_url = 'BotProfileURL'
         bot_user.avatar_url = 'BotAvatarURL'
-        bot_user.team_id = random.choice(fake_team_ids)
         bot_user.join_date = dt.utcnow()
         bot_user.last_online = dt.utcnow()
         bot_user.team_leader = False
@@ -546,9 +545,10 @@ def bots_create_users():
     db.session.commit()
     return 'Created bots named after ' + fake_name, 200
 
-def bots_create_fake_teams():
+def _bots_create_fake_teams():
     """
-    Create 10 fake teams
+    Create enough fake teams - all possible combinations of skill level, 
+    time zone, scrim time, etc.
     """
 
     from consts import SKILL_LEVEL, TIME_ZONE
@@ -559,14 +559,17 @@ def bots_create_fake_teams():
 
     for skill in SKILL_LEVEL:
         for time in TIME_ZONE:
-            bot_team = Team()
-            bot_team.name = fake_name + '_' + str(skill) + '_' + str(time)
-            bot_team.skill_level = skill
-            bot_team.time_zone = time
-            bot_team.reputation = '42'
-            db.session.add(bot_team)
-            db.session.flush()
-            fake_team_ids.append(bot_team.id)
+            possible_weekdays = _get_bit_combinations("0000000")
+            for weekday in possible_weekdays:
+                bot_team = Team()
+                bot_team.name = fake_name + '_' + str(skill) + '_' + str(time)
+                bot_team.skill_level = skill
+                bot_team.time_zone = time
+                bot_team.reputation = '42'
+                bot_team.week_days = weekday
+                db.session.add(bot_team)
+                db.session.flush()
+                fake_team_ids.append(bot_team.id)
     db.session.commit()
     
     return fake_team_ids
