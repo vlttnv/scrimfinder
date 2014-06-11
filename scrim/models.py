@@ -21,8 +21,12 @@ class User(db.Model):
     # same with played_with
     has_given_rep_to    = db.Column(db.Text)
     has_played_with     = db.Column(db.Text)
-    request             = db.relationship('Request', backref='user', lazy='dynamic')
-    membership          = db.relationship('Membership', backref='user', lazy='dynamic')
+    request             = db.relationship('Request',
+            backref='user',
+            lazy='dynamic')
+    membership          = db.relationship('Membership',
+            backref='user',
+            lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -54,9 +58,9 @@ class Request(db.Model):
     that a user can make.
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    id              = db.Column(db.Integer, primary_key=True)
+    team_id         = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Team(db.Model):
     """
@@ -64,25 +68,34 @@ class Team(db.Model):
     incrementing value (write a method for it).
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    skill_level = db.Column(db.String(80))
-    time_zone = db.Column(db.String(80))
-    reputation = db.Column(db.Integer)
-    week_days = db.Column(db.String(7), default="0000000")
-    membership = db.relationship('Membership', backref='team', lazy='dynamic')
-    scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id1', backref='team', lazy='dynamic')
-    scrim_team1 = db.relationship('Scrim', foreign_keys='Scrim.team_id2', backref='team', lazy='dynamic')
+    id              = db.Column(db.Integer, primary_key=True)
+    name            = db.Column(db.String(80))
+    skill_level     = db.Column(db.String(80))
+    time_zone       = db.Column(db.String(80))
+    reputation      = db.Column(db.Integer)
+    week_days       = db.Column(db.String(7), default="0000000")
+    avatar_url      = db.Column(db.String(80))
+    membership      = db.relationship('Membership',
+            backref='team',
+            lazy='dynamic')
+    scrim_team1     = db.relationship('Scrim',
+            foreign_keys='Scrim.team_id1',
+            backref='team',
+            lazy='dynamic')
+    scrim_team1     = db.relationship('Scrim',
+            foreign_keys='Scrim.team_id2',
+            backref='team',
+            lazy='dynamic')
 
 class Membership(db.Model):
     """
     A membership is made after a request is approved and deleted
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    role = db.Column(db.String(80))
+    id              = db.Column(db.Integer, primary_key=True)
+    team_id         = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
+    role            = db.Column(db.String(80))
 
 class Scrim(db.Model):
     """
@@ -93,12 +106,12 @@ class Scrim(db.Model):
     state of scrim - finished, pending, invalid, proposed, challenge...
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    start_time = db.Column(db.String(80))
-    time_zone = db.Column(db.String(80))
-    map1 = db.Column(db.String(80))
-    map2 = db.Column(db.String(80))
+    id              = db.Column(db.Integer, primary_key=True)
+    start_time      = db.Column(db.String(80))
+    time_zone       = db.Column(db.String(80))
+    map1            = db.Column(db.String(80))
+    map2            = db.Column(db.String(80))
     connection_info = db.Column(db.String(80))
-    team_id1 = db.Column(db.Integer, db.ForeignKey('team.id'))
-    team_id2 = db.Column(db.Integer, db.ForeignKey('team.id'))
-    scrim_type = db.Column(db.String(80))
+    team_id1        = db.Column(db.Integer, db.ForeignKey('team.id'))
+    team_id2        = db.Column(db.Integer, db.ForeignKey('team.id'))
+    scrim_type      = db.Column(db.String(80))
