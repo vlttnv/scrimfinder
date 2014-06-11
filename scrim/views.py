@@ -459,14 +459,22 @@ def team_join(team_id):
         flash("User not found")
         return redirect(url_for('index'))
     
-    req = Request()
-    req.team_id = team_id
-    req.user_id = user.id
+    user_memberships = Membership.query.filter_by(user_id=user.id).all()
+    already_in_team = False
+    for mem in user_memberships:
+        team = Team.query.filter_by(id=mem.team_id).one()
+        if (team.id == team_id):
+            already_in_team = True
+            break
 
-    #user.team_id=team_id
-    db.session.add(req)
-    db.session.commit()
-    flash("Request made")
+    if not already_in_team:
+        req = Request()
+        req.team_id = team_id
+        req.user_id = user.id
+        db.session.add(req)
+        db.session.commit()
+        flash("Request made")
+    
     return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/team/<team_id>/accept_user/<user_id>')
