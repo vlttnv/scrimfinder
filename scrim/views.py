@@ -370,7 +370,8 @@ def create_team():
         mem = Membership()
         mem.team_id = new_team.id
         mem.user_id = g.user.id
-        mem.role = "Leader"
+        # Charlito: sounds better
+        mem.role = "Captain" 
         db.session.add(mem)
         db.session.commit()
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
@@ -474,7 +475,7 @@ def team_join(team_id):
         db.session.add(req)
         db.session.commit()
         flash("Request made")
-    
+
     return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/team/<team_id>/accept_user/<user_id>')
@@ -507,7 +508,7 @@ def team_accept_user(team_id, user_id):
 @scrim_app.route('/bots/boom')
 def bots_boom():
     """
-    Use for testing filters. Create 100 bot users and a number of teams.
+    Make sure stuff works. Let's say no error = It works!
 
     See bots.py
     """
@@ -518,5 +519,6 @@ def bots_boom():
 
     bots.create_bot_users()
     bots.create_bot_teams()
+    bots.make_bot_join_team()
 
     return 'Trust me. It worked.', 200

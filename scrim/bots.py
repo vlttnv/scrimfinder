@@ -50,3 +50,13 @@ def create_bot_teams():
                 db.session.add(bot_team)
     
     db.session.commit()
+
+def make_bot_join_team():
+    """
+    Get all users to join some team
+    """
+
+    all_users = User.query.filter(User.nickname.startswith('@_User')).all()
+    all_teams = Team.query.filter(Team.name.startswith('@_Team')).all()
+
+    # TODO: make bot users join team
