@@ -10,6 +10,9 @@ from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, Fi
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
+# Helper function
+
+
 # Steam Web APIs...
 
 def get_steam_user_info(steam_id):
@@ -431,9 +434,18 @@ def team_page(team_id):
         #
         pendings = User.query.join(Request).filter(User.id==Request.user_id).filter(Request.team_id==team_id).all()
         
+        # Is the user in the team
         in_team = False
         if g.user in (x[0] for x in members_roles):
                 in_team = True
+
+        # What's the team availability in days
+        days = team.week_days
+        words = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday", "Sunday"]
+        aval = []
+        aval = [(word if int(day)==1 else False) 
+                for day,word in zip(days,words)]
+        print aval
 
     except NoResultFound, e:
         flash("Team not found")
@@ -445,7 +457,8 @@ def team_page(team_id):
             team_zone=team.time_zone,
             members_roles=members_roles,
             pendings=pendings,
-            in_team=in_team)
+            in_team=in_team,
+            aval=aval)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
