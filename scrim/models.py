@@ -16,6 +16,11 @@ class User(db.Model):
     join_date           = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Boolean)
+    # Stores a list of team ids to which the player
+    # has given rep to prevent abuse
+    # same with played_with
+    has_given_rep_to    = db.Column(db.Text)
+    has_played_with     = db.Column(db.Text)
     request             = db.relationship('Request', backref='user', lazy='dynamic')
     membership          = db.relationship('Membership', backref='user', lazy='dynamic')
 

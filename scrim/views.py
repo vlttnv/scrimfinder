@@ -10,8 +10,18 @@ from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, Fi
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
+#========================
 # Helper function
+#========================
 
+def map_days(days):
+        # Map a list of words to the "bit string"
+        # Maybe there's a shorter and cleverer way to do it
+        # but we wont show it to Tristan so that's fine
+        words = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday", "Sunday"]
+        aval = [(word if int(day)==1 else False) 
+                for day,word in zip(days,words)]
+        return aval
 
 # Steam Web APIs...
 
@@ -441,11 +451,7 @@ def team_page(team_id):
 
         # What's the team availability in days
         days = team.week_days
-        words = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday", "Sunday"]
-        aval = []
-        aval = [(word if int(day)==1 else False) 
-                for day,word in zip(days,words)]
-        print aval
+        aval = map_days(days)
 
     except NoResultFound, e:
         flash("Team not found")
