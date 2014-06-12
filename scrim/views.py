@@ -441,46 +441,6 @@ def team_page(team_id):
         return redirect(url_for('index'))
 #<<<<<<< HEAD
     
-    if form.validate_on_submit():
-        com = Comment()
-        com.team_id = team_id
-        com.user_id = g.user.id
-        com.comment = form.text.data
-
-        db.session.add(com)
-        db.session.commit()
-        return redirect(url_for("team_page", team_id=team_id))
-    else:
-        comment_list =[]
-        try:
-            cmnts = Comment.query.join(User).all()
-            for x in cmnts:
-                comment_list.append((x.user.nickname,x.comment))
-
-        except NoResultFound, e:
-            comment_list = False
-
-        if g.user == None:
-            dont_show = True
-        else:
-            dont_show = False
-
-        return render_template('team.html',
-                team_id=team.id,
-                team_name=team.name,
-                team_skill=team.skill_level,
-                team_zone=team.time_zone,
-                team_time=team.time_from,
-                members_roles=members_roles,
-                pendings=pendings,
-                in_team=in_team,
-                aval=aval,
-                form=form,
-                com_list=comment_list,
-                dont_show=dont_show)
-
-"""
-=======
 
     all_members = Membership.query.join(Team).filter_by(id=team_id).all()
     # an arry of tuples of User and role e.g. [(user,"Captain"),(user,"BenchPlayer")]
@@ -518,16 +478,48 @@ def team_page(team_id):
     # What's the team availability in days
     days = team.week_days
     aval = map_days(days)
-        
-    return render_template('team.html',
-            team=team,
-            members_roles=members_roles,
-            pendings=pendings,
-            in_team=in_team,
-            propose_scrim=propose_scrim,
-            aval=aval)
->>>>>>> a1523c860c88e7c58cae5dbffc6759272de034f4
-"""
+
+    
+    if form.validate_on_submit():
+        com = Comment()
+        com.team_id = team_id
+        com.user_id = g.user.id
+        com.comment = form.text.data
+
+        db.session.add(com)
+        db.session.commit()
+        return redirect(url_for("team_page", team_id=team_id))
+    else:
+        comment_list =[]
+        try:
+            cmnts = Comment.query.join(User).all()
+            for x in cmnts:
+                comment_list.append((x.user.nickname,x.comment))
+
+        except NoResultFound, e:
+            comment_list = False
+
+        if g.user == None:
+            dont_show = True
+        else:
+            dont_show = False
+
+        return render_template('team.html',
+                team_id=team.id,
+                team_name=team.name,
+                team_skill=team.skill_level,
+                team_zone=team.time_zone,
+                team_time=team.time_from,
+                members_roles=members_roles,
+                pendings=pendings,
+                in_team=in_team,
+                aval=aval,
+                form=form,
+                com_list=comment_list,
+                dont_show=dont_show,
+                propose_scrim=propose_scrim,
+                team=team)
+
 @scrim_app.route('/team/join/<team_id>')
 @login_required
 def team_join(team_id):
