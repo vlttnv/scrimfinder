@@ -12,11 +12,10 @@
 			<td>Your team timezone: {{ form.time_zone() }}</td>
 		</tr>
 		<tr>
-			<td>Opponent Day (UTC): {{ form.day() }}</td>
+			<td>Day: {{ form.day() }}</td>
 		</tr>
 		<tr>
-			<td>Opponent Start Time (UTC): {{ form.start_time() }}</td>
-			<td>Your Start Time: <span class="your_start_time"></span></td>
+			<td>Time: {{ form.start_time() }}</td>
 		</tr>
 		<tr>
 			<td>Map: {{ form.map() }}</td>
@@ -33,30 +32,32 @@
 <script src="/static/js/moment-timezone-data.js"></script>
 <script>
   $(document).ready(function(){
+	var yourTimeZone = $('#time_zone');
 	var opponentDay = $('#day');
-	var opponentTime = $('#start_time');
-	var yourTimeZone = $('#time_zone')
-	var yourTime = $('.your_start_time');
 
 	var updateYourTime = function() {
 		timezone = yourTimeZone.val();
 		day = opponentDay.val();
-		hour = opponentTime.val();
 
-		thisWeek = moment.utc().day(parseInt(day)).hour(hour).tz(timezone)
-		nextWeek = moment.utc().day(parseInt(day)+7).hour(hour).tz(timezone)
+		var startTimeOptions = $('#start_time > option');
+		for (var i = 0; i < startTimeOptions.length; i++) {
+			hour = startTimeOptions[i].value;
 
-		if (thisWeek.unix() < moment.utc().tz(timezone).unix()) {
-			yourTime.html(nextWeek.minute(0).format('LLLL'));
-		} else {
-			yourTime.html(thisWeek.minute(0).format('LLLL'));
+			thisWeek = moment.utc().day(parseInt(day)).hour(hour).tz(timezone);
+			nextWeek = moment.utc().day(parseInt(day)+7).hour(hour).tz(timezone);
+
+			if (thisWeek.unix() < moment.utc().tz(timezone).unix()) {
+				startTimeOptions[i].text = nextWeek.minute(0).format('LLLL');
+			} else {
+				startTimeOptions[i].text = thisWeek.minute(0).format('LLLL');
+			}
 		}
 	}
-	
+
 	updateYourTime();
 	opponentDay.change(updateYourTime);
-	opponentTime.change(updateYourTime);
 	yourTimeZone.change(updateYourTime);
+	setInterval(updateYourTime, 60000);
   });
 </script>
 {% endblock %}
