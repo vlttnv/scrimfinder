@@ -11,6 +11,7 @@
 
 <p>{{team_skill}}</p>
 <p>{{team_zone}}</p>
+<p>Preferred Start Time: {{team_time}}</p>
 <p>{% for day in aval %}
 {% if day%}
 {{day}}
@@ -31,6 +32,32 @@
 <p>
 {{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team_id, user_id=pending.id  )}}"> Accept user</a>
 </p> 
+{% endfor %}
+{% endif %}
+
+<h1>Comments</h1>
+{% if not dont_show %}
+<form action="{{url_for('team_page', team_id=team_id)}}" method="post" name="comment">
+		{{form.hidden_tag()}}
+		<table>
+				<tr>
+						<td>Comment</td>
+						<td>{{form.text()}}</td>
+				</tr>
+				<tr>
+						<td></td>
+						<td><input type="submit" value="Comment"></td>
+				</tr>
+		</table>
+</form>
+{% endif %}
+{% if not com_list %}
+<h1>LOL</h1>
+{% else %}
+{% for name,text in com_list %}
+<h3>{{name}}</h3>
+<p>{{text}}</p>
+<hr>
 {% endfor %}
 {% endif %}
 {% endblock %}

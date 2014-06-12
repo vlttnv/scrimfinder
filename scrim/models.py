@@ -27,6 +27,9 @@ class User(db.Model):
     membership          = db.relationship('Membership',
             backref='user',
             lazy='dynamic')
+    comment             = db.relationship('Comment',
+            backref='user',
+            lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -87,6 +90,9 @@ class Team(db.Model):
             foreign_keys='Scrim.team_id2',
             backref='team',
             lazy='dynamic')
+    comment         = db.relationship('Comment',
+            backref='team',
+            lazy='dynamic')
 
 class Membership(db.Model):
     """
@@ -116,3 +122,9 @@ class Scrim(db.Model):
     team_id1        = db.Column(db.Integer, db.ForeignKey('team.id'))
     team_id2        = db.Column(db.Integer, db.ForeignKey('team.id'))
     scrim_type      = db.Column(db.String(80))
+
+class Comment(db.Model):
+    id              = db.Column(db.Integer, primary_key=True)
+    team_id         = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
+    comment         = db.Column(db.Text)
