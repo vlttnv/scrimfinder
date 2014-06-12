@@ -541,21 +541,52 @@ def team_accept_user(team_id, user_id):
     flash("Accepted")
     return redirect(url_for('team_page', team_id=team_id))         
 
-@scrim_app.route('/propose/scrim/<int:team_id>', methods=['GET','POST'])
+@scrim_app.route('/propose/scrim/<int:opponent_team_id>', methods=['GET','POST'])
 @login_required
-def propose_scrim(team_id):
+def propose_scrim(opponent_team_id):
+
+    try:
+        opponent_team = Team.query.filter_by(id=opponent_team_id).one()
+    except NoResultFound as e:
+        flash('Cannot find the team')
+        return redirect(url_for('index'))
+
+    # Check if the user is a captain
+    a_captain = False
+    your_teams_id = []
+    if g.user is not None:
+        user_memberships = Membership.query.filter_by(user_id=g.user.id)
+        for mem in user_memberships:
+            if mem.role == 'Captain':
+                a_captain = True
+                your_teams_id.append(mem.team_id)
+
+    if not a_captain:
+        flash('You are not a captain. Cannot propose scrims.')
+        return redirect(url_for('team_page', team_id=opponent_team_id))
+
+    # Set form choices
+    your_team = []
+    for team_id in your_teams_id:
+        team = Team.query.filter_by(id=team_id).one()
+        your_team.append((str(team.id), str(team.name)))
+    opponent_time_zone = 'CET'
+    opponent_day = [('Mon','Mon'),('Tue','Tue'),('Wed','Wed'), \
+                    ('Thurs','Thurs'),('Fri','Fri'),('Sat','Sat'),('Sun','Sun')]
+    opponent_start_time = [('8:00','8:00'),('9:00','9:00'),('10:00','10:00')]
+
     from wtforms import SelectField
-
-    time_zone = [('CET','CET'),('EST','EST')]
-    ProposeScrimForm.time_zone = SelectField('time_zone', choices=time_zone)
-
+    ProposeScrimForm.team = SelectField('team', choices=your_team)
+    ProposeScrimForm.day = SelectField('day', choices=opponent_day)
+    ProposeScrimForm.start_time = SelectField('start_time', choices=opponent_start_time)
+    
     form = ProposeScrimForm()
 
     if form.validate_on_submit():
         flash('Scrim proposed')
         return redirect(url_for('index'))
     else:
-        return render_template('propose_scrim.html', form=form)
+        return render_template('propose_scrim.html', form=form, opponent_time_zone=opponent_time_zone)
 
 
 @scrim_app.route('/bots/boom')

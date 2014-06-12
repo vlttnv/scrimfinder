@@ -6,7 +6,22 @@
 	{{form.hidden_tag()}}
 	<table>
 		<tr>
-			<td>Time zone: {{ form.time_zone() }}</td>
+			<td>Your team: {{ form.team() }}</td>
+		</tr>
+		<tr>
+			<td>Day: {{ form.day() }}</td>
+		</tr>
+		<tr>
+			<td>Opponent start_time: {{ form.start_time() }}</td>
+			<td>Opponent time_zone: {{ opponent_time_zone }}</td>
+			<td>Your time_zone: TODO</td>
+			<td>Your start_time: TODO</td>
+		</tr>
+		<tr>
+			<td>Map: {{ form.map() }}</td>
+		</tr>
+		<tr>
+			<td>Type: {{ form.type() }}</td>
 		</tr>
 	</table>
 	<input type="submit" value="Propose Scrim">

@@ -9,7 +9,7 @@
 <p><a href="{{url_for('team_join', team_id=team.id)}}">Join team</a></p>
 {% endif %}
 {% if propose_scrim %}
-<p><a href="{{url_for('propose_scrim', team_id=team.id)}}">Propose scrim :)</a></p>
+<p><a href="{{url_for('propose_scrim', opponent_team_id=team.id)}}">Propose scrim :)</a></p>
 {% endif %}
 
 <p>{{team.skill_level}}</p>
