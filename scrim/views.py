@@ -1,13 +1,12 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team, Request, Membership
+from models import User, Team, Request, Membership, Comment
 from utils import utils
 from flask import redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
 from sqlalchemy import func, and_
-from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, \
-    FilterScrimForm, ProposeScrimForm
+from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm, TeamCommentForm, ProposeScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -424,7 +423,7 @@ def quit_team(team_id):
             flash("You quit from team " + user_team_name)
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
-@scrim_app.route('/team/<team_id>')
+@scrim_app.route('/team/<team_id>', methods=['GET','POST'])
 def team_page(team_id):
     """
     Currently shows a specific team, with team parameters, current members
@@ -432,11 +431,16 @@ def team_page(team_id):
 
     The pending members view will be restricted to the team leader
     """
+    
+    form = TeamCommentForm()
+
     try:
         team = Team.query.filter_by(id=team_id).one()
     except NoResultFound as e:
         flash("Team not found")
         return redirect(url_for('index'))
+#<<<<<<< HEAD
+    
 
     all_members = Membership.query.join(Team).filter_by(id=team_id).all()
     # an arry of tuples of User and role e.g. [(user,"Captain"),(user,"BenchPlayer")]
@@ -474,14 +478,47 @@ def team_page(team_id):
     # What's the team availability in days
     days = team.week_days
     aval = map_days(days)
-        
-    return render_template('team.html',
-            team=team,
-            members_roles=members_roles,
-            pendings=pendings,
-            in_team=in_team,
-            propose_scrim=propose_scrim,
-            aval=aval)
+
+    
+    if form.validate_on_submit():
+        com = Comment()
+        com.team_id = team_id
+        com.user_id = g.user.id
+        com.comment = form.text.data
+
+        db.session.add(com)
+        db.session.commit()
+        return redirect(url_for("team_page", team_id=team_id))
+    else:
+        comment_list =[]
+        try:
+            cmnts = Comment.query.join(User).all()
+            for x in cmnts:
+                comment_list.append((x.user.nickname,x.comment))
+
+        except NoResultFound, e:
+            comment_list = False
+
+        if g.user == None:
+            dont_show = True
+        else:
+            dont_show = False
+
+        return render_template('team.html',
+                team_id=team.id,
+                team_name=team.name,
+                team_skill=team.skill_level,
+                team_zone=team.time_zone,
+                team_time=team.time_from,
+                members_roles=members_roles,
+                pendings=pendings,
+                in_team=in_team,
+                aval=aval,
+                form=form,
+                com_list=comment_list,
+                dont_show=dont_show,
+                propose_scrim=propose_scrim,
+                team=team)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required

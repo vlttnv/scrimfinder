@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, BooleanField, SelectField
+from wtforms import TextField, BooleanField, SelectField, TextAreaField
 from wtforms.validators import Required, Length
 from consts import *
 
@@ -32,6 +32,8 @@ class TeamEditForm(Form):
                 ("9:00","9:00"),
                 ("10:00","10:00")])
 
+class TeamCommentForm(Form):
+    text                = TextAreaField('text', validators=[Required()])
 
 class CreateTeamForm(Form):
     team_name           = TextField('team_name', validators = [Required()])
