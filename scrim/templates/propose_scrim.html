@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1> Propose scrim: </h1>
+<form action="" method="post"  name="propose_scrim">
+	{{form.hidden_tag()}}
+	<table>
+		<tr>
+			<td>Time zone: {{ form.time_zone() }}</td>
+		</tr>
+	</table>
+	<input type="submit" value="Propose Scrim">
+</form>
+{% endblock %}

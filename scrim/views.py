@@ -6,7 +6,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func, and_
-from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm, TeamCommentForm
+from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm, TeamCommentForm, ProposeScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -436,30 +436,10 @@ def team_page(team_id):
 
     try:
         team = Team.query.filter_by(id=team_id).one()
-        members = Membership.query.join(Team).filter_by(id=team_id).all()
-        # an arry of tuples of User and role e.g. [(user,"Captain"),(user,"BenchPlayer")]
-        members_roles = []
-        for mem in members:
-            user = User.query.filter_by(id=mem.user_id).one()
-            members_roles.append((user, mem.role))
-
-        #
-        #   This can be optimized by first filtering then joining
-        #
-        pendings = User.query.join(Request).filter(User.id==Request.user_id).filter(Request.team_id==team_id).all()
-        
-        # Is the user in the team
-        in_team = False
-        if g.user in (x[0] for x in members_roles):
-                in_team = True
-
-        # What's the team availability in days
-        days = team.week_days
-        aval = map_days(days)
-
-    except NoResultFound, e:
+    except NoResultFound as e:
         flash("Team not found")
         return redirect(url_for('index'))
+#<<<<<<< HEAD
     
     if form.validate_on_submit():
         com = Comment()
@@ -499,6 +479,55 @@ def team_page(team_id):
                 com_list=comment_list,
                 dont_show=dont_show)
 
+"""
+=======
+
+    all_members = Membership.query.join(Team).filter_by(id=team_id).all()
+    # an arry of tuples of User and role e.g. [(user,"Captain"),(user,"BenchPlayer")]
+    members_roles = []
+    for mem in all_members:
+        user = User.query.filter_by(id=mem.user_id).one()
+        members_roles.append((user, mem.role))
+
+    #
+    #   This can be optimized by first filtering then joining
+    #
+    pendings = User.query.join(Request).filter(User.id==Request.user_id) \
+                .filter(Request.team_id==team_id).all()
+    
+    # Is the user in the team
+    in_team = False
+    if g.user in (x[0] for x in members_roles):
+            in_team = True
+
+    # propose scrim if and only if the user is not in the team & is a captain
+    # of some team
+    is_captain = False
+    if g.user is not None:
+        user_memberships = Membership.query.filter_by(user_id=g.user.id)
+        for mem in user_memberships:
+            if mem.role == 'Captain':
+                is_captain = True
+                break
+
+    propose_scrim = False
+    if in_team == False and is_captain:
+        propose_scrim = True
+
+
+    # What's the team availability in days
+    days = team.week_days
+    aval = map_days(days)
+        
+    return render_template('team.html',
+            team=team,
+            members_roles=members_roles,
+            pendings=pendings,
+            in_team=in_team,
+            propose_scrim=propose_scrim,
+            aval=aval)
+>>>>>>> a1523c860c88e7c58cae5dbffc6759272de034f4
+"""
 @scrim_app.route('/team/join/<team_id>')
 @login_required
 def team_join(team_id):
@@ -556,6 +585,23 @@ def team_accept_user(team_id, user_id):
     
     flash("Accepted")
     return redirect(url_for('team_page', team_id=team_id))         
+
+@scrim_app.route('/propose/scrim/<int:team_id>', methods=['GET','POST'])
+@login_required
+def propose_scrim(team_id):
+    from wtforms import SelectField
+
+    time_zone = [('CET','CET'),('EST','EST')]
+    ProposeScrimForm.time_zone = SelectField('time_zone', choices=time_zone)
+
+    form = ProposeScrimForm()
+
+    if form.validate_on_submit():
+        flash('Scrim proposed')
+        return redirect(url_for('index'))
+    else:
+        return render_template('propose_scrim.html', form=form)
+
 
 @scrim_app.route('/bots/boom')
 def bots_boom():

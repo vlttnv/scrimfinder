@@ -1,12 +1,15 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<h1>{{team_name}}</h1>
+<h1>{{team.name}}</h1>
 {% if (g.user, "Captain") in members_roles %}
-<p><a href="{{url_for('edit_team', team_id=team_id)}}">Edit team</a></p>
+<p><a href="{{url_for('edit_team', team_id=team.id)}}">Edit team</a></p>
 {% endif %}
 {% if not in_team %}
-<p><a href="{{url_for('team_join', team_id=team_id)}}">Join team</a></p>
+<p><a href="{{url_for('team_join', team_id=team.id)}}">Join team</a></p>
+{% endif %}
+{% if propose_scrim %}
+<p><a href="{{url_for('propose_scrim', team_id=team.id)}}">Propose scrim :)</a></p>
 {% endif %}
 
 <p>{{team_skill}}</p>
@@ -30,7 +33,7 @@
 <h1>Pending</h1>
 {% for pending in pendings %}
 <p>
-{{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team_id, user_id=pending.id  )}}"> Accept user</a>
+{{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> Accept user</a>
 </p> 
 {% endfor %}
 {% endif %}

@@ -97,3 +97,6 @@ class FilterScrimForm(Form):
     fri = BooleanField('Friday')
     sat = BooleanField('Saturday')
     sun = BooleanField('Sunday')
+
+class ProposeScrimForm(Form):
+    time_zone = SelectField('time_zone', choices=[])
