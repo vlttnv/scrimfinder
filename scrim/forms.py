@@ -27,10 +27,10 @@ class TeamEditForm(Form):
     fri = BooleanField('Friday')
     sat = BooleanField('Saturday')
     sun = BooleanField('Sunday')
-    #time_from = SelectField('time_from',
-    #        choices=[("8:00","8:00"),
-    #            ("9:00","9:00"),
-    #            ("10:00","10:00")])
+    time_from = SelectField('time_from',
+            choices=[("8:00","8:00"),
+                ("9:00","9:00"),
+                ("10:00","10:00")])
 
 
 class CreateTeamForm(Form):
