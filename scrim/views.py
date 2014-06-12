@@ -604,16 +604,18 @@ def propose_scrim(opponent_team_id):
 
     # Set form choices
     your_team = []
+    your_team_timezone = []
     for team_id in your_teams_id:
         team = Team.query.filter_by(id=team_id).one()
         your_team.append((str(team.id), str(team.name)))
-    opponent_time_zone = 'CET'
-    opponent_day = [('Mon','Mon'),('Tue','Tue'),('Wed','Wed'), \
-                    ('Thurs','Thurs'),('Fri','Fri'),('Sat','Sat'),('Sun','Sun')]
-    opponent_start_time = [('8:00','8:00'),('9:00','9:00'),('10:00','10:00')]
+        your_team_timezone.append((str(team.time_zone), str(team.time_zone)))
+    opponent_day = [('1','Mon'),('2','Tue'),('3','Wed'), \
+                    ('4','Thurs'),('5','Fri'),('6','Sat'),('7','Sun')]
+    opponent_start_time = [('8','8:00'),('9','9:00'),('10','10:00')]
 
     from wtforms import SelectField
     ProposeScrimForm.team = SelectField('team', choices=your_team)
+    ProposeScrimForm.time_zone = SelectField('team', choices=your_team_timezone)
     ProposeScrimForm.day = SelectField('day', choices=opponent_day)
     ProposeScrimForm.start_time = SelectField('start_time', choices=opponent_start_time)
     
@@ -623,7 +625,7 @@ def propose_scrim(opponent_team_id):
         flash('Scrim proposed')
         return redirect(url_for('index'))
     else:
-        return render_template('propose_scrim.html', form=form, opponent_time_zone=opponent_time_zone)
+        return render_template('propose_scrim.html', form=form)
 
 
 @scrim_app.route('/bots/boom')

@@ -9,13 +9,14 @@
 			<td>Your team: {{ form.team() }}</td>
 		</tr>
 		<tr>
-			<td>Day: {{ form.day() }}</td>
+			<td>Your team timezone: {{ form.time_zone() }}</td>
 		</tr>
 		<tr>
-			<td>Opponent start_time: {{ form.start_time() }}</td>
-			<td>Opponent time_zone: {{ opponent_time_zone }}</td>
-			<td>Your time_zone: TODO</td>
-			<td>Your start_time: TODO</td>
+			<td>Opponent Day (UTC): {{ form.day() }}</td>
+		</tr>
+		<tr>
+			<td>Opponent Start Time (UTC): {{ form.start_time() }}</td>
+			<td>Your Start Time: <span class="your_start_time"></span></td>
 		</tr>
 		<tr>
 			<td>Map: {{ form.map() }}</td>
@@ -26,4 +27,36 @@
 	</table>
 	<input type="submit" value="Propose Scrim">
 </form>
+
+<script src="/static/js/moment.min.js"></script>
+<script src="/static/js/moment-timezone.min.js"></script>
+<script src="/static/js/moment-timezone-data.js"></script>
+<script>
+  $(document).ready(function(){
+	var opponentDay = $('#day');
+	var opponentTime = $('#start_time');
+	var yourTimeZone = $('#time_zone')
+	var yourTime = $('.your_start_time');
+
+	var updateYourTime = function() {
+		timezone = yourTimeZone.val();
+		day = opponentDay.val();
+		hour = opponentTime.val();
+
+		thisWeek = moment.utc().day(parseInt(day)).hour(hour).tz(timezone)
+		nextWeek = moment.utc().day(parseInt(day)+7).hour(hour).tz(timezone)
+
+		if (thisWeek.unix() < moment.utc().tz(timezone).unix()) {
+			yourTime.html(nextWeek.minute(0).format('LLLL'));
+		} else {
+			yourTime.html(thisWeek.minute(0).format('LLLL'));
+		}
+	}
+	
+	updateYourTime();
+	opponentDay.change(updateYourTime);
+	opponentTime.change(updateYourTime);
+	yourTimeZone.change(updateYourTime);
+  });
+</script>
 {% endblock %}

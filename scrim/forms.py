@@ -100,6 +100,7 @@ class FilterScrimForm(Form):
 
 class ProposeScrimForm(Form):
     team = SelectField('team', choices=[])
+    time_zone = SelectField('time_zone', choices=[])
     day = SelectField('day', choices=[])
     start_time = SelectField('start_time', choices=[])
     map = TextField('map', validators = [Required()])
