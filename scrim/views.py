@@ -294,7 +294,7 @@ def edit_team(team_id):
     #teams = Team.query.join(Membership).filter_by(user_id=g.user.id).all()
     teams = Membership.query.filter_by(user_id=g.user.id).all()
     for team in teams:
-        if team.team_id == int(team_id) and team.role == "Leader":
+        if team.team_id == int(team_id) and team.role == "Captain":
             has_right = True
     
     # Kick him out if not
