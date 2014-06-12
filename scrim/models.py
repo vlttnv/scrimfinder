@@ -72,6 +72,7 @@ class Team(db.Model):
     name            = db.Column(db.String(80))
     skill_level     = db.Column(db.String(80))
     time_zone       = db.Column(db.String(80))
+    time_from       = db.Column(db.String(80))
     reputation      = db.Column(db.Integer)
     week_days       = db.Column(db.String(7), default="0000000")
     avatar_url      = db.Column(db.String(80))

@@ -325,8 +325,8 @@ def edit_team(team_id):
         week[5] = str(int(form.sat.data))
         week[6] = str(int(form.sun.data))
         week = "".join(week)
-        print week
 
+        team_edit.time_from = form.time_from.data
         team_edit.week_days = week
         db.session.add(team_edit)
         db.session.commit()
@@ -337,6 +337,7 @@ def edit_team(team_id):
         form.team_name.data = team_edit.name
         form.team_skill_level.data = team_edit.skill_level
         form.team_time_zone.data = team_edit.time_zone
+        form.time_from.data = team_edit.time_from
         form.mon.data = bool(int(wk[0]))
         form.tue.data = bool(int(wk[1]))
         form.wed.data = bool(int(wk[2]))
