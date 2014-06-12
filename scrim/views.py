@@ -544,7 +544,12 @@ def team_accept_user(team_id, user_id):
 @scrim_app.route('/propose/scrim/<int:team_id>', methods=['GET','POST'])
 @login_required
 def propose_scrim(team_id):
-    form = ProposeScrimForm.get_instance(time_zone=['CET','EST'])
+    from wtforms import TextField, BooleanField, SelectField
+
+    time_zone = [('CET','CET'),('EST','EST')]
+    ProposeScrimForm.time_zone = SelectField('team_time_zone', choices=time_zone)
+
+    form = ProposeScrimForm()
 
     if form.validate_on_submit():
         flash('Scrim proposed')

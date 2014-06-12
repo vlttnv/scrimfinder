@@ -97,6 +97,7 @@ class FilterScrimForm(Form):
     sun = BooleanField('Sunday')
 
 class ProposeScrimForm(Form):
+    pass
     # team_skill_level    = SelectField(u'team_skill_level', 
     #         choices=[(ALL, ALL),
     #             (UGC_IRON, UGC_IRON),
@@ -104,7 +105,11 @@ class ProposeScrimForm(Form):
     #             (UGC_SILVER, UGC_SILVER),
     #             (UGC_GOLD, UGC_GOLD), 
     #             (UGC_PLATINUM, UGC_PLATINUM)])
-    time_zone = SelectField('team_time_zone', choices=[])
+    # time_zone = SelectField('team_time_zone', choices=[])
+
+    # def __init__(self, time_zone):
+    #     for t in time_zone:
+    #         self.time_zone.choices.append((t, t))
 
     # mon = BooleanField('Monday')
     # tue = BooleanField('Tuesday')
@@ -114,9 +119,7 @@ class ProposeScrimForm(Form):
     # sat = BooleanField('Saturday')
     # sun = BooleanField('Sunday')
 
-    @staticmethod
-    def get_instance(time_zone):
-        form = ProposeScrimForm()
-        for t in time_zone:
-            form.time_zone.choices.append((t, t))
-        return form
+    # @staticmethod
+    # def get_instance(time_zone):
+    #     form = ProposeScrimForm()
+        
