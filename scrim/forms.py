@@ -103,5 +103,6 @@ class ProposeScrimForm(Form):
     time_zone = SelectField('time_zone', choices=[])
     day = SelectField('day', choices=[])
     start_time = SelectField('start_time', choices=[])
-    map = TextField('map', validators = [Required()])
+    utc_time = TextField('utc_time', validators=[Required()])
+    map = TextField('map', validators=[Required()])
     type = SelectField('type', choices=[('4v4','4v4'),('6v6','6v6'),('9v9','9v9')])
