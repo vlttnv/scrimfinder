@@ -18,7 +18,7 @@
 			<td>Time: {{ form.start_time() }}</td>
 		</tr>
 		<tr>
-			<td>Map: {{ form.map() }}</td>
+			<td>Map: {{ form.map(placeholder="Just enter a map") }}</td>
 		</tr>
 		<tr>
 			<td>Type: {{ form.type() }}</td>
@@ -32,12 +32,12 @@
 <script src="/static/js/moment-timezone-data.js"></script>
 <script>
   $(document).ready(function(){
-	var yourTimeZone = $('#time_zone');
-	var opponentDay = $('#day');
+	var teamTimezone = $('#time_zone');
+	var scrimDay = $('#day');
 
-	var updateYourTime = function() {
-		timezone = yourTimeZone.val();
-		day = opponentDay.val();
+	var updateTime = function() {
+		timezone = teamTimezone.val();
+		day = scrimDay.val();
 
 		var startTimeOptions = $('#start_time > option');
 		for (var i = 0; i < startTimeOptions.length; i++) {
@@ -46,18 +46,30 @@
 			thisWeek = moment.utc().day(parseInt(day)).hour(hour).tz(timezone);
 			nextWeek = moment.utc().day(parseInt(day)+7).hour(hour).tz(timezone);
 
-			if (thisWeek.unix() < moment.utc().tz(timezone).unix()) {
-				startTimeOptions[i].text = nextWeek.minute(0).format('LLLL');
-			} else {
+			if (thisWeek.unix() > moment.utc().tz(timezone).unix()) {
 				startTimeOptions[i].text = thisWeek.minute(0).format('LLLL');
+			} else {
+				startTimeOptions[i].text = nextWeek.minute(0).format('LLLL');	
 			}
 		}
 	}
 
-	updateYourTime();
-	opponentDay.change(updateYourTime);
-	yourTimeZone.change(updateYourTime);
-	setInterval(updateYourTime, 60000);
+	updateTime();
+	scrimDay.change(updateTime);
+	teamTimezone.change(updateTime);
+	setInterval(updateTime, 60000);
+
+	var map = $('#map');
+	map.focus(function() {
+		if ($(this).val() == $(this).attr('placeholder')) {
+			$(this).val('');
+		}
+	});
+	map.blur(function() {
+		if ($(this).val() == '') {
+			$(this).val($(this).attr('placeholder'));
+		}
+	});
   });
 </script>
 {% endblock %}

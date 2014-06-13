@@ -1,7 +1,7 @@
 from scrim import scrim_app, oid, db, models, lm
 from models import User, Team, Request, Membership, Comment
 from utils import utils
-from flask import redirect, session, g, json, render_template, flash, url_for
+from flask import request, redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
@@ -439,8 +439,6 @@ def team_page(team_id):
     except NoResultFound as e:
         flash("Team not found")
         return redirect(url_for('index'))
-#<<<<<<< HEAD
-    
 
     all_members = Membership.query.join(Team).filter_by(id=team_id).all()
     # an arry of tuples of User and role e.g. [(user,"Captain"),(user,"BenchPlayer")]
@@ -474,11 +472,9 @@ def team_page(team_id):
     if in_team == False and is_captain:
         propose_scrim = True
 
-
     # What's the team availability in days
     days = team.week_days
     aval = map_days(days)
-
     
     if form.validate_on_submit():
         com = Comment()
@@ -505,11 +501,7 @@ def team_page(team_id):
             dont_show = False
 
         return render_template('team.html',
-                team_id=team.id,
-                team_name=team.name,
-                team_skill=team.skill_level,
-                team_zone=team.time_zone,
-                team_time=team.time_from,
+                team=team,
                 members_roles=members_roles,
                 pendings=pendings,
                 in_team=in_team,
@@ -517,8 +509,7 @@ def team_page(team_id):
                 form=form,
                 com_list=comment_list,
                 dont_show=dont_show,
-                propose_scrim=propose_scrim,
-                team=team)
+                propose_scrim=propose_scrim)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
@@ -624,8 +615,10 @@ def propose_scrim(opponent_team_id):
     if form.validate_on_submit():
         flash('Scrim proposed')
         return redirect(url_for('index'))
-    else:
-        return render_template('propose_scrim.html', form=form)
+    elif request.method == 'POST':
+        flash('Scrim proposal not validated')
+    
+    return render_template('propose_scrim.html', form=form)
 
 
 @scrim_app.route('/bots/boom')
