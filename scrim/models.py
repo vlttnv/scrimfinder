@@ -114,8 +114,7 @@ class Scrim(db.Model):
     """
 
     id              = db.Column(db.Integer, primary_key=True)
-    day             = db.Column(db.String(80))
-    start_time      = db.Column(db.String(80))
+    date            = db.Column(db.DateTime)
     map1            = db.Column(db.String(80))
     map2            = db.Column(db.String(80))
     connection_info = db.Column(db.String(80))
