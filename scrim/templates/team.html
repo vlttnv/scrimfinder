@@ -29,8 +29,24 @@
 </p>
 {% endfor %}
 
+<h1>Scrimsssssssss</h1>
+{% for scrim in scrims %}
+<p>TODO</p>
+{% endfor %}
+
 {% if (g.user,'Leader') in members_roles  %}
 <h1>Pending</h1>
+{% for team, proposal in scrim_proposals %}
+	<p>Team: {{ team.name }} <a href="#"> Accept</a> <a href="#"> Reject</a></p>
+	<p>Date: {{ proposal.date }}</p>
+	{% if proposal.map1 is not none %}
+	<p>Map: {{ proposal.map1 }}</p>
+	{% else %}
+	<p>Map: {{ proposal.map2 }}</p>
+	{% endif %}
+	<p>Type: {{ proposal.type }}</p>
+{% endfor %}
+
 {% for pending in pendings %}
 <p>
 {{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> Accept user</a>

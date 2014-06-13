@@ -117,7 +117,7 @@ class Scrim(db.Model):
     date            = db.Column(db.DateTime)
     map1            = db.Column(db.String(80))
     map2            = db.Column(db.String(80))
-    connection_info = db.Column(db.String(80))
+    connection      = db.Column(db.String(80))
     team_id1        = db.Column(db.Integer, db.ForeignKey('team.id'))
     team_id2        = db.Column(db.Integer, db.ForeignKey('team.id'))
     scrim_type      = db.Column(db.String(80))

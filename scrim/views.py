@@ -1,5 +1,5 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team, Request, Membership, Comment
+from models import User, Team, Request, Membership, Comment, Scrim
 from utils import utils
 from flask import request, redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
@@ -472,6 +472,14 @@ def team_page(team_id):
     if in_team == False and is_captain:
         propose_scrim = True
 
+    # find all the scrims
+    all_scrims = Scrim.query.join(Team).filter_by(id=team_id)
+    scrims = all_scrims.filter(and_(map1 != None, map2 != None)).all()
+
+    # find all the scrim proposals
+    scrim_proposals = all_scrims(or_(map1 == None, map2 == None)).all()
+
+
     # What's the team availability in days
     days = team.week_days
     aval = map_days(days)
@@ -481,7 +489,6 @@ def team_page(team_id):
         com.team_id = team_id
         com.user_id = g.user.id
         com.comment = form.text.data
-
         db.session.add(com)
         db.session.commit()
         return redirect(url_for("team_page", team_id=team_id))
@@ -509,7 +516,9 @@ def team_page(team_id):
                 form=form,
                 com_list=comment_list,
                 dont_show=dont_show,
-                propose_scrim=propose_scrim)
+                propose_scrim=propose_scrim,
+                scrims=scrims,
+                scrim_proposals=scrim_proposals)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
@@ -615,11 +624,18 @@ def propose_scrim(opponent_team_id):
     if form.validate_on_submit():
         from datetime import datetime as dt
 
-        print form.utc_time.data
-        print dt.utcfromtimestamp(int(form.utc_time.data))
+        new_scrim               = Scrim()
+        new_scrim.date          = dt.utcfromtimestamp(int(form.utc_time.data))
+        new_scrim.map1          = form.map.data
+        new_scrim.connection    = 'To be implemented'
+        new_scrim.team_id1      = form.team.data
+        new_scrim.team_id2      = opponent_team_id
+        new_scrim.scrim_type    = form.type.data
+        db.session.add(new_scrim)
+        db.session.commit()
 
         flash('Scrim proposed')
-        return redirect(url_for('index'))
+        return redirect(url_for('team_page', team_id=opponent_team_id))
     elif request.method == 'POST':
         flash('Scrim proposal not validated')
     

@@ -16,10 +16,11 @@ admin   = Admin(scrim_app, name='Scrim Finder')
 lm.init_app(scrim_app)
 
 from scrim import views, models
-from models import User, Team
+from models import User, Team, Scrim
 
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Team, db.session))
+admin.add_view(ModelView(Scrim, db.session))
 
 # Blueprints - Not Working
 # from scrim.teams.views import teams as teams_module
