@@ -52,8 +52,8 @@
 		for (var i = 0; i < startTimeOptions.length; i++) {
 			hour = parseInt(startTimeOptions[i].value);
 
-			thisWeek = moment.utc().day(day).hour(hour).minute(0);
-			nextWeek = moment.utc().day(day+7).hour(hour).minute(0);
+			thisWeek = moment.utc().day(day).hour(hour).minute(0).second(0);
+			nextWeek = moment.utc().day(day+7).hour(hour).minute(0).second(0);
 
 			if (thisWeek.unix() > moment.utc().unix()) {
 				utc = thisWeek.format('LLLL');
@@ -79,8 +79,8 @@
 		day = parseInt(scrimDay.val());
 		hour = parseInt(scrimTime.val());
 
-		thisWeek = moment.utc().day(day).hour(hour).minute(0);
-		nextWeek = moment.utc().day(day+7).hour(hour).minute(0);
+		thisWeek = moment.utc().day(day).hour(hour).minute(0).second(0);
+		nextWeek = moment.utc().day(day+7).hour(hour).minute(0).second(0);
 
 		console.log('Currently selected-----------------------');
 		if (thisWeek.unix() > moment.utc().unix()) {

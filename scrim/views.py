@@ -613,13 +613,17 @@ def propose_scrim(opponent_team_id):
     form = ProposeScrimForm()
 
     if form.validate_on_submit():
+        from datetime import datetime as dt
+
+        print form.utc_time.data
+        print dt.utcfromtimestamp(int(form.utc_time.data))
+
         flash('Scrim proposed')
         return redirect(url_for('index'))
     elif request.method == 'POST':
         flash('Scrim proposal not validated')
     
     return render_template('propose_scrim.html', form=form)
-
 
 @scrim_app.route('/bots/boom')
 def bots_boom():
