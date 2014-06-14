@@ -42,15 +42,19 @@
 {% endfor %}
 
 <h1>Pendingssssssss</h1>
-{% for team, scrim in scrim_proposals %}
+{% for team, scrim in scrim_proposals_sent %}
+	<p>Team: {{ team.name }} <a href="#"> Waiting for response</a></p>
+	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
+	<p>TODO: Convert time to your timezone</p>
+	<p>Your Map: {{ scrim.map1 }}</p>
+	<p>Type: {{ scrim.type }}</p>
+{% endfor %}
+
+{% for team, scrim in scrim_proposals_received %}
 	<p>Team: {{ team.name }} <a href="#"> Accept</a> <a href="#"> Reject</a></p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
-	{% if scrim.map1 is not none %}
-	<p>Proposed Map: {{ scrim.map1 }}</p>
-	{% else %}
-	<p>Proposed Map: {{ scrim.map2 }}</p>
-	{% endif %}
+	<p>Their map: {{ scrim.map1 }}</p>
 	<p>Type: {{ scrim.type }}</p>
 {% endfor %}
 
@@ -62,7 +66,7 @@
 
 <h1>Comments</h1>
 {% if not dont_show %}
-<form action="{{url_for('team_page', team_id=team_id)}}" method="post" name="comment">
+<form action="{{url_for('team_page', team_id=team.id)}}" method="post" name="comment">
 		{{form.hidden_tag()}}
 		<table>
 				<tr>

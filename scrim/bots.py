@@ -42,7 +42,7 @@ def create_bot_teams():
             possible_weekdays = utils.get_bit_combinations("0000000")
             for weekday in possible_weekdays:
                 bot_team = Team()
-                bot_team.name = fake_name + '_' + str(skill) + '_' + str(time)
+                bot_team.name = fake_name + '_' + str(skill) + '_' + str(time) + '_' + str(weekday)
                 bot_team.skill_level = skill
                 bot_team.time_zone = time
                 bot_team.reputation = '42'

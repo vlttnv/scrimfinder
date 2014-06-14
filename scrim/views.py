@@ -423,7 +423,7 @@ def quit_team(team_id):
             flash("You quit from team " + user_team_name)
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
-@scrim_app.route('/team/<team_id>', methods=['GET','POST'])
+@scrim_app.route('/team/<int:team_id>', methods=['GET','POST'])
 def team_page(team_id):
     """
     Currently shows a specific team, with team parameters, current members
@@ -474,6 +474,7 @@ def team_page(team_id):
 
     # find all the scrims
     all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
+    # scrim agreed by both team have two map options
     scrim_decided = all_scrims.filter(and_(Scrim.map1 != None, Scrim.map2 != None)).all()
     scrim_final = []
     for scrim in scrim_decided:
@@ -484,18 +485,22 @@ def team_page(team_id):
             proposing_team = Team.query.filter_by(id=scrim.team2_id).one()
             scrim_final.append((proposing_team, scrim))
 
-    # find all the scrim proposals
+    # find all the scrim proposals 'received'
     scrim_undecided = all_scrims.filter(or_(Scrim.map1 == None, Scrim.map2 == None)).all()
-    scrim_proposals = []
+    scrim_proposals_received = []
+    for scrim in scrim_undecided:
+        # team2: the team to accept or reject the proposal
+        if scrim.team2_id == team_id:
+            # team1: the team to propose the scrim
+            proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
+            scrim_proposals_received.append((proposing_team, scrim))
+
+    # find all the scrim proposals 'sent'
+    scrim_proposals_sent = []
     for scrim in scrim_undecided:
         if scrim.team1_id == team_id:
-            proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
-            scrim_proposals.append((proposing_team, scrim))
-        else:
-            proposing_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrim_proposals.append((proposing_team, scrim))
-
-    print scrim_proposals
+            accepting_team = Team.query.filter_by(id=scrim.team2_id).one()
+            scrim_proposals_sent.append((accepting_team, scrim))
 
     # What's the team availability in days
     days = team.week_days
@@ -535,7 +540,8 @@ def team_page(team_id):
                 dont_show=dont_show,
                 propose_scrim=propose_scrim,
                 scrim_final=scrim_final,
-                scrim_proposals=scrim_proposals)
+                scrim_proposals_received=scrim_proposals_received,
+                scrim_proposals_sent=scrim_proposals_sent)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
