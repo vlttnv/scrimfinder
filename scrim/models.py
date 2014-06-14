@@ -82,14 +82,6 @@ class Team(db.Model):
     membership      = db.relationship('Membership',
             backref='team',
             lazy='dynamic')
-    scrim_team1     = db.relationship('Scrim',
-            foreign_keys='Scrim.team_id1',
-            backref='team',
-            lazy='dynamic')
-    scrim_team1     = db.relationship('Scrim',
-            foreign_keys='Scrim.team_id2',
-            backref='team',
-            lazy='dynamic')
     comment         = db.relationship('Comment',
             backref='team',
             lazy='dynamic')
@@ -118,9 +110,11 @@ class Scrim(db.Model):
     map1            = db.Column(db.String(80))
     map2            = db.Column(db.String(80))
     connection      = db.Column(db.String(80))
-    team_id1        = db.Column(db.Integer, db.ForeignKey('team.id'))
-    team_id2        = db.Column(db.Integer, db.ForeignKey('team.id'))
-    scrim_type      = db.Column(db.String(80))
+    team1_id        = db.Column(db.Integer, db.ForeignKey('team.id'))
+    team1           = db.relationship('Team', foreign_keys=team1_id)
+    team2_id        = db.Column(db.Integer, db.ForeignKey('team.id'))
+    team2           = db.relationship('Team', foreign_keys=team2_id)
+    type            = db.Column(db.String(80))
 
 class Comment(db.Model):
     id              = db.Column(db.Integer, primary_key=True)

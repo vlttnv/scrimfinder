@@ -30,21 +30,28 @@
 {% endfor %}
 
 <h1>Scrimsssssssss</h1>
-{% for scrim in scrims %}
-<p>TODO</p>
+{% for team, scrim in scrim_final %}
+	<p>Team: {{ team.name }} <a href="#"> I guess put something here</a></p>
+	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
+	<p>TODO: Convert time to your timezone</p>
+	{% if scrim.map1 is not none %}
+	<p>Map1: {{ scrim.map1 }}</p>
+	<p>Map2: {{ scrim.map2 }}</p>
+	{% endif %}
+	<p>Type: {{ scrim.type }}</p>
 {% endfor %}
 
-{% if (g.user,'Leader') in members_roles  %}
-<h1>Pending</h1>
-{% for team, proposal in scrim_proposals %}
+<h1>Pendingssssssss</h1>
+{% for team, scrim in scrim_proposals %}
 	<p>Team: {{ team.name }} <a href="#"> Accept</a> <a href="#"> Reject</a></p>
-	<p>Date: {{ proposal.date }}</p>
-	{% if proposal.map1 is not none %}
-	<p>Map: {{ proposal.map1 }}</p>
+	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
+	<p>TODO: Convert time to your timezone</p>
+	{% if scrim.map1 is not none %}
+	<p>Proposed Map: {{ scrim.map1 }}</p>
 	{% else %}
-	<p>Map: {{ proposal.map2 }}</p>
+	<p>Proposed Map: {{ scrim.map2 }}</p>
 	{% endif %}
-	<p>Type: {{ proposal.type }}</p>
+	<p>Type: {{ scrim.type }}</p>
 {% endfor %}
 
 {% for pending in pendings %}
@@ -52,7 +59,6 @@
 {{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> Accept user</a>
 </p> 
 {% endfor %}
-{% endif %}
 
 <h1>Comments</h1>
 {% if not dont_show %}

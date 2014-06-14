@@ -5,7 +5,7 @@ from flask import request, redirect, session, g, json, render_template, flash, u
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm, TeamCommentForm, ProposeScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
@@ -473,12 +473,29 @@ def team_page(team_id):
         propose_scrim = True
 
     # find all the scrims
-    all_scrims = Scrim.query.join(Team).filter_by(id=team_id)
-    scrims = all_scrims.filter(and_(map1 != None, map2 != None)).all()
+    all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
+    scrim_decided = all_scrims.filter(and_(Scrim.map1 != None, Scrim.map2 != None)).all()
+    scrim_final = []
+    for scrim in scrim_decided:
+        if scrim.team1_id == team_id:
+            proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
+            scrim_final.append((proposing_team, scrim))
+        else:
+            proposing_team = Team.query.filter_by(id=scrim.team2_id).one()
+            scrim_final.append((proposing_team, scrim))
 
     # find all the scrim proposals
-    scrim_proposals = all_scrims(or_(map1 == None, map2 == None)).all()
+    scrim_undecided = all_scrims.filter(or_(Scrim.map1 == None, Scrim.map2 == None)).all()
+    scrim_proposals = []
+    for scrim in scrim_undecided:
+        if scrim.team1_id == team_id:
+            proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
+            scrim_proposals.append((proposing_team, scrim))
+        else:
+            proposing_team = Team.query.filter_by(id=scrim.team2_id).one()
+            scrim_proposals.append((proposing_team, scrim))
 
+    print scrim_proposals
 
     # What's the team availability in days
     days = team.week_days
@@ -517,7 +534,7 @@ def team_page(team_id):
                 com_list=comment_list,
                 dont_show=dont_show,
                 propose_scrim=propose_scrim,
-                scrims=scrims,
+                scrim_final=scrim_final,
                 scrim_proposals=scrim_proposals)
 
 @scrim_app.route('/team/join/<team_id>')
@@ -622,15 +639,21 @@ def propose_scrim(opponent_team_id):
     form = ProposeScrimForm()
 
     if form.validate_on_submit():
+        your_team_id = form.team.data
+        your_team = Team.query.filter_by(id=your_team_id).one()
+        opponent_team = Team.query.filter_by(id=opponent_team_id).one()
+
         from datetime import datetime as dt
 
         new_scrim               = Scrim()
         new_scrim.date          = dt.utcfromtimestamp(int(form.utc_time.data))
         new_scrim.map1          = form.map.data
         new_scrim.connection    = 'To be implemented'
-        new_scrim.team_id1      = form.team.data
-        new_scrim.team_id2      = opponent_team_id
-        new_scrim.scrim_type    = form.type.data
+        new_scrim.team1_id      = your_team_id
+        new_scrim.team1         = your_team
+        new_scrim.team2_id      = opponent_team_id
+        new_scrim.team2         = opponent_team
+        new_scrim.type    = form.type.data
         db.session.add(new_scrim)
         db.session.commit()
 
