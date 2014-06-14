@@ -474,10 +474,11 @@ def team_page(team_id):
 
     # find all the scrims
     all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
-    # scrim agreed by both team have two map options
-    scrim_decided = all_scrims.filter(and_(Scrim.map1 != None, Scrim.map2 != None)).all()
+    
+    from consts import SCRIM_ACCEPTED
+    scrim_accepted = all_scrims.filter_by(state=SCRIM_ACCEPTED).all()
     scrim_final = []
-    for scrim in scrim_decided:
+    for scrim in scrim_accepted:
         if scrim.team1_id == team_id:
             proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
             scrim_final.append((proposing_team, scrim))
@@ -485,10 +486,11 @@ def team_page(team_id):
             proposing_team = Team.query.filter_by(id=scrim.team2_id).one()
             scrim_final.append((proposing_team, scrim))
 
+    from consts import SCRIM_PROPOSED
     # find all the scrim proposals 'received'
-    scrim_undecided = all_scrims.filter(or_(Scrim.map1 == None, Scrim.map2 == None)).all()
+    scrim_proposed = all_scrims.filter_by(state=SCRIM_PROPOSED).all()
     scrim_proposals_received = []
-    for scrim in scrim_undecided:
+    for scrim in scrim_proposed:
         # team2: the team to accept or reject the proposal
         if scrim.team2_id == team_id:
             # team1: the team to propose the scrim
@@ -497,7 +499,7 @@ def team_page(team_id):
 
     # find all the scrim proposals 'sent'
     scrim_proposals_sent = []
-    for scrim in scrim_undecided:
+    for scrim in scrim_proposed:
         if scrim.team1_id == team_id:
             accepting_team = Team.query.filter_by(id=scrim.team2_id).one()
             scrim_proposals_sent.append((accepting_team, scrim))
@@ -601,7 +603,7 @@ def team_accept_user(team_id, user_id):
     flash("Accepted")
     return redirect(url_for('team_page', team_id=team_id))         
 
-@scrim_app.route('/propose/scrim/<int:opponent_team_id>', methods=['GET','POST'])
+@scrim_app.route('/scrim/propose/<int:opponent_team_id>', methods=['GET','POST'])
 @login_required
 def propose_scrim(opponent_team_id):
 
@@ -650,6 +652,7 @@ def propose_scrim(opponent_team_id):
         opponent_team = Team.query.filter_by(id=opponent_team_id).one()
 
         from datetime import datetime as dt
+        from consts import SCRIM_PROPOSED
 
         new_scrim               = Scrim()
         new_scrim.date          = dt.utcfromtimestamp(int(form.utc_time.data))
@@ -659,7 +662,8 @@ def propose_scrim(opponent_team_id):
         new_scrim.team1         = your_team
         new_scrim.team2_id      = opponent_team_id
         new_scrim.team2         = opponent_team
-        new_scrim.type    = form.type.data
+        new_scrim.type          = form.type.data
+        new_scrim.state         = SCRIM_PROPOSED
         db.session.add(new_scrim)
         db.session.commit()
 
@@ -669,6 +673,45 @@ def propose_scrim(opponent_team_id):
         flash('Scrim proposal not validated')
     
     return render_template('propose_scrim.html', form=form)
+
+@scrim_app.route('/scrim/accept/', methods=['GET', 'POST'])
+@login_required
+def accept_scrim():
+    # team1 = who proposes scrim
+    # team2 = who accepts/rejects scrim
+
+    if g.user is None:
+        abort(404)
+
+    form = AcceptScrimForm()
+
+    if form.validate_on_submit():
+        try:
+            scrim = Scrim.query.filter_by(id=form.scrim_id.data).one()
+        except NoResultFound as e:
+            flash('Cannot find scrim with id: ' + str(scrim_id))
+            return render_template('accept_scrim.html', form=form)
+
+        accepting_team_id = scrim.team2_id
+
+        # is user the captain of team2
+        try:
+            team_membership = Membership.query.filter(and_(user_id=g.user.id, team_id=accepting_team_id)).one()
+        except NoResultFound as e:
+            flash('Invalid operation - Cannot accept this scrim')
+            return render_template('accept_scrim.html', form=form)
+
+        the_captain = team_membership.role == 'Captain'
+        if not the_captain:
+            flash('You are not the captain of the responding team')
+            return render_template('accept_scrim.html', form=form)
+
+        from consts import SCRIM_ACCEPTED
+        scrim.map2  = form.map.data
+        scrim.state = SCRIM_ACCEPTED
+        return redirect(url_for('team_page', team_id=accepting_team_id))
+    else:
+        return render_template('accept_scrim.html', form=form)
 
 @scrim_app.route('/bots/boom')
 def bots_boom():
