@@ -115,6 +115,7 @@ class Scrim(db.Model):
     team2_id        = db.Column(db.Integer, db.ForeignKey('team.id'))
     team2           = db.relationship('Team', foreign_keys=team2_id)
     type            = db.Column(db.String(80))
+    state           = db.Column(db.String(20))
 
 class Comment(db.Model):
     id              = db.Column(db.Integer, primary_key=True)

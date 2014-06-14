@@ -43,7 +43,7 @@
 
 <h1>Pendingssssssss</h1>
 {% for team, scrim in scrim_proposals_sent %}
-	<p>Team: {{ team.name }} <a href="#"> Waiting for response</a></p>
+	<p>Team: <a href="#">{{ team.name }}</a> <a href="#"> Waiting for response</a> </p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
 	<p>Your Map: {{ scrim.map1 }}</p>
@@ -51,7 +51,7 @@
 {% endfor %}
 
 {% for team, scrim in scrim_proposals_received %}
-	<p>Team: {{ team.name }} <a href="#"> Accept</a> <a href="#"> Reject</a></p>
+	<p>Team: <a href="#">{{ team.name }}</a> <a href="#"> Accept</a> <a href="#"> Reject</a></p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
 	<p>Their map: {{ scrim.map1 }}</p>
