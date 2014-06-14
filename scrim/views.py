@@ -6,7 +6,8 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func, and_, or_
-from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, FilterScrimForm, TeamCommentForm, ProposeScrimForm
+from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, \
+    FilterScrimForm, TeamCommentForm, ProposeScrimForm, AcceptScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -480,11 +481,11 @@ def team_page(team_id):
     scrim_final = []
     for scrim in scrim_accepted:
         if scrim.team1_id == team_id:
-            proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
-            scrim_final.append((proposing_team, scrim))
+            other_team = Team.query.filter_by(id=scrim.team2_id).one()
+            scrim_final.append((other_team, scrim))
         else:
-            proposing_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrim_final.append((proposing_team, scrim))
+            other_team = Team.query.filter_by(id=scrim.team1_id).one()
+            scrim_final.append((other_team, scrim))
 
     from consts import SCRIM_PROPOSED
     # find all the scrim proposals 'received'
@@ -674,9 +675,9 @@ def propose_scrim(opponent_team_id):
     
     return render_template('propose_scrim.html', form=form)
 
-@scrim_app.route('/scrim/accept/', methods=['GET', 'POST'])
+@scrim_app.route('/scrim/accept/<int:scrim_id>', methods=['GET', 'POST'])
 @login_required
-def accept_scrim():
+def accept_scrim(scrim_id):
     # team1 = who proposes scrim
     # team2 = who accepts/rejects scrim
 
@@ -687,7 +688,7 @@ def accept_scrim():
 
     if form.validate_on_submit():
         try:
-            scrim = Scrim.query.filter_by(id=form.scrim_id.data).one()
+            scrim = Scrim.query.filter_by(id=scrim_id).one()
         except NoResultFound as e:
             flash('Cannot find scrim with id: ' + str(scrim_id))
             return render_template('accept_scrim.html', form=form)
@@ -695,20 +696,21 @@ def accept_scrim():
         accepting_team_id = scrim.team2_id
 
         # is user the captain of team2
-        try:
-            team_membership = Membership.query.filter(and_(user_id=g.user.id, team_id=accepting_team_id)).one()
-        except NoResultFound as e:
-            flash('Invalid operation - Cannot accept this scrim')
-            return render_template('accept_scrim.html', form=form)
+        # try:
+        #     team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
+        # except NoResultFound as e:
+        #     flash('You are not part of the team')
+        #     return render_template('accept_scrim.html', form=form)
 
-        the_captain = team_membership.role == 'Captain'
-        if not the_captain:
-            flash('You are not the captain of the responding team')
-            return render_template('accept_scrim.html', form=form)
+        # the_captain = team_membership.role == 'Captain'
+        # if not the_captain:
+        #     flash('You are not the captain of the responding team')
+        #     return render_template('accept_scrim.html', form=form)
 
         from consts import SCRIM_ACCEPTED
         scrim.map2  = form.map.data
         scrim.state = SCRIM_ACCEPTED
+        db.session.commit()
         return redirect(url_for('team_page', team_id=accepting_team_id))
     else:
         return render_template('accept_scrim.html', form=form)

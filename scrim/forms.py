@@ -98,5 +98,4 @@ class ProposeScrimForm(Form):
     type = SelectField('type', choices=[('4v4','4v4'),('6v6','6v6'),('9v9','9v9')])
 
 class AcceptScrimForm(Form):
-    scrim_id = TextField('scrim_id', validators=[Required()])
     map = TextField('map', validators=[Required()])

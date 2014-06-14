@@ -51,7 +51,7 @@
 {% endfor %}
 
 {% for team, scrim in scrim_proposals_received %}
-	<p>Team: <a href="#">{{ team.name }}</a> <a href="#"> Accept</a> <a href="#"> Reject</a></p>
+	<p>Team: <a href="#">{{ team.name }}</a> <a href="{{ url_for('accept_scrim', scrim_id=scrim.id) }}"> Accept</a> <a href="#"> Reject</a></p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
 	<p>Their map: {{ scrim.map1 }}</p>
