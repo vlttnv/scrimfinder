@@ -31,18 +31,25 @@
 
 <h1>Scrimsssssssss</h1>
 {% for team, scrim in scrim_final %}
-	<p>Team: {{ team.name }} <a href="#"> I guess put something here</a></p>
+	<p>Team: {{ team.name }} <a href="#"> To be played against </a></p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
-	{% if scrim.map1 is not none %}
 	<p>Map1: {{ scrim.map1 }}</p>
 	<p>Map2: {{ scrim.map2 }}</p>
-	{% endif %}
+	<p>Type: {{ scrim.type }}</p>
+{% endfor %}
+
+<h1>Rejections</h1>
+{% for team, scrim in scrim_rejected %}
+	<p>Team: {{ team.name }} <a href="#"> Rejected by </a></p>
+	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
+	<p>TODO: Convert time to your timezone</p>
+	<p>Map1: {{ scrim.map1 }}</p>
 	<p>Type: {{ scrim.type }}</p>
 {% endfor %}
 
 <h1>Pendingssssssss</h1>
-{% for team, scrim in scrim_proposals_sent %}
+{% for team, scrim in scrim_sent %}
 	<p>Team: <a href="#">{{ team.name }}</a> <a href="#"> Waiting for response</a> </p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
@@ -50,8 +57,10 @@
 	<p>Type: {{ scrim.type }}</p>
 {% endfor %}
 
-{% for team, scrim in scrim_proposals_received %}
-	<p>Team: <a href="#">{{ team.name }}</a> <a href="{{ url_for('accept_scrim', scrim_id=scrim.id) }}"> Accept</a> <a href="#"> Reject</a></p>
+{% for team, scrim in scrim_received %}
+	<p>Team: <a href="#">{{ team.name }}</a>
+		<a href="{{ url_for('accept_scrim', scrim_id=scrim.id) }}"> Accept</a>
+		<a href="{{ url_for('reject_scrim', scrim_id=scrim.id) }}"> Reject</a></p>
 	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
 	<p>TODO: Convert time to your timezone</p>
 	<p>Their map: {{ scrim.map1 }}</p>

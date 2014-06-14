@@ -487,23 +487,33 @@ def team_page(team_id):
             other_team = Team.query.filter_by(id=scrim.team1_id).one()
             scrim_final.append((other_team, scrim))
 
+    from consts import SCRIM_REJECTED
+    # find all the scrim proposals 'rejected'
+    scrim_rejections = all_scrims.filter_by(state=SCRIM_REJECTED).all()
+    scrim_rejected = []
+    for scrim in scrim_rejections:
+        # team1: the team to make the proposal
+        if scrim.team1_id == team_id:
+            rejecting_team = Team.query.filter_by(id=scrim.team2_id).one()
+            scrim_rejected.append((rejecting_team, scrim))
+
     from consts import SCRIM_PROPOSED
     # find all the scrim proposals 'received'
-    scrim_proposed = all_scrims.filter_by(state=SCRIM_PROPOSED).all()
-    scrim_proposals_received = []
-    for scrim in scrim_proposed:
+    scrim_proposals = all_scrims.filter_by(state=SCRIM_PROPOSED).all()
+    scrim_received = []
+    for scrim in scrim_proposals:
         # team2: the team to accept or reject the proposal
         if scrim.team2_id == team_id:
             # team1: the team to propose the scrim
             proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
-            scrim_proposals_received.append((proposing_team, scrim))
+            scrim_received.append((proposing_team, scrim))
 
     # find all the scrim proposals 'sent'
-    scrim_proposals_sent = []
-    for scrim in scrim_proposed:
+    scrim_sent = []
+    for scrim in scrim_proposals:
         if scrim.team1_id == team_id:
             accepting_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrim_proposals_sent.append((accepting_team, scrim))
+            scrim_sent.append((accepting_team, scrim))
 
     # What's the team availability in days
     days = team.week_days
@@ -543,8 +553,9 @@ def team_page(team_id):
                 dont_show=dont_show,
                 propose_scrim=propose_scrim,
                 scrim_final=scrim_final,
-                scrim_proposals_received=scrim_proposals_received,
-                scrim_proposals_sent=scrim_proposals_sent)
+                scrim_rejected=scrim_rejected,
+                scrim_received=scrim_received,
+                scrim_sent=scrim_sent)
 
 @scrim_app.route('/team/join/<team_id>')
 @login_required
@@ -714,6 +725,37 @@ def accept_scrim(scrim_id):
         return redirect(url_for('team_page', team_id=accepting_team_id))
     else:
         return render_template('accept_scrim.html', form=form)
+
+@scrim_app.route('/scrim/reject/<int:scrim_id>', methods=['GET'])
+@login_required
+def reject_scrim(scrim_id):
+    if g.user is None:
+        abort(404)
+
+    try:
+        scrim = Scrim.query.filter_by(id=scrim_id).one()
+    except NoResultFound as e:
+        flash('Cannot find scrim with id: ' + str(scrim_id))
+        return redirect(url_for('index.html'))
+
+    accepting_team_id = scrim.team2_id
+
+    # is user the captain of team2
+    # try:
+    #     team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
+    # except NoResultFound as e:
+    #     flash('You are not part of the team')
+    #     return render_template('accept_scrim.html', form=form)
+
+    # the_captain = team_membership.role == 'Captain'
+    # if not the_captain:
+    #     flash('You are not the captain of the responding team')
+    #     return render_template('accept_scrim.html', form=form)
+
+    from consts import SCRIM_REJECTED
+    scrim.state = SCRIM_REJECTED
+    db.session.commit()
+    return redirect(url_for('team_page', team_id=accepting_team_id))
 
 @scrim_app.route('/bots/boom')
 def bots_boom():
