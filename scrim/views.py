@@ -557,6 +557,48 @@ def team_page(team_id):
                 scrim_received=scrim_received,
                 scrim_sent=scrim_sent)
 
+@scrim_app.route('/team/<team_id>/promote/<user_id>')
+@login_required
+def promote(team_id, user_id):
+    """
+    Promote a user to Captain
+
+    TODO: Need to add safety checks
+    """
+    
+    try:
+        mem = Membership.query.filter(and_(Membership.team_id==team_id, Membership.user_id==user_id)).one()
+        mem.role = "Captain"
+        db.session.add(mem)
+        db.session.commit()
+        flash("User promoted")
+        return redirect(url_for('team_page', team_id=team_id))
+    except NoResultFound, e:
+        flash("Invalid user or team")
+        return redirect(url_form('team_page', team_id=team_id))
+
+@scrim_app.route('/team/<team_id>/demote/<user_id>')
+@login_required
+def demote(team_id, user_id):
+    """
+    Demote user to a member
+
+    TODO: Need to add safety checks
+    """
+    
+    try:
+        mem = Membership.query.filter(and_(Membership.team_id==team_id, Membership.user_id==user_id)).one()
+        mem.role = "Member"
+        db.session.add(mem)
+        db.session.commit()
+        flash("User promoted")
+        return redirect(url_for('team_page', team_id=team_id))
+    except NoResultFound, e:
+        flash("Invalid user or team")
+        return redirect(url_form('team_page', team_id=team_id))
+
+
+
 @scrim_app.route('/team/join/<team_id>')
 @login_required
 def team_join(team_id):
