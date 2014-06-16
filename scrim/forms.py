@@ -6,7 +6,7 @@ from consts import *
 class UserEditForm(Form):
     team_name           = TextField('team_name', validators = [Required()])
     #team_skill_level    = SelectField(u'team_skill_level', choices=[(UGC_IRON, UGC_IRON),(UGC_STEEL, UGC_STEEL),(UGC_SILVER, UGC_SILVER),(UGC_GOLD, UGC_GOLD), (UGC_PLATINUM, UGC_PLATINUM)])
-    team_skill_level    = SelectField(u'team_skill_level', choices=[SKILL_LEVEL])
+    team_skill_level    = SelectField('team_skill_level', choices=[SKILL_LEVEL])
     team_time_zone      = SelectField('team_time_zone', choices=CHOICES_ZONES)
 
 class TeamEditForm(Form):
@@ -45,19 +45,9 @@ class CreateTeamForm(Form):
     sat = BooleanField('Saturday')
     sun = BooleanField('Sunday')
 
-class FilterTeamForm(Form):
-    team_name           = TextField('team_name')
-    team_skill_level    = SelectField(u'team_skill_level', 
-            choices=[(ALL, ALL),
-                (UGC_IRON, UGC_IRON),
-                (UGC_STEEL, UGC_STEEL),
-                (UGC_SILVER, UGC_SILVER),
-                (UGC_GOLD, UGC_GOLD), 
-                (UGC_PLATINUM, UGC_PLATINUM)])
-    team_time_zone      = SelectField('team_time_zone', 
-            choices=[("ALL", "ALL"),
-                ("CET","CET"),
-                ("EST","EST")])
+class SearchTeamForm(Form):
+    team_skill_level  = SelectField('team_skill_level', choices=FILTER_SKILLS)
+    team_time_zone    = SelectField('team_time_zone', choices=FILTER_ZONES)
 
     mon = BooleanField('Monday')
     tue = BooleanField('Tuesday')
@@ -67,26 +57,23 @@ class FilterTeamForm(Form):
     sat = BooleanField('Saturday')
     sun = BooleanField('Sunday')
 
-class FilterScrimForm(Form):
-    team_skill_level    = SelectField(u'team_skill_level', 
-            choices=[(ALL, ALL),
-                (UGC_IRON, UGC_IRON),
-                (UGC_STEEL, UGC_STEEL),
-                (UGC_SILVER, UGC_SILVER),
-                (UGC_GOLD, UGC_GOLD), 
-                (UGC_PLATINUM, UGC_PLATINUM)])
-    team_time_zone      = SelectField('team_time_zone', 
-            choices=[("ALL", "ALL"),
-                ("CET","CET"),
-                ("EST","EST")])
+    def read_scrim_days(form):
+        scrim_days    = list('0000000')
+        scrim_days[0] = str(int(form.mon.data))
+        scrim_days[1] = str(int(form.tue.data))
+        scrim_days[2] = str(int(form.wed.data))
+        scrim_days[3] = str(int(form.thu.data))
+        scrim_days[4] = str(int(form.fri.data))
+        scrim_days[5] = str(int(form.sat.data))
+        scrim_days[6] = str(int(form.sun.data))
+        scrim_days    = ''.join(scrim_days)
+        return scrim_days
 
-    mon = BooleanField('Monday')
-    tue = BooleanField('Tuesday')
-    wed = BooleanField('Wednesday')
-    thu = BooleanField('Thursday')
-    fri = BooleanField('Friday')
-    sat = BooleanField('Saturday')
-    sun = BooleanField('Sunday')
+class FilterTeamForm(SearchTeamForm):
+    team_name         = TextField('team_name')
+
+class FilterScrimForm(SearchTeamForm):
+    pass
 
 class ProposeScrimForm(Form):
     team = SelectField('team', choices=[])
@@ -99,17 +86,3 @@ class ProposeScrimForm(Form):
 
 class AcceptScrimForm(Form):
     map = TextField('map', validators=[Required()])
-
-
-# HACK
-def read_scrim_days(form):
-    scrim_days    = list('0000000')
-    scrim_days[0] = str(int(form.mon.data))
-    scrim_days[1] = str(int(form.tue.data))
-    scrim_days[2] = str(int(form.wed.data))
-    scrim_days[3] = str(int(form.thu.data))
-    scrim_days[4] = str(int(form.fri.data))
-    scrim_days[5] = str(int(form.sat.data))
-    scrim_days[6] = str(int(form.sun.data))
-    scrim_days    = ''.join(scrim_days)
-    return scrim_days
