@@ -1,4 +1,4 @@
-ALL 			= "ALL"
+ALL             = "ALL"
 
 UGC_PLATINUM    = "UGC Platinum"
 UGC_GOLD        = "UGC Gold"
