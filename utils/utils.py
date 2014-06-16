@@ -1,4 +1,4 @@
-def get_bit_combinations(bit_string):
+def get_binary_combinations(bit_string):
     """
     Use for generating similar scrim times, represented as a bit string.
 
