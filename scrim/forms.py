@@ -99,3 +99,17 @@ class ProposeScrimForm(Form):
 
 class AcceptScrimForm(Form):
     map = TextField('map', validators=[Required()])
+
+
+# HACK
+def read_scrim_days(form):
+    scrim_days    = list('0000000')
+    scrim_days[0] = str(int(form.mon.data))
+    scrim_days[1] = str(int(form.tue.data))
+    scrim_days[2] = str(int(form.wed.data))
+    scrim_days[3] = str(int(form.thu.data))
+    scrim_days[4] = str(int(form.fri.data))
+    scrim_days[5] = str(int(form.sat.data))
+    scrim_days[6] = str(int(form.sun.data))
+    scrim_days    = ''.join(scrim_days)
+    return scrim_days

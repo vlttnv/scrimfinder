@@ -71,7 +71,7 @@
       <div class="col-lg-10 col-lg-offset-2">
 
 			  <a href="{{url_for('user_page', steam_id=g.user.steam_id)}}"class="btn btn-default">Cancel</a>
-<input class="btn btn-success" type="submit" value="Create Team">
+<input id="lol" data-toggle="tooltip" data-placement="right" title="" data-original-title="Tooltip on right" class="btn btn-success" type="submit" value="Create Team">
       </div>
     </div>
 		</fieldset>
@@ -80,4 +80,16 @@
 </div>
 <form action="" method="post"  name="create_team">
 </form>
+
+
+<script language="javascript">
+document.getElementById('teamName').setAttribute('data-toggle','popover')
+document.getElementById('teamName').setAttribute('data-placement','right')
+document.getElementById('teamName').setAttribute('data-content','Team name can be changed later.')
+document.getElementById('teamName').setAttribute('onBlur',"$(this).popover('hide')")
+
+$(document).ready(function(){
+				$('#teamName').popover(trigger='focus');
+});
+</script>
 {% endblock %}

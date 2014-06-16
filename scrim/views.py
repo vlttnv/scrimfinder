@@ -191,21 +191,15 @@ def show_all_scrims(page=1):
             query = query.filter(Team.id != mem.team_id)
 
     from utils import scrim_filter
+    from scrim import forms
+
     if form.validate_on_submit():
         if form.team_skill_level.data != 'ALL':
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != 'ALL':
             query = query.filter_by(time_zone=form.team_time_zone.data)
         
-        scrim_days    = list('0000000')
-        scrim_days[0] = str(int(form.mon.data))
-        scrim_days[1] = str(int(form.tue.data))
-        scrim_days[2] = str(int(form.wed.data))
-        scrim_days[3] = str(int(form.thu.data))
-        scrim_days[4] = str(int(form.fri.data))
-        scrim_days[5] = str(int(form.sat.data))
-        scrim_days[6] = str(int(form.sun.data))
-        scrim_days    = ''.join(scrim_days)
+        scrim_days = forms.read_scrim_days(form)
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
         query = query.filter(Team.week_days.in_(matched_scrim_days))
     else:
@@ -363,7 +357,6 @@ def create_team():
         mem = Membership()
         mem.team_id = new_team.id
         mem.user_id = g.user.id
-        # Charlito: sounds better
         mem.role = "Captain" 
         db.session.add(mem)
         db.session.commit()
