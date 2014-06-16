@@ -175,54 +175,52 @@ def show_all_scrims(page=1):
     Scrim search page. Only visible for users who are part of a team
     """
 
-    from utils import scrim_filter
-
     if page < 1:
         abort(404)
 
     form = FilterScrimForm()
 
-    user_membership = Membership.query.filter_by(user_id=g.user.id).all()
-    if len(user_membership) == 0:
+    player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(player_memberships) == 0:
         flash('You are not in a team. Cannot search for scrims.')
         return render_template('all_scrims.html', teams_list=None, form=form)
 
+    # Ignore your own teams
     query = Team.query
-    for membership in user_membership:
-            query = query.filter(Team.id != membership.team_id)
+    for mem in player_memberships:
+            query = query.filter(Team.id != mem.team_id)
+
+    from utils import scrim_filter
+    from scrim import forms
+
     if form.validate_on_submit():
-        if form.team_skill_level.data != "ALL":
+        if form.team_skill_level.data != 'ALL':
             query = query.filter_by(skill_level=form.team_skill_level.data)
-        if form.team_time_zone.data != "ALL":
+        if form.team_time_zone.data != 'ALL':
             query = query.filter_by(time_zone=form.team_time_zone.data)
         
-        week = list("0000000")
-        week[0] = str(int(form.mon.data))
-        week[1] = str(int(form.tue.data))
-        week[2] = str(int(form.wed.data))
-        week[3] = str(int(form.thu.data))
-        week[4] = str(int(form.fri.data))
-        week[5] = str(int(form.sat.data))
-        week[6] = str(int(form.sun.data))
-        week = "".join(week)
-        possible_weekdays = scrim_filter.scrim_days_combinations(week)
-        query = query.filter(Team.week_days.in_(possible_weekdays))
+        scrim_days = forms.read_scrim_days(form)
+        matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
+        query = query.filter(Team.week_days.in_(matched_scrim_days))
     else:
-        # set default values HACK - use user's first team
-        first_team = Team.query.filter_by(id=user_membership[0].team_id).one()
+        # HACK - set default values using the player's 1st team info
+        try:
+            player_1st_team_id = player_memberships[0].team_id
+            player_1st_team = Team.query.filter_by(id=player_1st_team_id).one()
 
-        query = query.filter_by(skill_level=first_team.skill_level)
-        query = query.filter_by(time_zone=first_team.time_zone)
+            query = query.filter_by(skill_level=player_1st_team.skill_level)
+            query = query.filter_by(time_zone=player_1st_team.time_zone)
         
-        # continue - set scrim time preferences
-        first_team_weekdays = first_team.week_days
-        possible_weekdays = scrim_filter.scrim_days_combinations(first_team_weekdays)
-        query = query.filter(Team.week_days.in_(possible_weekdays))
+            scrim_days = player_1st_team.week_days
+            matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
+            query = query.filter(Team.week_days.in_(matched_scrim_days))
+        except NoResultFound as e:
+            print e
 
     from config import TEAMS_PER_PAGE
     try:
         teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
-    except OperationalError: # no team in db
+    except OperationalError:
         teams_list = None
 
     return render_template('all_scrims.html', teams_list=teams_list, form=form)
@@ -359,7 +357,6 @@ def create_team():
         mem = Membership()
         mem.team_id = new_team.id
         mem.user_id = g.user.id
-        # Charlito: sounds better
         mem.role = "Captain" 
         db.session.add(mem)
         db.session.commit()

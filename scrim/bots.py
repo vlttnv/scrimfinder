@@ -1,7 +1,5 @@
 from scrim import db, models
 from models import User, Team
-from utils import utils
-import random
 
 def create_bot_users():
     """
@@ -34,12 +32,13 @@ def create_bot_teams():
     """
 
     from consts import SKILL_LEVEL, TIME_ZONE
+    from utils import scrim_filter
 
     fake_name = '@_Team'
 
     for skill in SKILL_LEVEL:
         for time in TIME_ZONE:
-            possible_weekdays = utils.get_bit_combinations("0000000")
+            possible_weekdays = scrim_filter.scrim_days_combinations('0000000')
             for weekday in possible_weekdays:
                 bot_team = Team()
                 bot_team.name = fake_name + '_' + str(skill) + '_' + str(time) + '_' + str(weekday)
