@@ -98,12 +98,13 @@ def after_login(resp):
     except NoResultFound:
         g.user = User()
         steam_data = get_steam_user_info(steam_id)
-        g.user.steam_id     = steam_id
-        g.user.nickname     = steam_data['personaname']
-        g.user.profile_url  = steam_data['profileurl']
-        g.user.avatar_url   = steam_data['avatar']
-        g.user.join_date    = dt.utcnow()
-        g.user.last_online  = dt.utcnow()
+        g.user.steam_id         = steam_id
+        g.user.nickname         = steam_data['personaname']
+        g.user.profile_url      = steam_data['profileurl']
+        g.user.avatar_url       = steam_data['avatar']
+        g.user.avatar_url_full  = steam_data['avatarfull']
+        g.user.join_date        = dt.utcnow()
+        g.user.last_online      = dt.utcnow()
         db.session.add(g.user)
     
     last_online = g.user.last_online
@@ -151,6 +152,7 @@ def user_page(steam_id):
             nick=user.nickname,
             profile_url=user.profile_url,
             avatar=user.avatar_url,
+            avatar_full=user.avatar_url_full,
             teams_roles=teams_roles)
 
 @scrim_app.route('/users')

@@ -1,42 +1,84 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1> {{nick}} </h1>
-<p> {{id}} </p>
-<img src='{{avatar}}' />
-{% if g.user is not none and g.user.steam_id in request.path %}
-  <p><a href="{{ url_for('edit_profile') }}">Edit</a>
-{% endif %}
-<p><a href='{{profile_url}}'>Go to steam profile</a></p>
-<p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
-{% if teams_roles %}
-<h2>Teams</h2>
-  {% for team, role in teams_roles %}
-    <h3><a href="{{ url_for('team_page', team_id=team.id) }}">{{ team.name }}</a></h3>
-    <p>Role: {{ role }}</p>
-    <p>Skill level: {{ team.skill_level }}</p>
-    <p>Rep: {{team.reputation }}</p>
-    <p>Time zone:  {{ team.time_zone }}</p>
-    <p>Week days: {{ team.week_days }}</p>
+<div class="page-header">
+		<h1>{{nick}}</h1>
+</div>
 
-    <form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
-    <input type="submit" value="Quit">
+<div class="row">
+		<div class="col-lg-6">
+				<div class="row">
+						<div class="col-md-4">
+						<img src='{{avatar_full}}' />
+
+						</div>
+						<div class="col-md-8">
+								<p><strong>SteamID:</strong> {{id}} </p>
+								<p><a href='{{profile_url}}'>Go to steam profile</a></p>
+								<p><a href="steam://friends/add/{{id}}">Add on Steam</a></p>
+
+						</div>
+				</div>
+<br>
+<ul class="list-group">
+  <li class="list-group-item">
+    Your local time: <span class="time"></span>
+  </li>
+  <li class="list-group-item">
+    Asia/Seoul: <span class="time-zone" zone="Asia/Seoul"></span>
+  </li>
+  <li class="list-group-item">
+CET: <span class="time-zone" zone="CET"></span>
+  </li>
+  <li class="list-group-item">
+Australia/Perth: <span class="time-zone" zone="Australia/Perth"></span>
+  </li>
+<li class="list-group-item">
+EST: <span class="time-zone" zone="EST"></span>
+  </li>
+ </li>
+<li class="list-group-item">
+Etc/GMT: <span class="time-zone" zone="Etc/GMT"></span>
+  </li>
+<li class="list-group-item">
+Pacific/Auckland: <span class="time-zone" zone="Pacific/Auckland"></span>
+  </li>
+</ul>
+		</div>
+		<div class="col-lg-6">
+				{% if teams_roles %}
+				{% for team, role in teams_roles %}
+
+				<div class="panel panel-primary">
+						<div class="panel-heading">
+								<h3 class="panel-title"><a href="{{ url_for('team_page', team_id=team.id) }}">{{ team.name }}</a></h3>
+						</div>
+						<div class="panel-body">
+								<div class="row">
+								<div class="col-xs-6">
+										<p>Role: <span {% if role == "Captain" %}class="label label-success"{% else %} class="label label-warning" {% endif %}>{{ role }}</span> </p>
+								<p>Skill level: {{ team.skill_level }}</p>
+								<p>Rep: {{team.reputation }}</p>
+
+
+						</div>
+						<div class="col-xs-6">
+								<p>Time zone:  {{ team.time_zone }}</p>
+								<p>Week days: {{ team.week_days }}</p>
+														</div>
+						</div>
+<form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
+    <input type="submit" class="btn btn-danger pull-right" value="Quit">
     </form>
-    <br>
-  {% endfor %}
-{% else %}
-  <p><a href="{{ url_for('create_team') }}">Create a team</a></p>
-  <p><a href="{{ url_for('show_all_teams') }}">Join a team</a></p>
-{% endif %}
+						</div>
+				</div>
+				{% endfor %}
+				{% else %}
+				<p><a href="{{url_for('create_team')}}" class="btn btn-success btn-lg">Create a team</a> <a href="{{url_for('show_all_teams')}}" class="btn btn-primary btn-lg">Join a team</a></p>
 
-<p><em>Your local time: <span class="time"></span></em></p>
+				{% endif %}
+		</div>
+</div>
 
-<li><em>Asia/Seoul: <span class="time-zone" zone="Asia/Seoul"></span></em></li>
-<li><em>Australia/Perth: <span class="time-zone" zone="Australia/Perth"></span></em></li>
-<li><em>CET: <span class="time-zone" zone="CET"></span></em></li>
-<li><em>EST: <span class="time-zone" zone="EST"></span></em></li>
-<li><em>EST5EDT: <span class="time-zone" zone="EST5EDT"></span></em></li>
-<li><em>Etc/GMT: <span class="time-zone" zone="Etc/GMT"></span></em></li>
-<li><em>Pacific/Auckland: <span class="time-zone" zone="Pacific/Auckland"></span></em></li>
 
 <script src="/static/js/moment.min.js"></script>
 <script src="/static/js/moment-timezone.min.js"></script>

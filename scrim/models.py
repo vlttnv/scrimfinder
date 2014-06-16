@@ -13,6 +13,7 @@ class User(db.Model):
     nickname            = db.Column(db.String(80))
     profile_url         = db.Column(db.String(80))
     avatar_url          = db.Column(db.String(80))
+    avatar_url_full     = db.Column(db.String(80))
     join_date           = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Boolean)
