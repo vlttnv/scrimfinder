@@ -67,8 +67,6 @@ def after_login(resp):
     except NoResultFound:
         g.user = User()
         steam_data              = steam_api.get_user_info(steam_id)
-        x = steam_api.get_recently_played_games(steam_id)
-
         g.user.steam_id         = steam_id
         g.user.nickname         = steam_data['personaname']
         g.user.profile_url      = steam_data['profileurl']
@@ -92,7 +90,7 @@ def before_request():
     This gets called before each request and checks the session.
     Will probably do more stuff.
     """
-    
+
     g.user = None
     if 'user_id' in session:
         g.user = User.query.filter_by(id=session['user_id']).first()

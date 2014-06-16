@@ -5,40 +5,25 @@ import requests
 
 def get_user_info(steam_id):
     """
+    Return player summaries of the user with steam id = steam_id
+
+    Example:
+    {
+        u'steamid': u'steamid',
+        u'personaname': u'personaname',
+        ...
+    }
+
+    See: https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29
     """
 
-    get_player_summaries_api = \
-    'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
-
+    api = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
     params = {
         'key': scrim_app.config['STEAM_API_KEY'],
         'steamids': steam_id,
         'format': json
     }
-
-    response = requests.get(url=get_player_summaries_api, params=params)
-    user_info = response.json()
-
-    print user_info['response']['players'][0]
-
-    return user_info['response']['players'][0] or {}
-
-def get_recently_played_games(steam_id):
-    """
-    """
-
-    get_recently_played_games_api = \
-    'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?'
-
-    params = {
-        'key': scrim_app.config['STEAM_API_KEY'],
-        'steamid': steam_id, 
-        'format': json
-    }
-
-    response = requests.get(url=get_recently_played_games_api, params=params)
-    recently_played_games = response.json()
-
-    print recently_played_games['response']
-
-    return recently_played_games['response'] or {}
+    user_info = requests.get(url=api, params=params)
+    user_info_json = user_info.json()
+    
+    return user_info_json['response']['players'][0] or {}
