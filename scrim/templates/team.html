@@ -25,8 +25,8 @@
 <h1>Members</h1>
 {% for user, role in members_roles %}
 <p>
-  Role: {{ role }}, {{user.nickname}} 
-  <a href="{{ url_for('user_page', steam_id=user.steam_id) }}">go to profile page</a></li> </b>
+  Role: {{ role }},
+  <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a></li> </b>
 {% if (g.user, "Captain") in members_roles %}
 <a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
 <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a>
@@ -34,6 +34,8 @@
 {% endif %}
 </p>
 {% endfor %}
+
+<p>Scrim History <a href="{{ url_for('scrim_history', team_id=team.id, page=1) }}"> Link </a></p>
 
 <h1>Scrimsssssssss</h1>
 {% for team, scrim in scrim_final %}

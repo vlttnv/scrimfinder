@@ -801,6 +801,29 @@ def reject_scrim(scrim_id):
     db.session.commit()
     return redirect(url_for('team_page', team_id=accepting_team_id))
 
+@scrim_app.route('/scrim/history/<int:team_id>/page/<int:page>', methods=['GET'])
+@login_required
+def scrim_history(team_id, page=1):
+    from datetime import datetime as dt
+    from consts import SCRIM_FINISHED
+    from config import SCRIMS_PER_PAGE
+
+    if page < 1:
+        abort(404)
+
+    scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
+   
+    # check if scrims expired 
+    current_time = dt.utcnow()
+    scrims_finished = scrims.filter_by(state=SCRIM_FINISHED)
+
+    try:
+        scrims_list = scrims_finished.paginate(page, per_page=SCRIMS_PER_PAGE)
+    except OperationalError:
+        scrims_list = None
+    
+    return render_template('scrim_history.html', team_id=team_id, scrims_list=scrims_list)
+
 @scrim_app.route('/bots/boom')
 def bots_boom():
     """
@@ -810,8 +833,6 @@ def bots_boom():
     """
 
     from scrim import bots
-
-    print bots
 
     bots.create_bot_users()
     bots.create_bot_teams()
