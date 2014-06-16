@@ -1,54 +1,83 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1> Create a Team </h1>
-<form action="" method="post"  name="create_team">
+<div class="col-lg-6 col-lg-offset-3 well">
+
+<form class="form-horizontal" action="" method="post"  name="create_team">
+
 	{{create_team_form.hidden_tag()}}
-	<table>
-		<tr>
-			<td>Team Name</td>
-			<td>{{create_team_form.team_name()}}</td>
-		</tr>
-		<tr>
-			<td>Team Skill Level:</td>
-			<td>{{create_team_form.team_skill_level()}}</td>
-		</tr>
-		<tr>
-			<td>Time Zone</td>
-			<td>{{create_team_form.team_time_zone()}}</td>
-		</tr>
-		<tr>
-			<td>Monday</td>
-			<td>{{create_team_form.mon()}}</td>
-		</tr>
-		<tr>
-			<td>Tuesday</td>
-			<td>{{create_team_form.tue()}}</td>
-		</tr>
-		<tr>
-			<td>Wednesday</td>
-			<td>{{create_team_form.wed()}}</td>
-		</tr>
-		<tr>
-			<td>Thursday</td>
-			<td>{{create_team_form.thu()}}</td>
-		</tr>
-		<tr>
-			<td>Friday</td>
-			<td>{{create_team_form.fri()}}</td>
-		</tr>
-		<tr>
-			<td>Saturday</td>
-			<td>{{create_team_form.sat()}}</td>
-		</tr>
-		<tr>
-			<td>Sunday</td>
-			<td>{{create_team_form.sun()}}</td>
-		</tr>																
-		<tr>
-			<td></td>
-			<td><input type="submit" value="Create Team"></td>
-		</tr>
-	</table>
+		<fieldset>
+				<legend>New Team</legend>
+				<div class="form-group">
+						<label for="teamName" class="col-lg-2 control-label">Email</label>
+						<div class="col-lg-10">
+{{create_team_form.team_name(type="text", class_="form-control", id="teamName", placeholder="Super Team")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<div class="col-lg-10">
+								{{create_team_form.team_skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<div class="col-lg-10">
+								{{create_team_form.team_time_zone(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Availability</label>
+						<div class="col-lg-10">
+								<div class="checkbox">
+										<label>
+												{{create_team_form.mon()}} Monday 
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.tue()}} Tuesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.wed()}} Wednesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.thu()}} Thursdy
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.fri()}} Friday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.sat()}} Saturday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.sun()}} Sunday
+										</label>
+								</div>
+
+						</div>
+				</div>
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+
+			  <a href="{{url_for('user_page', steam_id=g.user.steam_id)}}"class="btn btn-default">Cancel</a>
+<input class="btn btn-success" type="submit" value="Create Team">
+      </div>
+    </div>
+		</fieldset>
+
+
+</div>
+<form action="" method="post"  name="create_team">
 </form>
 {% endblock %}
