@@ -91,9 +91,10 @@ def before_request():
     Will probably do more stuff.
     """
 
-    g.user = None
     if 'user_id' in session:
         g.user = User.query.filter_by(id=session['user_id']).first()
+    else:
+        g.user = None
 
 @scrim_app.route('/logout')
 def logout():
@@ -174,7 +175,7 @@ def show_all_scrims(page=1):
     Scrim search page. Only visible for users who are part of a team
     """
 
-    from utils import utils
+    from utils import scrim_filter
 
     if page < 1:
         abort(404)
@@ -204,7 +205,7 @@ def show_all_scrims(page=1):
         week[5] = str(int(form.sat.data))
         week[6] = str(int(form.sun.data))
         week = "".join(week)
-        possible_weekdays = utils.get_binary_combinations(week)
+        possible_weekdays = scrim_filter.scrim_days_combinations(week)
         query = query.filter(Team.week_days.in_(possible_weekdays))
     else:
         # set default values HACK - use user's first team
@@ -215,7 +216,7 @@ def show_all_scrims(page=1):
         
         # continue - set scrim time preferences
         first_team_weekdays = first_team.week_days
-        possible_weekdays = utils.get_bit_combinations(first_team_weekdays)
+        possible_weekdays = scrim_filter.scrim_days_combinations(first_team_weekdays)
         query = query.filter(Team.week_days.in_(possible_weekdays))
 
     from config import TEAMS_PER_PAGE
