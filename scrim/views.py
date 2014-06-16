@@ -1,6 +1,6 @@
 from scrim import scrim_app, oid, db, models, lm
 from models import User, Team, Request, Membership, Comment, Scrim
-from utils import utils
+from utils import steam_api
 from flask import request, redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
@@ -23,38 +23,6 @@ def map_days(days):
         aval = [(word if int(day)==1 else False) 
                 for day,word in zip(days,words)]
         return aval
-
-# Steam Web APIs...
-
-def get_steam_user_info(steam_id):
-    get_player_summaries_api = \
-    'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
-
-    params = {
-        'key': scrim_app.config['STEAM_API_KEY'],
-        'steamids': steam_id,
-        'format': json
-    }
-
-    response = requests.get(url=get_player_summaries_api, params=params)
-    user_info = response.json()
-
-    return user_info['response']['players'][0] or {}
-
-def get_recently_played_games(steam_id):
-    get_recently_played_games_api = \
-    'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?'
-
-    params = {
-        'key': scrim_app.config['STEAM_API_KEY'],
-        'steamid': steam_id, 
-        'format': json
-    }
-
-    response = requests.get(url=get_recently_played_games_api, params=params)
-    recently_played_games = response.json()
-
-    return recently_played_games['response'] or {}
 
 @scrim_app.route('/')
 @scrim_app.route('/index')
@@ -88,16 +56,17 @@ def after_login(resp):
     Creates a new user or gets the existing one
     """
 
+    from datetime import datetime as dt
+    from utils import steam_api
+
     steam_id_regex = re.compile('steamcommunity.com/openid/id/(.*?)$')
     steam_id = steam_id_regex.search(resp.identity_url).group(1)
-
-    from datetime import datetime as dt
 
     try:
         g.user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
         g.user = User()
-        steam_data = get_steam_user_info(steam_id)
+        steam_data              = steam_api.get_user_info(steam_id)
         g.user.steam_id         = steam_id
         g.user.nickname         = steam_data['personaname']
         g.user.profile_url      = steam_data['profileurl']
@@ -122,9 +91,10 @@ def before_request():
     Will probably do more stuff.
     """
 
-    g.user = None
     if 'user_id' in session:
         g.user = User.query.filter_by(id=session['user_id']).first()
+    else:
+        g.user = None
 
 @scrim_app.route('/logout')
 def logout():
@@ -205,6 +175,8 @@ def show_all_scrims(page=1):
     Scrim search page. Only visible for users who are part of a team
     """
 
+    from utils import scrim_filter
+
     if page < 1:
         abort(404)
 
@@ -233,7 +205,7 @@ def show_all_scrims(page=1):
         week[5] = str(int(form.sat.data))
         week[6] = str(int(form.sun.data))
         week = "".join(week)
-        possible_weekdays = utils.get_bit_combinations(week)
+        possible_weekdays = scrim_filter.scrim_days_combinations(week)
         query = query.filter(Team.week_days.in_(possible_weekdays))
     else:
         # set default values HACK - use user's first team
@@ -244,7 +216,7 @@ def show_all_scrims(page=1):
         
         # continue - set scrim time preferences
         first_team_weekdays = first_team.week_days
-        possible_weekdays = utils.get_bit_combinations(first_team_weekdays)
+        possible_weekdays = scrim_filter.scrim_days_combinations(first_team_weekdays)
         query = query.filter(Team.week_days.in_(possible_weekdays))
 
     from config import TEAMS_PER_PAGE
