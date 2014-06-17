@@ -30,7 +30,9 @@
 				  <li {% if request.path == "/users" %}class="active"{% endif %}><a href="{{ url_for('show_all_users') }}"><i class="fa fa-users"></i> Users</a></li>
 				  <li {% if request.path == "/teams" %}class="active"{% endif %}><a href="{{ url_for('show_all_teams') }}"><i class="fa fa-sort-alpha-asc"></i> Teams</a></li>
 
+				  {% if current_user.is_authenticated() %}
 				  <li {% if "/scrims" in request.path %}class="active"{% endif %}><a href="{{ url_for('show_all_scrims') }}"><i class="fa fa-bullhorn"></i> Scrims</a></li>
+				  {% endif %}
 		  </ul>
 <form class="navbar-form navbar-left">
       <input type="text" class="form-control col-lg-8" placeholder="Search Teams">
