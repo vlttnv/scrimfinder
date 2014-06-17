@@ -192,9 +192,6 @@ def show_all_scrims(page=1):
             query = query.filter(Team.id != mem.team_id)
 
     from utils import scrim_filter
-
-    print form.clear.data
-
     if form.clear.data == True:
         print 'waoeakoewkaoe'
         form.team_skill_level.data = 'ALL'
