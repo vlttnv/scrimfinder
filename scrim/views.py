@@ -208,10 +208,22 @@ def show_all_scrims(page=1):
             player_1st_team_id = player_memberships[0].team_id
             player_1st_team = Team.query.filter_by(id=player_1st_team_id).one()
 
-            query = query.filter_by(skill_level=player_1st_team.skill_level)
+            form.team_skill_level.data = player_1st_team.skill_level
+            form.team_time_zone.data = player_1st_team.time_zone
+
+            query = query.filter_by(skill_level=player_1st_team.skill_level)            
             query = query.filter_by(time_zone=player_1st_team.time_zone)
         
             scrim_days = player_1st_team.week_days
+           
+            form.mon.data = bool(int(scrim_days[0]))
+            form.tue.data = bool(int(scrim_days[1]))
+            form.wed.data = bool(int(scrim_days[2]))
+            form.thu.data = bool(int(scrim_days[3]))
+            form.fri.data = bool(int(scrim_days[4]))
+            form.sat.data = bool(int(scrim_days[5]))
+            form.sun.data = bool(int(scrim_days[6]))
+
             matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
             query = query.filter(Team.week_days.in_(matched_scrim_days))
         except NoResultFound as e:

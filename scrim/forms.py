@@ -6,7 +6,7 @@ from consts import *
 class UserEditForm(Form):
     team_name           = TextField('team_name', validators = [Required()])
     #team_skill_level    = SelectField(u'team_skill_level', choices=[(UGC_IRON, UGC_IRON),(UGC_STEEL, UGC_STEEL),(UGC_SILVER, UGC_SILVER),(UGC_GOLD, UGC_GOLD), (UGC_PLATINUM, UGC_PLATINUM)])
-    team_skill_level    = SelectField('team_skill_level', choices=[SKILL_LEVEL])
+    team_skill_level    = SelectField('team_skill_level', choices=CHOICES_SKILLS)
     team_time_zone      = SelectField('team_time_zone', choices=CHOICES_ZONES)
 
 class TeamEditForm(Form):

@@ -31,21 +31,21 @@ def create_bot_teams():
     time zone, scrim time, etc.
     """
 
-    from consts import SKILL_LEVEL, TIME_ZONE
+    from consts import CHOICES_SKILLS, CHOICES_ZONES
     from utils import scrim_filter
 
     fake_name = '@_Team'
 
-    for skill in SKILL_LEVEL:
-        for time in TIME_ZONE:
-            possible_weekdays = scrim_filter.scrim_days_combinations('0000000')
-            for weekday in possible_weekdays:
+    for skill,_ in CHOICES_SKILLS:
+        for time,_ in CHOICES_ZONES:
+            combinations = scrim_filter.scrim_days_combinations('0000000')
+            for scrim_days in combinations:
                 bot_team = Team()
-                bot_team.name = fake_name + '_' + str(skill) + '_' + str(time) + '_' + str(weekday)
+                bot_team.name = fake_name + '_' + str(skill) + '_' + str(time) + '_' + str(scrim_days)
                 bot_team.skill_level = skill
                 bot_team.time_zone = time
                 bot_team.reputation = '42'
-                bot_team.week_days = weekday
+                bot_team.week_days = scrim_days
                 db.session.add(bot_team)
     
     db.session.commit()
