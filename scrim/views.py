@@ -150,8 +150,8 @@ def show_all_teams(page=1):
         abort(404)
 
     query = Team.query
-    form = FilterTeamForm()
 
+    form = FilterTeamForm()
     if form.validate_on_submit():
         if form.team_name != "":
             query = query.filter(Team.name.like('%'+form.team_name.data+'%'))

@@ -46,7 +46,7 @@ class CreateTeamForm(Form):
     sun = BooleanField('Sunday')
 
 class SearchTeamForm(Form):
-    team_skill_level  = SelectField('team_skill_level', choices=FILTER_SKILLS)
+    team_skill_level  = SelectField('team_skill_level', choices=CHOICES_SKILLS)
     team_time_zone    = SelectField('team_time_zone', choices=FILTER_ZONES)
 
     mon = BooleanField('Monday')
@@ -70,19 +70,19 @@ class SearchTeamForm(Form):
         return scrim_days
 
 class FilterTeamForm(SearchTeamForm):
-    team_name         = TextField('team_name')
+    team_name = TextField('team_name')
 
 class FilterScrimForm(SearchTeamForm):
     pass
 
 class ProposeScrimForm(Form):
-    team = SelectField('team', choices=[])
-    time_zone = SelectField('time_zone', choices=[])
-    day = SelectField('day', choices=[])
+    team       = SelectField('team', choices=[])
+    time_zone  = SelectField('time_zone', choices=[])
+    day        = SelectField('day', choices=[])
     start_time = SelectField('start_time', choices=[])
-    utc_time = TextField('utc_time', validators=[Required()])
-    map = TextField('map', validators=[Required()])
-    type = SelectField('type', choices=[('4v4','4v4'),('6v6','6v6'),('9v9','9v9')])
+    utc_time   = TextField('utc_time', validators=[Required()])
+    map        = TextField('map', validators=[Required()])
+    type       = SelectField('type', choices=[('4v4','4v4'),('6v6','6v6'),('9v9','9v9')])
 
 class AcceptScrimForm(Form):
     map = TextField('map', validators=[Required()])

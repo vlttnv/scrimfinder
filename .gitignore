@@ -1,3 +1,6 @@
+# db
+app.db
+
 # project stuff
 config.py
 *.swp
