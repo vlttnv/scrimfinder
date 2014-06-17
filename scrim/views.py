@@ -193,13 +193,27 @@ def show_all_scrims(page=1):
 
     from utils import scrim_filter
 
-    if form.validate_on_submit():
+    print form.clear.data
+
+    if form.clear.data == True:
+        print 'waoeakoewkaoe'
+        form.team_skill_level.data = 'ALL'
+        form.team_time_zone.data = 'ALL'
+        form.mon.data = False
+        form.tue.data = False
+        form.wed.data = False
+        form.thu.data = False
+        form.fri.data = False
+        form.sat.data = False
+        form.sun.data = False
+        form.clear.data = False
+    elif form.validate_on_submit():
         if form.team_skill_level.data != 'ALL':
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != 'ALL':
             query = query.filter_by(time_zone=form.team_time_zone.data)
-        
-        scrim_days = form.read_scrim_days(form)
+
+        scrim_days = form.read_scrim_days()
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
         query = query.filter(Team.week_days.in_(matched_scrim_days))
     else:

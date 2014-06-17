@@ -46,7 +46,7 @@ class CreateTeamForm(Form):
     sun = BooleanField('Sunday')
 
 class SearchTeamForm(Form):
-    team_skill_level  = SelectField('team_skill_level', choices=CHOICES_SKILLS)
+    team_skill_level  = SelectField('team_skill_level', choices=FILTER_SKILLS)
     team_time_zone    = SelectField('team_time_zone', choices=FILTER_ZONES)
 
     mon = BooleanField('Monday')
@@ -57,15 +57,15 @@ class SearchTeamForm(Form):
     sat = BooleanField('Saturday')
     sun = BooleanField('Sunday')
 
-    def read_scrim_days(form):
+    def read_scrim_days(self):
         scrim_days    = list('0000000')
-        scrim_days[0] = str(int(form.mon.data))
-        scrim_days[1] = str(int(form.tue.data))
-        scrim_days[2] = str(int(form.wed.data))
-        scrim_days[3] = str(int(form.thu.data))
-        scrim_days[4] = str(int(form.fri.data))
-        scrim_days[5] = str(int(form.sat.data))
-        scrim_days[6] = str(int(form.sun.data))
+        scrim_days[0] = str(int(self.mon.data))
+        scrim_days[1] = str(int(self.tue.data))
+        scrim_days[2] = str(int(self.wed.data))
+        scrim_days[3] = str(int(self.thu.data))
+        scrim_days[4] = str(int(self.fri.data))
+        scrim_days[5] = str(int(self.sat.data))
+        scrim_days[6] = str(int(self.sun.data))
         scrim_days    = ''.join(scrim_days)
         return scrim_days
 
@@ -73,7 +73,7 @@ class FilterTeamForm(SearchTeamForm):
     team_name = TextField('team_name')
 
 class FilterScrimForm(SearchTeamForm):
-    pass
+    clear = BooleanField('Clear')
 
 class ProposeScrimForm(Form):
     team       = SelectField('team', choices=[])
