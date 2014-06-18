@@ -131,4 +131,18 @@ def create_scrims():
     scrim_rejected.state    = SCRIM_REJECTED
     db.session.add(scrim_rejected)
 
+    another_day = now - timedelta(days=now.weekday() + 1)
+    scrim_finished = Scrim()
+    scrim_finished.date     = another_day
+    scrim_finished.map1     = 'Team Map1'
+    scrim_finished.map2     = 'Team Map2'
+    scrim_finished.team1_id = team1.id
+    scrim_finished.team1    = team1
+    scrim_finished.team2_id = team2.id
+    scrim_finished.team2    = team2
+    scrim_finished.type     = 'Won by Team 1'
+    scrim_finished.result   = 'Won'
+    scrim_finished.state    = SCRIM_FINISHED
+    db.session.add(scrim_finished)
+
     db.session.commit()

@@ -108,18 +108,26 @@
 	<em>Map 1:</em> {{ scrim_info.scrim.map1 }}, <em>Map 2:</em> {{ scrim_info.scrim.map2 }}<br>
 	Type: {{ scrim_info.scrim.type }}
 	
-	{% if scrim_info.state == "Accepted" %}
-		Add Scrim Accepted Label
+	{% if scrim_info.state == "Finished" %}
+		<span class="accepted" style="color:orange">Add Finished Label</span>
+		State: {{ scrim_info.scrim.state }}
+		{% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
+			Result: {{ scrim_info.scrim.result }}
+		{% else %}
+			Result: Opposite of {{ scrim_info.scrim.result }}
+		{% endif %}
+	{% elif scrim_info.state == "Accepted" %}
+		<span class="accepted" style="color:green">Add Accepted Label</span>
 		State: {{ scrim_info.scrim.state }}
 	{% elif scrim_info.state == "Rejected" %}
-		Add Scrim Rejected Label
+		<span class="accepted" style="color:red">Add Rejected Label</span>
 		State: {{ scrim_info.scrim.state }}
 	{% elif scrim_info.state == "Sent" %}
-		Add Scrim Proposal Sent Label
+		<span class="accepted" style="color:blue">Add Sent Label</span>
 		State: {{ scrim_info.scrim.state }}
 		<a href="#">Waiting for response</a>
 	{% elif scrim_info.state == "Received" %}
-		Add Scrim Proposal Received Label
+		<span class="accepted" style="color:brown">Add Received Label</span>
 		State: {{ scrim_info.scrim.state }}
 		<a href="#">Accept</a> <a href="#">Reject</a>
 	{% endif %}

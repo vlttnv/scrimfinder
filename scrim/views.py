@@ -480,7 +480,18 @@ def team_page(team_id):
     for scrim in all_scrims.all():
         print scrim.state
 
-        if scrim.state == SCRIM_ACCEPTED:
+        if scrim.state == SCRIM_FINISHED:
+            opponent = None
+            if scrim.team1_id == team_id:
+                opponent = Team.query.filter_by(id=scrim.team2_id).one()
+            else:
+                opponent = Team.query.filter_by(id=scrim.team1_id).one()
+            scrims_list.append({
+                'state': SCRIM_FINISHED,
+                'opponent': opponent,
+                'scrim': scrim
+            })
+        elif scrim.state == SCRIM_ACCEPTED:
             opponent = None
             if scrim.team1_id == team_id:
                 opponent = Team.query.filter_by(id=scrim.team2_id).one()
