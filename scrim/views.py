@@ -168,7 +168,7 @@ def show_all_teams(page=1):
     
     return render_template('all_teams.html', teams_list=teams_list, form=form)
 
-@scrim_app.route('/scrims', methods=['GET','POST'])
+@scrim_app.route('/scrims/', methods=['GET','POST'])
 @scrim_app.route('/scrims/page/<int:page>', methods=['GET','POST'])
 @login_required
 def show_all_scrims(page=1):

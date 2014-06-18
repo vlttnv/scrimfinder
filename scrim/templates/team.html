@@ -2,10 +2,24 @@
 
 {% block body %}
 <div class="page-header" >
-		<h1>{{team.name}}  {% if (g.user, "Captain") in members_roles %}
-				<a href="{{url_for('edit_team', team_id=team.id)}}"><i class="fa fa-pencil"></i></a>{% endif %}{% if not in_team %}
-<a href="{{url_for('team_join', team_id=team.id)}}" class="btn btn-warning">Join team</a>
-{% endif %}</h1>
+		<h1>{{team.name}}  
+<div class="btn-group">
+		    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+			  <ul class="dropdown-menu">
+					      <li> {% if (g.user, "Captain") in members_roles %}
+				<a href="{{url_for('edit_team', team_id=team.id)}}"><i class="fa fa-pencil"></i> Edit Team</a>{% endif %}</li>
+							      <li> {% if not in_team %}
+								  <a href="{{url_for('team_join', team_id=team.id)}}" ><i class="fa fa-envelope"></i> Request to join</a>
+{% endif %}</li>
+<li>
+{% if propose_scrim %}
+<a href="{{url_for('propose_scrim', opponent_team_id=team.id)}}"><i class="fa fa-bullseye"></i> Propose Scrim</a>
+{% endif %}
+
+</li>
+										    </ul>
+									</div>
+</h1>
 </div>
 
 <div class="row">
@@ -42,7 +56,7 @@
 				</div>
 				<div class="row">
 						<div class="col-md-12">
-								<div class="panel panel-warning">
+								<div class="panel panel-info">
 										<div class="panel-heading">
 												<h3 class="panel-title"><i class="fa fa-users"></i> Members</h3>
 							   	</div>
@@ -67,10 +81,78 @@
 {% endif %}
 </tr>
 {% endfor %}
+{% for pending in pendings %}
+<tr class="warning">
+		<td>{{pending.nickname}}</td>
+		<td></td>
+		<td></td>
+		<td>  <a  href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-warning">Accept user</span></a>
+  </td>
+</tr> 
+{% endfor %}
+
       </tbody>
 </table> 
+
 </div>
-						</div>
+<div class="panel panel-success">
+  <div class="panel-heading">
+    <h3 class="panel-title">Accepted Scrims</h3>
+  </div>
+<ul class="list-group">
+{% for team, scrim in scrim_final %}
+	<li class="list-group-item">
+	<span class="badge">{{ scrim.date }}</span>
+	<strong>Versus:</strong> {{team.name}}<br>
+	<em>Map 1:</em> {{ scrim.map1 }}, <em>Map 2:</em> {{ scrim.map2 }}<br>
+	Type: {{ scrim.type }}
+	</li>
+{% endfor %}
+
+</ul>
+</div>
+<div class="panel panel-warning">
+  <div class="panel-heading">
+    <h3 class="panel-title">Pending Scrims</h3>
+  </div>
+<ul class="list-group">
+{% for team, scrim in scrim_sent %}
+	<li class="list-group-item">
+	<span class="badge">{{ scrim.date }}</span>
+	<strong>Versus:</strong> {{team.name}}<br>
+	<em>Map 1:</em> {{ scrim.map1 }}<br>
+	Type: {{ scrim.type }}
+	</li>
+{% endfor %}
+{% for team, scrim in scrim_received %}
+	<li class="list-group-item">
+	<span class="badge"> {{ scrim.date }}</span>
+	<strong>Versus:</strong> {{team.name}} <a href="{{ url_for('accept_scrim', scrim_id=scrim.id) }}"> Accept</a>
+	<a href="{{ url_for('reject_scrim', scrim_id=scrim.id) }}"> Reject</a> <br>
+	<em>Map 1:</em> {{ scrim.map1 }}<br>
+	Type: {{ scrim.type }}
+	</li>
+
+{% endfor %}
+
+</ul>
+</div>
+	<div class="panel panel-danger">
+  <div class="panel-heading">
+    <h3 class="panel-title">Rejected Scrims</h3>
+  </div>
+<ul class="list-group">
+{% for team, scrim in scrim_rejected %}
+	<li class="list-group-item">
+	<span class="badge">{{ scrim.date }}</span>
+	<strong>Versus:</strong> {{team.name}}<br>
+	<em>Map 1:</em> {{ scrim.map1 }}, <em>Map 2</em> {{ scrim.map2 }}<br>
+	Type: {{ scrim.type }}
+	</li>
+{% endfor %}
+
+</ul>
+</div>					</div>
 				</div>
 		</div>
 		<div class="col-lg-4">
@@ -80,7 +162,7 @@
 						</div>
 						<div class="panel-body">
 {% if not com_list %}
-<h1>LOL</h1>
+<p class="text-muted">There is no feedback for this team yet.</p>
 {% else %}
 {% for name,text in com_list %}
 <div class="col-lg-2">
@@ -94,7 +176,6 @@
 {% endfor %}
 {% endif %}
 {% if not dont_show %}
-<br><br>
 <hr>
 <form role="form"  action="{{url_for('team_page', team_id=team.id)}}" method="post" name="comment">
 		{{form.hidden_tag()}}
@@ -121,88 +202,8 @@
 
 
 
-<h1>Members</h1>
-{% for user, role in members_roles %}
-<p>
-  Role: {{ role }},
-  <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a></li> </b>
-{% if (g.user, "Captain") in members_roles %}
-<a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
-<a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a>
-
-{% endif %}
-</p>
-{% endfor %}
 
 <p>Scrim History <a href="{{ url_for('scrim_history', team_id=team.id, page=1) }}"> Link </a></p>
 
-<h1>Scrimsssssssss</h1>
-{% for team, scrim in scrim_final %}
-	<p>Team: {{ team.name }} <a href="#"> To be played against </a></p>
-	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
-	<p>TODO: Convert time to your timezone</p>
-	<p>Map1: {{ scrim.map1 }}</p>
-	<p>Map2: {{ scrim.map2 }}</p>
-	<p>Type: {{ scrim.type }}</p>
-{% endfor %}
 
-<h1>Rejections</h1>
-{% for team, scrim in scrim_rejected %}
-	<p>Team: {{ team.name }} <a href="#"> Rejected by </a></p>
-	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
-	<p>TODO: Convert time to your timezone</p>
-	<p>Map1: {{ scrim.map1 }}</p>
-	<p>Type: {{ scrim.type }}</p>
-{% endfor %}
-
-<h1>Pendingssssssss</h1>
-{% for team, scrim in scrim_sent %}
-	<p>Team: <a href="#">{{ team.name }}</a> <a href="#"> Waiting for response</a> </p>
-	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
-	<p>TODO: Convert time to your timezone</p>
-	<p>Your Map: {{ scrim.map1 }}</p>
-	<p>Type: {{ scrim.type }}</p>
-{% endfor %}
-
-{% for team, scrim in scrim_received %}
-	<p>Team: <a href="#">{{ team.name }}</a>
-		<a href="{{ url_for('accept_scrim', scrim_id=scrim.id) }}"> Accept</a>
-		<a href="{{ url_for('reject_scrim', scrim_id=scrim.id) }}"> Reject</a></p>
-	<p>Date (from db - so in UTC) : {{ scrim.date }}</p>
-	<p>TODO: Convert time to your timezone</p>
-	<p>Their map: {{ scrim.map1 }}</p>
-	<p>Type: {{ scrim.type }}</p>
-{% endfor %}
-
-{% for pending in pendings %}
-<p>
-{{pending.nickname}} <a href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> Accept user</a>
-</p> 
-{% endfor %}
-
-<h1>Comments</h1>
-{% if not dont_show %}
-<form action="{{url_for('team_page', team_id=team.id)}}" method="post" name="comment">
-		{{form.hidden_tag()}}
-		<table>
-				<tr>
-						<td>Comment</td>
-						<td>{{form.text()}}</td>
-				</tr>
-				<tr>
-						<td></td>
-						<td><input type="submit" value="Comment"></td>
-				</tr>
-		</table>
-</form>
-{% endif %}
-{% if not com_list %}
-<h1>LOL</h1>
-{% else %}
-{% for name,text in com_list %}
-<h3>{{name}}</h3>
-<p>{{text}}</p>
-<hr>
-{% endfor %}
-{% endif %}
 {% endblock %}
