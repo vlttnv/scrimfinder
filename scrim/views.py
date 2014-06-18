@@ -192,8 +192,7 @@ def show_all_scrims(page=1):
             query = query.filter(Team.id != mem.team_id)
 
     from utils import scrim_filter
-    if form.clear.data == True:
-        print 'waoeakoewkaoe'
+    if page == 1 and form.clear.data == True:
         form.team_skill_level.data = 'ALL'
         form.team_time_zone.data = 'ALL'
         form.mon.data = False
