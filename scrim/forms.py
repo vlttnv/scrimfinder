@@ -69,11 +69,30 @@ class SearchTeamForm(Form):
         scrim_days    = ''.join(scrim_days)
         return scrim_days
 
+    def reset(self):
+        self.team_skill_level.data = 'ALL'
+        self.team_time_zone.data = 'ALL'
+        self.mon.data = False
+        self.tue.data = False
+        self.wed.data = False
+        self.thu.data = False
+        self.fri.data = False
+        self.sat.data = False
+        self.sun.data = False
+
 class FilterTeamForm(SearchTeamForm):
     team_name = TextField('team_name')
 
+    def reset(self):
+        super(FilterTeamForm, self).reset()
+        self.team_name.data = ''
+
 class FilterScrimForm(SearchTeamForm):
     clear = BooleanField('Clear')
+
+    def reset(self):
+        super(FilterScrimForm, self).reset()
+        self.clear.data = False
 
 class ProposeScrimForm(Form):
     team       = SelectField('team', choices=[])

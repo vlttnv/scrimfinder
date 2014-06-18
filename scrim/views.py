@@ -191,20 +191,12 @@ def show_all_scrims(page=1):
     query = Team.query
     for mem in player_memberships:
             query = query.filter(Team.id != mem.team_id)
+   
+    if form.clear.data == True:
+        form.reset()
 
     from utils import scrim_filter
-    if page == 1 and form.clear.data == True:
-        form.team_skill_level.data = 'ALL'
-        form.team_time_zone.data = 'ALL'
-        form.mon.data = False
-        form.tue.data = False
-        form.wed.data = False
-        form.thu.data = False
-        form.fri.data = False
-        form.sat.data = False
-        form.sun.data = False
-        form.clear.data = False
-    elif form.validate_on_submit():
+    if form.validate_on_submit():
         if form.team_skill_level.data != 'ALL':
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != 'ALL':
