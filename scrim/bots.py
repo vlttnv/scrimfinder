@@ -1,5 +1,5 @@
 from scrim import db, models
-from models import User, Team
+from models import User, Team, Scrim
 
 def create_bot_users():
     """
@@ -59,3 +59,76 @@ def make_bot_join_team():
     all_teams = Team.query.filter(Team.name.startswith('@_Team')).all()
 
     # TODO: make bot users join team
+
+def create_scrims():
+
+    from consts import UGC_PLATINUM, TIME_EDT
+    from consts import SCRIM_PROPOSED, SCRIM_ACCEPTED, SCRIM_REJECTED, SCRIM_FINISHED
+    from datetime import datetime, timedelta
+
+    team1 = Team()
+    team1.name = 'Scrim Team 1'
+    team1.skill_level = UGC_PLATINUM
+    team1.time_zone = TIME_EDT
+    db.session.add(team1)
+
+    team2 = Team()
+    team2.name = 'Scrim Team 2'
+    team2.skill_level = UGC_PLATINUM
+    team2.time_zone = TIME_EDT
+    db.session.add(team2)
+
+    db.session.flush()
+
+    now = datetime.utcnow()
+
+    scrim_proposed = Scrim()
+    scrim_proposed.date     = now
+    scrim_proposed.map1     = 'Team Map1'
+    scrim_proposed.team1_id = team1.id
+    scrim_proposed.team1    = team1
+    scrim_proposed.team2_id = team2.id
+    scrim_proposed.team2    = team2
+    scrim_proposed.type     = 'Proposed by Team 1'
+    scrim_proposed.state    = SCRIM_PROPOSED
+    db.session.add(scrim_proposed)
+
+    another_day = now - timedelta(days=now.weekday() + 4)
+    scrim_proposed2 = Scrim()
+    scrim_proposed2.date     = another_day
+    scrim_proposed2.map1     = 'Team Map2'
+    scrim_proposed2.team1_id = team2.id
+    scrim_proposed2.team1    = team2
+    scrim_proposed2.team2_id = team1.id
+    scrim_proposed2.team2    = team1
+    scrim_proposed2.type     = 'Proposed by Team 2'
+    scrim_proposed2.state    = SCRIM_PROPOSED
+    db.session.add(scrim_proposed2)
+
+    another_day = now - timedelta(days=now.weekday() + 3)
+    scrim_accepted = Scrim()
+    scrim_accepted.date     = another_day
+    scrim_accepted.map1     = 'Team Map1'
+    scrim_accepted.map2     = 'Team Map2'
+    scrim_accepted.team1_id = team1.id
+    scrim_accepted.team1    = team1
+    scrim_accepted.team2_id = team2.id
+    scrim_accepted.team2    = team2
+    scrim_accepted.type     = 'Accepted by Team 2'
+    scrim_accepted.state    = SCRIM_ACCEPTED
+    db.session.add(scrim_accepted)
+
+    another_day = now - timedelta(days=now.weekday() + 2)
+    scrim_rejected = Scrim()
+    scrim_rejected.date     = another_day
+    scrim_rejected.map1     = 'Team Map1'
+    scrim_rejected.map2     = 'Team Map2'
+    scrim_rejected.team1_id = team1.id
+    scrim_rejected.team1    = team1
+    scrim_rejected.team2_id = team2.id
+    scrim_rejected.team2    = team2
+    scrim_rejected.type     = 'Rejected by Team 2'
+    scrim_rejected.state    = SCRIM_REJECTED
+    db.session.add(scrim_rejected)
+
+    db.session.commit()

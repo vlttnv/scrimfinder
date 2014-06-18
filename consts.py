@@ -65,6 +65,10 @@ SCRIM_STATES   = [
     SCRIM_REJECTED,
     SCRIM_FINISHED]
 
+# sub scrim states
+SCRIM_RECEIVED = "Received"
+SCRIM_SENT     = "Sent"
+
 # scrim results
 SCRIM_LOST = "Lost"
 SCRIM_WON  = "Won"

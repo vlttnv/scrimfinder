@@ -1,11 +1,12 @@
 from scrim import scrim_app, oid, db, models, lm
 from models import User, Team, Request, Membership, Comment, Scrim
 from utils import steam_api
+from consts import *
 from flask import request, redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
-from sqlalchemy import func, and_, or_
+from sqlalchemy import func, and_, or_, desc
 from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, \
     FilterScrimForm, TeamCommentForm, ProposeScrimForm, AcceptScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -425,7 +426,7 @@ def team_page(team_id):
 
     The pending members view will be restricted to the team leader
     """
-    
+
     form = TeamCommentForm()
 
     try:
@@ -466,47 +467,53 @@ def team_page(team_id):
     if in_team == False and is_captain:
         propose_scrim = True
 
-    # find all the scrims
     all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
-    
-    from consts import SCRIM_ACCEPTED
-    scrim_accepted = all_scrims.filter_by(state=SCRIM_ACCEPTED).all()
-    scrim_final = []
-    for scrim in scrim_accepted:
-        if scrim.team1_id == team_id:
-            other_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrim_final.append((other_team, scrim))
-        else:
-            other_team = Team.query.filter_by(id=scrim.team1_id).one()
-            scrim_final.append((other_team, scrim))
+    all_scrims = all_scrims.order_by(desc(Scrim.date))
+    scrims_list = []
+    # {
+    #   'state',
+    #   'opponent',
+    #   'scrim'
+    # }
 
-    from consts import SCRIM_REJECTED
-    # find all the scrim proposals 'rejected'
-    scrim_rejections = all_scrims.filter_by(state=SCRIM_REJECTED).all()
-    scrim_rejected = []
-    for scrim in scrim_rejections:
-        # team1: the team to make the proposal
-        if scrim.team1_id == team_id:
-            rejecting_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrim_rejected.append((rejecting_team, scrim))
+    # still need to cover scrim finished
+    for scrim in all_scrims.all():
+        print scrim.state
 
-    from consts import SCRIM_PROPOSED
-    # find all the scrim proposals 'received'
-    scrim_proposals = all_scrims.filter_by(state=SCRIM_PROPOSED).all()
-    scrim_received = []
-    for scrim in scrim_proposals:
-        # team2: the team to accept or reject the proposal
-        if scrim.team2_id == team_id:
-            # team1: the team to propose the scrim
+        if scrim.state == SCRIM_ACCEPTED:
+            print 'here'
+            accepted_by = None
+            if scrim.team1_id == team_id:
+                accepted_by = Team.query.filter_by(id=scrim.team2_id).one()
+            else:
+                accepted_by = Team.query.filter_by(id=scrim.team1_id).one()
+            scrims_list.append({
+                'state': SCRIM_ACCEPTED,
+                'opponent': accepted_by,
+                'scrim': scrim
+            })
+        elif scrim.state == SCRIM_REJECTED:
+            rejected_by = Team.query.filter_by(id=scrim.team2_id).one()
+            scrims_list.append({
+                'state': SCRIM_REJECTED,
+                'opponent': rejected_by,
+                'scrim': scrim
+            })
+        elif scrim.state == SCRIM_PROPOSED and scrim.team2_id == team_id:
             proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
-            scrim_received.append((proposing_team, scrim))
-
-    # find all the scrim proposals 'sent'
-    scrim_sent = []
-    for scrim in scrim_proposals:
-        if scrim.team1_id == team_id:
-            accepting_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrim_sent.append((accepting_team, scrim))
+            scrims_list.append({
+                'state': SCRIM_RECEIVED,
+                'opponent': proposing_team,
+                'scrim': scrim
+            })
+        elif scrim.state == SCRIM_PROPOSED and scrim.team1_id == team_id:
+            print 'here2'
+            responding_team = Team.query.filter_by(id=scrim.team2_id).one()
+            scrims_list.append({
+                'state': SCRIM_SENT,
+                'opponent': responding_team,
+                'scrim': scrim
+            })
 
     # What's the team availability in days
     days = team.week_days
@@ -544,11 +551,7 @@ def team_page(team_id):
                 form=form,
                 com_list=comment_list,
                 dont_show=dont_show,
-                propose_scrim=propose_scrim,
-                scrim_final=scrim_final,
-                scrim_rejected=scrim_rejected,
-                scrim_received=scrim_received,
-                scrim_sent=scrim_sent)
+                scrims_list=scrims_list)
 
 @scrim_app.route('/team/<team_id>/promote/<user_id>')
 @login_required
@@ -830,3 +833,14 @@ def bots_boom():
     bots.make_bot_join_team()
 
     return 'Trust me. It worked.', 200
+
+@scrim_app.route('/bots/scrims')
+def bots_scrims():
+    """
+    """
+
+    from scrim import bots
+
+    bots.create_scrims()
+
+    return 'Does it work?', 200

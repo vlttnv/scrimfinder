@@ -97,34 +97,51 @@
 </div>
 <div class="panel panel-success">
   <div class="panel-heading">
-    <h3 class="panel-title">Accepted Scrims</h3>
+    <h3 class="panel-title">All the Scrims</h3>
   </div>
+
 <ul class="list-group">
-{% for team, scrim in scrim_final %}
+{% for scrim_info in scrims_list %}
 	<li class="list-group-item">
-	<span class="badge">{{ scrim.date }}</span>
-	<strong>Versus:</strong> {{team.name}}<br>
-	<em>Map 1:</em> {{ scrim.map1 }}, <em>Map 2:</em> {{ scrim.map2 }}<br>
-	Type: {{ scrim.type }}
+	<span class="badge">{{ scrim_info.scrim.date }}</span>
+	<strong>Versus:</strong> {{ scrim_info.opponent.name }}<br>
+	<em>Map 1:</em> {{ scrim_info.scrim.map1 }}, <em>Map 2:</em> {{ scrim_info.scrim.map2 }}<br>
+	Type: {{ scrim_info.scrim.type }}
+	
+	{% if scrim_info.state == "Accepted" %}
+		Add Scrim Accepted Label
+		State: {{ scrim_info.scrim.state }}
+	{% elif scrim_info.state == "Rejected" %}
+		Add Scrim Rejected Label
+		State: {{ scrim_info.scrim.state }}
+	{% elif scrim_info.state == "Sent" %}
+		Add Scrim Proposal Sent Label
+		State: {{ scrim_info.scrim.state }}
+		<a href="#">Waiting for response</a>
+	{% elif scrim_info.state == "Received" %}
+		Add Scrim Proposal Received Label
+		State: {{ scrim_info.scrim.state }}
+		<a href="#">Accept</a> <a href="#">Reject</a>
+	{% endif %}
 	</li>
 {% endfor %}
-
 </ul>
-</div>
+
+<!-- </div>
 <div class="panel panel-warning">
   <div class="panel-heading">
     <h3 class="panel-title">Pending Scrims</h3>
   </div>
-<ul class="list-group">
-{% for team, scrim in scrim_sent %}
+<ul class="list-group"> -->
+<!-- {% for team, scrim in scrim_sent %}
 	<li class="list-group-item">
 	<span class="badge">{{ scrim.date }}</span>
 	<strong>Versus:</strong> {{team.name}}<br>
 	<em>Map 1:</em> {{ scrim.map1 }}<br>
 	Type: {{ scrim.type }}
 	</li>
-{% endfor %}
-{% for team, scrim in scrim_received %}
+{% endfor %} -->
+<!-- {% for team, scrim in scrim_received %}
 	<li class="list-group-item">
 	<span class="badge"> {{ scrim.date }}</span>
 	<strong>Versus:</strong> {{team.name}} <a href="{{ url_for('accept_scrim', scrim_id=scrim.id) }}"> Accept</a>
@@ -133,9 +150,9 @@
 	Type: {{ scrim.type }}
 	</li>
 
-{% endfor %}
+{% endfor %} -->
 
-</ul>
+<!-- </ul>
 </div>
 	<div class="panel panel-danger">
   <div class="panel-heading">
@@ -151,7 +168,7 @@
 	</li>
 {% endfor %}
 
-</ul>
+</ul> -->
 </div>					</div>
 				</div>
 		</div>
