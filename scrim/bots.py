@@ -62,20 +62,20 @@ def make_bot_join_team():
 
 def create_scrims():
 
-    from consts import UGC_PLATINUM, TIME_EDT
+    from consts import UGC_PLATINUM
     from consts import SCRIM_PROPOSED, SCRIM_ACCEPTED, SCRIM_REJECTED, SCRIM_FINISHED
     from datetime import datetime, timedelta
 
     team1 = Team()
     team1.name = 'Scrim Team 1'
     team1.skill_level = UGC_PLATINUM
-    team1.time_zone = TIME_EDT
+    team1.time_zone = "CET"
     db.session.add(team1)
 
     team2 = Team()
     team2.name = 'Scrim Team 2'
     team2.skill_level = UGC_PLATINUM
-    team2.time_zone = TIME_EDT
+    team2.time_zone = "CET"
     db.session.add(team2)
 
     db.session.flush()

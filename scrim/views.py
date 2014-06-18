@@ -661,7 +661,7 @@ def team_accept_user(team_id, user_id):
     return redirect(url_for('team_page', team_id=team_id))         
 
 def hack_timezone(utc_offset):
-    
+    print 'something'
 
 @scrim_app.route('/scrim/propose/<int:opponent_team_id>', methods=['GET','POST'])
 @login_required

@@ -31,59 +31,65 @@ CHOICES_SKILLS = [
 FILTER_SKILLS = [(ALL, ALL)]
 FILTER_SKILLS.extend(CHOICES_SKILLS)
 
-TIME_EDT = "EDT", TIME_EDT_OFF = "-0400"
-TIME_CLT = "CLI", TIME_CLT_OFF = "-0400"
-TIME_BRT = "BRT", TIME_BRT_OFF = "-0300"
-TIME_UTC = "GMT/UTC", TIME_UTC_OFF = "+0000"
-TIME_CET = "CET", TIME_CET_OFF = "+0100"
-TIME_RST = "RST", TIME_RST_OFF = "+0000"
-TIME_AUS = "AUS", TIME_AUS_OFF = "+0000"
-TIME_NZ  = "NZ", TIME_NZ_OFF = "+1200"
 
-ZONES_DICT = [
+TIME_ZONES_DICT = [
     {
-        'time': TIME_EDT,
-        'offset': TIME_EDT_OFF, 
+        'label': "UTC",
+        'time_zone': "Etc/UTC"
     },
     {
-        'time': TIME_CLT,
-        'offset': TIME_CLT_OFF, 
+        'label': "CET",
+        'time_zone': "CET"
     },
     {
-        'time': TIME_BRT,
-        'offset': TIME_BRT_OFF, 
+        'label': "Los Angeles",
+        'time_zone': "America/Los_Angeles"
     },
     {
-        'time': TIME_UTC,
-        'offset': TIME_UTC_OFF, 
+        'label': "Vancouver",
+        'time_zone': "America/Vancouver"
     },
     {
-        'time': TIME_CET,
-        'offset': TIME_CET_OFF, 
+        'label': "Seoul",
+        'time_zone': "Asia/Seoul"
     },
     {
-        'time': TIME_RST,
-        'offset': TIME_RST_OFF, 
+        'label': "Singapore",
+        'time_zone': "Asia/Singapore"
     },
     {
-        'time': TIME_AUS,
-        'offset': TIME_AUS_OFF, 
+        'label': "Perth",
+        'time_zone': "Australia/Perth"
     },
     {
-        'time': TIME_NZ,
-        'offset': TIME_NZ_OFF, 
+        'label': "Sydney",
+        'time_zone': "Australia/Sydney"
     },
+    {
+        'label': "Amsterdam",
+        'time_zone': "Europe/Amsterdam"
+    },
+    {
+        'label': "London",
+        'time_zone': "Europe/London"
+    },
+        {
+        'label': "Luxembourg",
+        'time_zone': "Europe/Luxembourg"
+    },
+    {
+        'label': "Moscow",
+        'time_zone': "Europe/Moscow"
+    },
+    {
+        'label': "Sofia",
+        'time_zone': "Europe/Sofia"
+    }
 ]
 
-CHOICES_ZONES = [
-    (TIME_EDT,TIME_EDT),
-    (TIME_CLI,TIME_CLT),
-    (TIME_BRT,TIME_BRT),
-    (TIME_UTC,TIME_UTC),
-    (TIME_CET_OFF,TIME_CET),
-    (TIME_RST,TIME_RST),
-    (TIME_AUS,TIME_AUS),
-    (TIME_NZ,TIME_NZ)]
+CHOICES_ZONES = []
+for time in TIME_ZONES_DICT:
+    CHOICES_ZONES.append((time['time_zone'], time['label']))
 
 FILTER_ZONES = [(ALL, ALL)]
 FILTER_ZONES.extend(CHOICES_ZONES)
