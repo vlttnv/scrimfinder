@@ -9,11 +9,10 @@ class UserEditForm(Form):
     team_skill_level    = SelectField('team_skill_level', choices=CHOICES_SKILLS)
     team_time_zone      = SelectField('team_time_zone', choices=CHOICES_ZONES)
 
-class TeamEditForm(Form):
-    team_name           = TextField('team_name')
-    team_skill_level = SelectField('team_skill_level', choices=CHOICES_SKILLS)
-    team_time_zone      = SelectField('team_time_zone', 
-            choices=CHOICES_ZONES)
+class BaseTeamForm(Form):
+    team_name           = TextField('team_name', validators = [Required()])
+    team_skill_level    = SelectField('team_skill_level', choices=CHOICES_SKILLS)
+    team_time_zone      = SelectField('team_time_zone', choices=CHOICES_ZONES)
 
     mon = BooleanField('Monday')
     tue = BooleanField('Tuesday')
@@ -22,28 +21,18 @@ class TeamEditForm(Form):
     fri = BooleanField('Friday')
     sat = BooleanField('Saturday')
     sun = BooleanField('Sunday')
+
+class TeamEditForm(BaseTeamForm):
     time_from = SelectField('time_from',
             choices=[("8:00","8:00"),
                 ("9:00","9:00"),
                 ("10:00","10:00")])
 
+class CreateTeamForm(BaseTeamForm):
+    pass
+    
 class TeamCommentForm(Form):
     text                = TextAreaField('text', validators=[Required()])
-
-class CreateTeamForm(Form):
-    team_name           = TextField('team_name', validators = [Required()])
-    team_skill_level    = SelectField('team_skill_level', 
-            choices=CHOICES_SKILLS)
-    team_time_zone      = SelectField('team_time_zone', 
-            choices=CHOICES_ZONES)
-
-    mon = BooleanField('Monday')
-    tue = BooleanField('Tuesday')
-    wed = BooleanField('Wednesday')
-    thu = BooleanField('Thursday')
-    fri = BooleanField('Friday')
-    sat = BooleanField('Saturday')
-    sun = BooleanField('Sunday')
 
 class SearchTeamForm(Form):
     team_skill_level  = SelectField('team_skill_level', choices=FILTER_SKILLS)
