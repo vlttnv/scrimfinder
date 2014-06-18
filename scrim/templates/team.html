@@ -95,40 +95,39 @@
 </table> 
 
 </div>
-<div class="panel panel-success">
+<div class="panel panel-warning">
   <div class="panel-heading">
-    <h3 class="panel-title">All the Scrims</h3>
+		  <h3 class="panel-title"><i class="fa fa-bullseye"></i> Scrims</h3>
   </div>
 
 <ul class="list-group">
 {% for scrim_info in scrims_list %}
 	<li class="list-group-item">
-	<span class="badge">{{ scrim_info.scrim.date }}</span>
+	<span class="badge">{{ scrim_info.scrim.date }}
+	
+	
+	</span>
+
 	<strong>Versus:</strong> {{ scrim_info.opponent.name }}<br>
 	<em>Map 1:</em> {{ scrim_info.scrim.map1 }}, <em>Map 2:</em> {{ scrim_info.scrim.map2 }}<br>
 	Type: {{ scrim_info.scrim.type }}
 	
 	{% if scrim_info.state == "Finished" %}
-		<span class="accepted" style="color:orange">Add Finished Label</span>
-		State: {{ scrim_info.scrim.state }}
+		<span class="label label-default">{{ scrim_info.scrim.state }}</span>
 		{% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
 			Result: {{ scrim_info.scrim.result }}
 		{% else %}
 			Result: Opposite of {{ scrim_info.scrim.result }}
 		{% endif %}
 	{% elif scrim_info.state == "Accepted" %}
-		<span class="accepted" style="color:green">Add Accepted Label</span>
-		State: {{ scrim_info.scrim.state }}
+		<span class="label label-success">{{ scrim_info.scrim.state }}</span>
 	{% elif scrim_info.state == "Rejected" %}
-		<span class="accepted" style="color:red">Add Rejected Label</span>
-		State: {{ scrim_info.scrim.state }}
+		<span class="label label-danger">{{ scrim_info.scrim.state }}</span>
 	{% elif scrim_info.state == "Sent" %}
-		<span class="accepted" style="color:blue">Add Sent Label</span>
-		State: {{ scrim_info.scrim.state }}
+		<span class="label label-info">{{ scrim_info.scrim.state }}</span>
 		<a href="#">Waiting for response</a>
 	{% elif scrim_info.state == "Received" %}
-		<span class="accepted" style="color:brown">Add Received Label</span>
-		State: {{ scrim_info.scrim.state }}
+		<span class="label label-info">{{ scrim_info.scrim.state }}</span>
 		<a href="#">Accept</a> <a href="#">Reject</a>
 	{% endif %}
 	</li>
