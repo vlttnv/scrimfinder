@@ -31,21 +31,56 @@ CHOICES_SKILLS = [
 FILTER_SKILLS = [(ALL, ALL)]
 FILTER_SKILLS.extend(CHOICES_SKILLS)
 
-TIME_EDT = "EDT"
-TIME_CLI = "CLI"
-TIME_BRT = "BRT"
-TIME_UTC = "GMT/UTC"
-TIME_CET = "CET"
-TIME_RST = "RST"
-TIME_AUS = "AUS"
-TIME_NZ  = "NZ"
+TIME_EDT = "EDT", TIME_EDT_OFF = "-0400"
+TIME_CLT = "CLI", TIME_CLT_OFF = "-0400"
+TIME_BRT = "BRT", TIME_BRT_OFF = "-0300"
+TIME_UTC = "GMT/UTC", TIME_UTC_OFF = "+0000"
+TIME_CET = "CET", TIME_CET_OFF = "+0100"
+TIME_RST = "RST", TIME_RST_OFF = "+0000"
+TIME_AUS = "AUS", TIME_AUS_OFF = "+0000"
+TIME_NZ  = "NZ", TIME_NZ_OFF = "+1200"
+
+ZONES_DICT = [
+    {
+        'time': TIME_EDT,
+        'offset': TIME_EDT_OFF, 
+    },
+    {
+        'time': TIME_CLT,
+        'offset': TIME_CLT_OFF, 
+    },
+    {
+        'time': TIME_BRT,
+        'offset': TIME_BRT_OFF, 
+    },
+    {
+        'time': TIME_UTC,
+        'offset': TIME_UTC_OFF, 
+    },
+    {
+        'time': TIME_CET,
+        'offset': TIME_CET_OFF, 
+    },
+    {
+        'time': TIME_RST,
+        'offset': TIME_RST_OFF, 
+    },
+    {
+        'time': TIME_AUS,
+        'offset': TIME_AUS_OFF, 
+    },
+    {
+        'time': TIME_NZ,
+        'offset': TIME_NZ_OFF, 
+    },
+]
 
 CHOICES_ZONES = [
     (TIME_EDT,TIME_EDT),
-    (TIME_CLI,TIME_CLI),
+    (TIME_CLI,TIME_CLT),
     (TIME_BRT,TIME_BRT),
     (TIME_UTC,TIME_UTC),
-    (TIME_CET,TIME_CET),
+    (TIME_CET_OFF,TIME_CET),
     (TIME_RST,TIME_RST),
     (TIME_AUS,TIME_AUS),
     (TIME_NZ,TIME_NZ)]

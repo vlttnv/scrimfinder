@@ -557,6 +557,7 @@ def team_page(team_id):
                 form=form,
                 com_list=comment_list,
                 dont_show=dont_show,
+                propose_scrim=propose_scrim,
                 scrims_list=scrims_list)
 
 @scrim_app.route('/team/<team_id>/promote/<user_id>')
@@ -658,6 +659,9 @@ def team_accept_user(team_id, user_id):
     
     flash("Accepted")
     return redirect(url_for('team_page', team_id=team_id))         
+
+def hack_timezone(utc_offset):
+    
 
 @scrim_app.route('/scrim/propose/<int:opponent_team_id>', methods=['GET','POST'])
 @login_required
