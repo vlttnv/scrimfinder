@@ -557,7 +557,8 @@ def team_page(team_id):
                 form=form,
                 com_list=comment_list,
                 dont_show=dont_show,
-                scrims_list=scrims_list)
+                scrims_list=scrims_list,
+                propose_scrim=propose_scrim)
 
 @scrim_app.route('/team/<team_id>/promote/<user_id>')
 @login_required
