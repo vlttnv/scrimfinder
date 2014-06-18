@@ -481,22 +481,25 @@ def team_page(team_id):
         print scrim.state
 
         if scrim.state == SCRIM_ACCEPTED:
-            print 'here'
-            accepted_by = None
+            opponent = None
             if scrim.team1_id == team_id:
-                accepted_by = Team.query.filter_by(id=scrim.team2_id).one()
+                opponent = Team.query.filter_by(id=scrim.team2_id).one()
             else:
-                accepted_by = Team.query.filter_by(id=scrim.team1_id).one()
+                opponent = Team.query.filter_by(id=scrim.team1_id).one()
             scrims_list.append({
                 'state': SCRIM_ACCEPTED,
-                'opponent': accepted_by,
+                'opponent': opponent,
                 'scrim': scrim
             })
         elif scrim.state == SCRIM_REJECTED:
-            rejected_by = Team.query.filter_by(id=scrim.team2_id).one()
+            opponent = None
+            if scrim.team1_id == team_id:
+                opponent = Team.query.filter_by(id=scrim.team2_id).one()
+            else:
+                opponent = Team.query.filter_by(id=scrim.team1_id).one()
             scrims_list.append({
                 'state': SCRIM_REJECTED,
-                'opponent': rejected_by,
+                'opponent': opponent,
                 'scrim': scrim
             })
         elif scrim.state == SCRIM_PROPOSED and scrim.team2_id == team_id:
