@@ -120,32 +120,35 @@ def user_page(steam_id):
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
-def show_all_users(page=1):
+def all_users(page=1):
     """
-    Retrieve all users of the application, 50 results per page
+    Show all users, 50 results per page.
     """
-
-    if page < 1:
-        abort(404)
 
     from config import USERS_PER_PAGE
+
     try:
         users_list = User.query.paginate(page, per_page=USERS_PER_PAGE)
-    except OperationalError: # no user in db
+    except OperationalError:
+        flash("No users in the database.")
         users_list = None
     
     return render_template('all_users.html', users_list=users_list)
 
 @scrim_app.route('/teams', methods=['GET','POST'])
 @scrim_app.route('/teams/page/<int:page>', methods=['GET','POST'])
-def show_all_teams(page=1):
-
+def all_teams(page=1):
+    """
+    Show all teams, 50 results per page.
+    """
+    
     from forms import FilterTeamForm
+
     form = FilterTeamForm()
     
     query = Team.query
     if form.validate_on_submit():
-        if form.team_name != "":
+        if form.team_name.data != "":
             query = query.filter(Team.name.like('%'+form.team_name.data+'%'))
         if form.team_skill_level.data != "ALL":
             query = query.filter_by(skill_level=form.team_skill_level.data)
@@ -153,9 +156,11 @@ def show_all_teams(page=1):
             query = query.filter_by(time_zone=form.team_time_zone.data)
 
     from config import TEAMS_PER_PAGE
+
     try:
         teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
-    except OperationalError: # no team in db
+    except OperationalError:
+        flash("No teams in the database.")
         teams_list = None
     
     return render_template('all_teams.html', teams_list=teams_list, form=form)
@@ -163,12 +168,13 @@ def show_all_teams(page=1):
 @scrim_app.route('/scrims/', methods=['GET','POST'])
 @scrim_app.route('/scrims/page/<int:page>', methods=['GET','POST'])
 @login_required
-def show_all_scrims(page=1):
+def all_scrims(page=1):
     """
-    Scrim search page. Only visible for users who are part of a team
+    Scrim search page. Only visible for users who are part of a team.
     """
 
     from forms import FilterScrimForm
+
     form = FilterScrimForm()
 
     player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
@@ -185,6 +191,7 @@ def show_all_scrims(page=1):
         form.reset()
 
     from utils import scrim_filter
+
     if form.validate_on_submit():
         if form.team_skill_level.data != 'ALL':
             query = query.filter_by(skill_level=form.team_skill_level.data)
@@ -214,6 +221,7 @@ def show_all_scrims(page=1):
             print e
 
     from config import TEAMS_PER_PAGE
+
     try:
         teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
     except OperationalError:
