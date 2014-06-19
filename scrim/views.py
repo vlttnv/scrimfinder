@@ -7,8 +7,6 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 import requests
 import re
 from sqlalchemy import func, and_, or_, desc
-from forms import UserEditForm, CreateTeamForm, TeamEditForm, FilterTeamForm, \
-    FilterScrimForm, TeamCommentForm, ProposeScrimForm, AcceptScrimForm
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
 
@@ -29,7 +27,7 @@ def map_days(days):
 @scrim_app.route('/index')
 def index():
     """
-    Home page. empty for now.
+    Home page. TODO: Add some flavors
     """
 
     nname = None
@@ -42,7 +40,7 @@ def index():
 @oid.loginhandler
 def login():
     """
-    Logs in using steam.
+    Log in via Steam OpenID.
     """
 
     if g.user is not None:
@@ -53,7 +51,7 @@ def login():
 @oid.after_login
 def after_login(resp):
     """
-    Called after successful log in.
+    To be called after the user successfuly logged in.
     Creates a new user or gets the existing one
     """
 
@@ -147,6 +145,9 @@ def show_all_users(page=1):
 @scrim_app.route('/teams', methods=['GET','POST'])
 @scrim_app.route('/teams/page/<int:page>', methods=['GET','POST'])
 def show_all_teams(page=1):
+
+    from forms import FilterTeamForm
+
     if page < 1:
         abort(404)
 
@@ -176,6 +177,8 @@ def show_all_scrims(page=1):
     """
     Scrim search page. Only visible for users who are part of a team
     """
+
+    from forms import FilterScrimForm
 
     if page < 1:
         abort(404)
@@ -251,22 +254,15 @@ def edit_profile():
     This can be done once the user model is finalized
     so that constat modifications are avoided
     """
-    form = EditForm()
+
+    from forms import EditUserForm
+
+    form = EditUserForm()
     if form.validate_on_submit():
-        #g.user.team_name = form.team_name.data
-        #g.user.team_skill_level = form.team_skill_level.data
-        #g.user.team_time_zone = form.team_time_zone.data
-        #db.session.add(g.user)
-        #db.session.commit()
-        #flash('Your changes have been saved')
+        # TODO
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
-        #form.team_name.data = g.user.team_name
-        #form.team_skill_level.data = g.user.team_skill_level
-        #form.team_time_zone.data = g.user.team_time_zone
-        #times.day.data = aval.day
-        #times.time_from.data = aval.time_from
-        #times.time_to.data = aval.time_to
+        # TODO
         return render_template('edit_profile.html', form = form)
 
 @scrim_app.route('/edit_team/<int:team_id>', methods = ['GET', 'POST'])
@@ -275,6 +271,9 @@ def edit_team(team_id):
     """
 
     """
+
+    from forms import EditTeamForm
+
     has_right = False
 
     # Need to check if the user has the right to edit this team
@@ -297,7 +296,7 @@ def edit_team(team_id):
         flash("Team not found")
         return redirect(url_for('index'))
 
-    form = TeamEditForm()
+    form = EditTeamForm()
     if form.validate_on_submit():
         team_edit.name = form.team_name.data
         team_edit.skill_level = form.team_skill_level.data
@@ -342,6 +341,8 @@ def create_team():
     A user creates a new team and sets some team parameters
     The suer by default becomes the team leader
     """
+
+    from forms import CreateTeamForm
 
     form = CreateTeamForm()
 
@@ -419,7 +420,9 @@ def team_page(team_id):
     The pending members view will be restricted to the team leader
     """
 
-    form = TeamCommentForm()
+    from forms import CommentTeamForm
+
+    form = CommentTeamForm()
 
     try:
         team = Team.query.filter_by(id=team_id).one()
@@ -513,7 +516,6 @@ def team_page(team_id):
                 'scrim': scrim
             })
         elif scrim.state == SCRIM_PROPOSED and scrim.team1_id == team_id:
-            print 'here2'
             responding_team = Team.query.filter_by(id=scrim.team2_id).one()
             scrims_list.append({
                 'state': SCRIM_SENT,
@@ -667,6 +669,8 @@ def hack_timezone(utc_offset):
 @login_required
 def propose_scrim(opponent_team_id):
 
+    from forms import ProposeScrimForm
+
     try:
         opponent_team = Team.query.filter_by(id=opponent_team_id).one()
     except NoResultFound as e:
@@ -737,8 +741,12 @@ def propose_scrim(opponent_team_id):
 @scrim_app.route('/scrim/accept/<int:scrim_id>', methods=['GET', 'POST'])
 @login_required
 def accept_scrim(scrim_id):
+    """
     # team1 = who proposes scrim
     # team2 = who accepts/rejects scrim
+    """
+
+    from forms import AcceptScrimForm
 
     if g.user is None:
         abort(404)

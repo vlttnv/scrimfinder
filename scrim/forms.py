@@ -3,41 +3,14 @@ from wtforms import TextField, BooleanField, SelectField, TextAreaField
 from wtforms.validators import Required, Length
 from consts import *
 
-class UserEditForm(Form):
-    team_name           = TextField('team_name', validators = [Required()])
-    #team_skill_level    = SelectField(u'team_skill_level', choices=[(UGC_IRON, UGC_IRON),(UGC_STEEL, UGC_STEEL),(UGC_SILVER, UGC_SILVER),(UGC_GOLD, UGC_GOLD), (UGC_PLATINUM, UGC_PLATINUM)])
-    team_skill_level    = SelectField('team_skill_level', choices=CHOICES_SKILLS)
-    team_time_zone      = SelectField('team_time_zone', choices=CHOICES_ZONES)
+# USER
 
-class BaseTeamForm(Form):
-    team_name           = TextField('team_name', validators = [Required()])
-    team_skill_level    = SelectField('team_skill_level', choices=CHOICES_SKILLS)
-    team_time_zone      = SelectField('team_time_zone', choices=CHOICES_ZONES)
-
-    mon = BooleanField('Monday')
-    tue = BooleanField('Tuesday')
-    wed = BooleanField('Wednesday')
-    thu = BooleanField('Thursday')
-    fri = BooleanField('Friday')
-    sat = BooleanField('Saturday')
-    sun = BooleanField('Sunday')
-
-class TeamEditForm(BaseTeamForm):
-    time_from = SelectField('time_from',
-            choices=[("8:00","8:00"),
-                ("9:00","9:00"),
-                ("10:00","10:00")])
-
-class CreateTeamForm(BaseTeamForm):
+class EditUserForm(Form):
     pass
-    
-class TeamCommentForm(Form):
-    text                = TextAreaField('text', validators=[Required()])
 
-class SearchTeamForm(Form):
-    team_skill_level  = SelectField('team_skill_level', choices=FILTER_SKILLS)
-    team_time_zone    = SelectField('team_time_zone', choices=FILTER_ZONES)
+# SCRIM DAYS
 
+class BaseScrimDay(Form):
     mon = BooleanField('Monday')
     tue = BooleanField('Tuesday')
     wed = BooleanField('Wednesday')
@@ -69,21 +42,49 @@ class SearchTeamForm(Form):
         self.sat.data = False
         self.sun.data = False
 
-class FilterTeamForm(SearchTeamForm):
+# CREATE TEAM
+
+class CreateTeamForm(BaseScrimDay):
+    team_name        = TextField('team_name', validators=[Required()])
+    team_skill_level = SelectField('team_skill_level', choices=CHOICES_SKILLS)
+    team_time_zone   = SelectField('team_time_zone', choices=CHOICES_ZONES)
+
+class EditTeamForm(CreateTeamForm):
+    time_from = SelectField('time_from', 
+                    choices=[("8:00","8:00"),("9:00","9:00"),("10:00","10:00")])
+
+class CommentTeamForm(Form):
+    text = TextAreaField('text', validators=[Required()])
+
+# SEARCHES
+
+class BaseSearchForm(BaseScrimDay):
+    team_skill_level = SelectField('team_skill_level', choices=FILTER_SKILLS)
+    team_time_zone   = SelectField('team_time_zone', choices=FILTER_ZONES)
+
+class FilterTeamForm(BaseSearchForm):
     team_name = TextField('team_name')
 
     def reset(self):
         super(FilterTeamForm, self).reset()
         self.team_name.data = ''
 
-class FilterScrimForm(SearchTeamForm):
+class FilterScrimForm(BaseSearchForm):
     clear = BooleanField('Clear')
 
     def reset(self):
         super(FilterScrimForm, self).reset()
         self.clear.data = False
 
+# SCRIM PROPOSAL
+
 class ProposeScrimForm(Form):
+    """
+    The empty choices should be populated dynamically.
+
+    See /scrim/propose/<int:team_id>
+    """
+
     team       = SelectField('team', choices=[])
     time_zone  = SelectField('time_zone', choices=[])
     day        = SelectField('day', choices=[])
