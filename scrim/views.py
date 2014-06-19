@@ -65,14 +65,14 @@ def after_login(resp):
         g.user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
         g.user = User()
-        steam_data              = steam_api.get_user_info(steam_id)
-        g.user.steam_id         = steam_id
-        g.user.nickname         = steam_data['personaname']
-        g.user.profile_url      = steam_data['profileurl']
-        g.user.avatar_url       = steam_data['avatar']
-        g.user.avatar_url_full  = steam_data['avatarfull']
-        g.user.join_date        = dt.utcnow()
-        g.user.last_online      = dt.utcnow()
+        steam_data             = steam_api.get_user_info(steam_id)
+        g.user.steam_id        = steam_id
+        g.user.nickname        = steam_data['personaname']
+        g.user.profile_url     = steam_data['profileurl']
+        g.user.avatar_url      = steam_data['avatar']
+        g.user.avatar_url_full = steam_data['avatarfull']
+        g.user.join_date       = dt.utcnow()
+        g.user.last_online     = dt.utcnow()
         db.session.add(g.user)
     
     last_online = g.user.last_online
@@ -213,22 +213,14 @@ def show_all_scrims(page=1):
         try:
             player_1st_team_id = player_memberships[0].team_id
             player_1st_team = Team.query.filter_by(id=player_1st_team_id).one()
+            scrim_days = player_1st_team.week_days
 
             form.team_skill_level.data = player_1st_team.skill_level
             form.team_time_zone.data = player_1st_team.time_zone
+            form.fill_scrim_days(scrim_days)
 
             query = query.filter_by(skill_level=player_1st_team.skill_level)            
             query = query.filter_by(time_zone=player_1st_team.time_zone)
-        
-            scrim_days = player_1st_team.week_days
-           
-            form.mon.data = bool(int(scrim_days[0]))
-            form.tue.data = bool(int(scrim_days[1]))
-            form.wed.data = bool(int(scrim_days[2]))
-            form.thu.data = bool(int(scrim_days[3]))
-            form.fri.data = bool(int(scrim_days[4]))
-            form.sat.data = bool(int(scrim_days[5]))
-            form.sun.data = bool(int(scrim_days[6]))
 
             matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
             query = query.filter(Team.week_days.in_(matched_scrim_days))
@@ -269,27 +261,23 @@ def edit_profile():
 @login_required
 def edit_team(team_id):
     """
+    Edit a team's information.
 
+    The operation is only permitted by the captain.
     """
 
     from forms import EditTeamForm
 
-    has_right = False
-
-    # Need to check if the user has the right to edit this team
-    # Search through his memberships
-    #teams = Team.query.join(Membership).filter_by(user_id=g.user.id).all()
+    have_edit_right = False
     teams = Membership.query.filter_by(user_id=g.user.id).all()
     for team in teams:
         if team.team_id == int(team_id) and team.role == "Captain":
-            has_right = True
+            have_edit_right = True
     
-    # Kick him out if not
-    if not has_right:
+    if not have_edit_right:
         flash("You should not be here")
         return redirect(url_for('index'))
 
-    # Get the team the is being edited
     try:
         team_edit = Team.query.filter_by(id=team_id).one()
     except NoResultFound, e:
@@ -301,37 +289,19 @@ def edit_team(team_id):
         team_edit.name = form.team_name.data
         team_edit.skill_level = form.team_skill_level.data
         team_edit.time_zone = form.team_time_zone.data
-
-        # Make week string
-        week = list("0000000")
-        week[0] = str(int(form.mon.data))
-        week[1] = str(int(form.tue.data))
-        week[2] = str(int(form.wed.data))
-        week[3] = str(int(form.thu.data))
-        week[4] = str(int(form.fri.data))
-        week[5] = str(int(form.sat.data))
-        week[6] = str(int(form.sun.data))
-        week = "".join(week)
-
+        team_edit.week_days = form.read_scrim_days()
         team_edit.time_from = form.time_from.data
-        team_edit.week_days = week
         db.session.add(team_edit)
         db.session.commit()
+
         return redirect(url_for('team_page', team_id=team_id))
     else:
-        wk = team_edit.week_days
-        print wk
         form.team_name.data = team_edit.name
         form.team_skill_level.data = team_edit.skill_level
         form.team_time_zone.data = team_edit.time_zone
+        form.fill_scrim_days(team_edit.week_days)
         form.time_from.data = team_edit.time_from
-        form.mon.data = bool(int(wk[0]))
-        form.tue.data = bool(int(wk[1]))
-        form.wed.data = bool(int(wk[2]))
-        form.thu.data = bool(int(wk[3]))
-        form.fri.data = bool(int(wk[4]))
-        form.sat.data = bool(int(wk[5]))
-        form.sun.data = bool(int(wk[6]))
+
         return render_template('edit_team.html', form=form, team_id=team_id)
 
 @scrim_app.route('/create_team', methods = ['GET', 'POST'])
@@ -346,36 +316,27 @@ def create_team():
 
     form = CreateTeamForm()
 
-    user_membership = Membership.query.filter_by(user_id=g.user.id).all()
-    if len(user_membership) == 3:
+    player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(player_memberships) == 3:
         flash('You are in three teams already. Chill.')
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
     if form.validate_on_submit():
-        new_team = Team()
-        new_team.name = form.team_name.data
-        new_team.skill_level = form.team_skill_level.data
-        new_team.time_zone = form.team_time_zone.data
-
-        week = list("0000000")
-        week[0] = str(int(form.mon.data))
-        week[1] = str(int(form.tue.data))
-        week[2] = str(int(form.wed.data))
-        week[3] = str(int(form.thu.data))
-        week[4] = str(int(form.fri.data))
-        week[5] = str(int(form.sat.data))
-        week[6] = str(int(form.sun.data))
-        week = "".join(week)
-        new_team.week_days = week
-
-        db.session.add(new_team)
+        team = Team()
+        team.name = form.team_name.data
+        team.skill_level = form.team_skill_level.data
+        team.time_zone = form.team_time_zone.data
+        team.week_days = form.read_scrim_days()
+        db.session.add(team)
         db.session.commit()
-        mem = Membership()
-        mem.team_id = new_team.id
-        mem.user_id = g.user.id
-        mem.role = "Captain" 
-        db.session.add(mem)
+
+        membership = Membership()
+        membership.team_id = new_team.id
+        membership.user_id = g.user.id
+        membership.role = "Captain" 
+        db.session.add(membership)
         db.session.commit()
+
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
         return render_template('create_team.html', create_team_form=form)
@@ -473,8 +434,6 @@ def team_page(team_id):
 
     # still need to cover scrim finished
     for scrim in all_scrims.all():
-        print scrim.state
-
         if scrim.state == SCRIM_FINISHED:
             opponent = None
             if scrim.team1_id == team_id:
@@ -718,16 +677,16 @@ def propose_scrim(opponent_team_id):
         from datetime import datetime as dt
         from consts import SCRIM_PROPOSED
 
-        new_scrim               = Scrim()
-        new_scrim.date          = dt.utcfromtimestamp(int(form.utc_time.data))
-        new_scrim.map1          = form.map.data
-        new_scrim.connection    = 'To be implemented'
-        new_scrim.team1_id      = your_team_id
-        new_scrim.team1         = your_team
-        new_scrim.team2_id      = opponent_team_id
-        new_scrim.team2         = opponent_team
-        new_scrim.type          = form.type.data
-        new_scrim.state         = SCRIM_PROPOSED
+        new_scrim            = Scrim()
+        new_scrim.date       = dt.utcfromtimestamp(int(form.utc_time.data))
+        new_scrim.map1       = form.map.data
+        new_scrim.connection = 'To be implemented'
+        new_scrim.team1_id   = your_team_id
+        new_scrim.team1      = your_team
+        new_scrim.team2_id   = opponent_team_id
+        new_scrim.team2      = opponent_team
+        new_scrim.type       = form.type.data
+        new_scrim.state      = SCRIM_PROPOSED
         db.session.add(new_scrim)
         db.session.commit()
 

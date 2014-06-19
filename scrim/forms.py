@@ -31,6 +31,15 @@ class BaseScrimDay(Form):
         scrim_days    = ''.join(scrim_days)
         return scrim_days
 
+    def fill_scrim_days(self, scrim_days):
+        self.mon.data = bool(int(scrim_days[0]))
+        self.tue.data = bool(int(scrim_days[1]))
+        self.wed.data = bool(int(scrim_days[2]))
+        self.thu.data = bool(int(scrim_days[3]))
+        self.fri.data = bool(int(scrim_days[4]))
+        self.sat.data = bool(int(scrim_days[5]))
+        self.sun.data = bool(int(scrim_days[6]))
+
     def reset(self):
         self.team_skill_level.data = 'ALL'
         self.team_time_zone.data = 'ALL'
