@@ -47,7 +47,107 @@
 						</div>
 				</div>
 				{% endfor %}
-				<p><a href="{{url_for('create_team')}}" class="btn btn-success btn-lg">Create a team</a> <a href="{{url_for('all_teams')}}" class="btn btn-primary btn-lg">Join a team</a></p>
+				{% if g.user.steam_id == user.steam_id %}
+				<p>
+				<!-- Button trigger modal -->
+<button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
+  Create a team
+</button>
+				<a href="{{url_for('all_teams')}}" class="btn btn-primary btn-lg">Join a team</a></p>{% endif %}
+
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Create a team</h4>
+      </div>
+      <div class="modal-body">
+			  <form class="form-horizontal" action="{{url_for('create_team')}}" method="post"  name="create_team">
+
+	{{create_team_form.hidden_tag()}}
+		<fieldset>
+				<div class="form-group">
+						<label for="teamName" class="col-lg-2 control-label">Email</label>
+						<div class="col-lg-10">
+{{create_team_form.team_name(type="text", class_="form-control", id="teamName", placeholder="Super Team")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<div class="col-lg-10">
+								{{create_team_form.team_skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<div class="col-lg-10">
+								{{create_team_form.team_time_zone(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Availability</label>
+						<div class="col-lg-10">
+								<div class="checkbox">
+										<label>
+												{{create_team_form.mon()}} Monday 
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.tue()}} Tuesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.wed()}} Wednesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.thu()}} Thursdy
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.fri()}} Friday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.sat()}} Saturday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{create_team_form.sun()}} Sunday
+										</label>
+								</div>
+
+						</div>
+				</div>
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+<input id="lol" data-toggle="tooltip" data-placement="right" title="" data-original-title="Tooltip on right" class="btn btn-success" type="submit" value="Create Team">
+      </div>
+    </div>
+		</fieldset>
+
+
+</div>
+<form action="" method="post"  name="create_team">
+</form> 
+      </div>
+          </div>
+  </div>
+</div>
 		</div>
 </div>
 {% endblock %}

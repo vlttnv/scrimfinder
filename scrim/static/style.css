@@ -1,5 +1,7 @@
+.navbar {
+		margin-bottom: 0;
+}
 .navbar-static-top {
-		  margin-bottom: 19px;
 }
 .profile-button {
 		background-color: #008cba;

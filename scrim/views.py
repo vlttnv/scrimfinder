@@ -103,7 +103,8 @@ def user_page(steam_id):
     Return the user page, containing a list of tuples of Team and Membership, 
     for instance, [(TeamA,"Captain"),(TeamB,"Coach")].
     """
-
+    from forms import CreateTeamForm
+    create_team_form = CreateTeamForm()
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
@@ -116,7 +117,7 @@ def user_page(steam_id):
         team = Team.query.filter_by(id=mem.team_id).one()
         team_roles.append((team, mem.role))
 
-    return render_template('user.html', user=user, team_roles=team_roles)
+    return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form)
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
