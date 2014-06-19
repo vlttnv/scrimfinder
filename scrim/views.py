@@ -14,27 +14,32 @@ from sqlalchemy.exc import OperationalError
 # Helper function
 #========================
 
-def map_days(days):
-        # Map a list of words to the "bit string"
-        # Maybe there's a shorter and cleverer way to do it
-        # but we wont show it to Tristan so that's fine
-        words = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday", "Sunday"]
-        aval = [(word if int(day)==1 else False) 
-                for day,word in zip(days,words)]
-        return aval
+def convert_bits_to_days(bit_string):
+    days_of_week = [
+        "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+    ]
+    aval = [day for day, bit in zip(days_of_week, bit_string) if bit == '1']
+    return aval
+
+@scrim_app.before_request
+def before_request():
+    """
+    A handler before every request. TODO: More.
+    """
+
+    if 'user_id' in session:
+        g.user = User.query.filter_by(id=session['user_id']).first()
+    else:
+        g.user = None
 
 @scrim_app.route('/')
 @scrim_app.route('/index')
 def index():
     """
-    Home page. TODO: Add some flavors
+    Home page. TODO: More.
     """
 
-    nname = None
-    if g.user is not None:
-        nname = g.user.nickname
-
-    return render_template('index.html',user=nname)
+    return render_template('index.html')
 
 @scrim_app.route('/login')
 @oid.loginhandler
@@ -51,8 +56,7 @@ def login():
 @oid.after_login
 def after_login(resp):
     """
-    To be called after the user successfuly logged in.
-    Creates a new user or gets the existing one
+    After the user logged in, create a new user or update the existing one
     """
 
     from datetime import datetime as dt
@@ -63,6 +67,9 @@ def after_login(resp):
 
     try:
         g.user = User.query.filter_by(steam_id=steam_id).one()
+        last_online = g.user.last_online
+        # choose to update steam user info (LIMITED API calls)
+        g.user.last_online = dt.utcnow()
     except NoResultFound:
         g.user = User()
         steam_data             = steam_api.get_user_info(steam_id)
@@ -74,55 +81,42 @@ def after_login(resp):
         g.user.join_date       = dt.utcnow()
         g.user.last_online     = dt.utcnow()
         db.session.add(g.user)
-    
-    last_online = g.user.last_online
-    # do something
-
-    g.user.last_online = dt.utcnow()
     db.session.commit()
+    
     login_user(g.user)
+
     return redirect(oid.get_next_url())
-
-@scrim_app.before_request
-def before_request():
-    """
-    This gets called before each request and checks the session.
-    Will probably do more stuff.
-    """
-
-    if 'user_id' in session:
-        g.user = User.query.filter_by(id=session['user_id']).first()
-    else:
-        g.user = None
 
 @scrim_app.route('/logout')
 def logout():
+    """
+    Logout.
+    """
+
     logout_user()
     flash("Logged out")
     return redirect(url_for('index'))
 
 @scrim_app.route('/user/<steam_id>')
 def user_page(steam_id):
+    """
+    Return the user page, containing a list of tuples of Team and Membership, 
+    for instance, [(TeamA,"Captain"),(TeamB,"Coach")].
+    """
+
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
-        flash('User not found')
+        flash("User not found")
         return redirect(url_for('index'))
 
-    # array of tuples of Team and role e.g. [(team,"Captain"),(team,"Coach")]
-    teams_roles = []
-    memberships = Membership.query.filter_by(user_id=user.id).all()
-    for mem in memberships:
+    team_roles = []
+    user_memberships = Membership.query.filter_by(user_id=user.id).all()
+    for mem in user_memberships:
         team = Team.query.filter_by(id=mem.team_id).one()
-        teams_roles.append((team, mem.role))
+        team_roles.append((team, mem.role))
 
-    return render_template('user.html',
-            id=user.steam_id,
-            nick=user.nickname,
-            profile_url=user.profile_url,
-            avatar=user.avatar_url,
-            avatar_full=user.avatar_url_full,
-            teams_roles=teams_roles)
+    return render_template('user.html', user=user, team_roles=team_roles)
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
@@ -147,13 +141,9 @@ def show_all_users(page=1):
 def show_all_teams(page=1):
 
     from forms import FilterTeamForm
-
-    if page < 1:
-        abort(404)
-
-    query = Team.query
-
     form = FilterTeamForm()
+    
+    query = Team.query
     if form.validate_on_submit():
         if form.team_name != "":
             query = query.filter(Team.name.like('%'+form.team_name.data+'%'))
@@ -179,10 +169,6 @@ def show_all_scrims(page=1):
     """
 
     from forms import FilterScrimForm
-
-    if page < 1:
-        abort(404)
-
     form = FilterScrimForm()
 
     player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
@@ -239,7 +225,7 @@ def show_all_scrims(page=1):
 def load_user(id):
     return User.query.get(int(id))
 
-@scrim_app.route('/edit_profile', methods = ['GET', 'POST'])
+@scrim_app.route('/profile/edit', methods = ['GET', 'POST'])
 @login_required
 def edit_profile():
     """
@@ -248,8 +234,8 @@ def edit_profile():
     """
 
     from forms import EditUserForm
-
     form = EditUserForm()
+
     if form.validate_on_submit():
         # TODO
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
@@ -257,7 +243,7 @@ def edit_profile():
         # TODO
         return render_template('edit_profile.html', form = form)
 
-@scrim_app.route('/edit_team/<int:team_id>', methods = ['GET', 'POST'])
+@scrim_app.route('/team/edit/<int:team_id>', methods = ['GET', 'POST'])
 @login_required
 def edit_team(team_id):
     """
@@ -266,15 +252,13 @@ def edit_team(team_id):
     The operation is only permitted by the captain.
     """
 
-    from forms import EditTeamForm
-
-    have_edit_right = False
+    have_edit_rights = False
     teams = Membership.query.filter_by(user_id=g.user.id).all()
     for team in teams:
         if team.team_id == int(team_id) and team.role == "Captain":
-            have_edit_right = True
+            have_edit_rights = True
     
-    if not have_edit_right:
+    if not have_edit_rights:
         flash("You should not be here")
         return redirect(url_for('index'))
 
@@ -284,7 +268,9 @@ def edit_team(team_id):
         flash("Team not found")
         return redirect(url_for('index'))
 
+    from forms import EditTeamForm
     form = EditTeamForm()
+    
     if form.validate_on_submit():
         team_edit.name = form.team_name.data
         team_edit.skill_level = form.team_skill_level.data
@@ -304,7 +290,7 @@ def edit_team(team_id):
 
         return render_template('edit_team.html', form=form, team_id=team_id)
 
-@scrim_app.route('/create_team', methods = ['GET', 'POST'])
+@scrim_app.route('/team/create', methods = ['GET', 'POST'])
 @login_required
 def create_team():
     """
@@ -313,7 +299,6 @@ def create_team():
     """
 
     from forms import CreateTeamForm
-
     form = CreateTeamForm()
 
     player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
@@ -331,7 +316,7 @@ def create_team():
         db.session.commit()
 
         membership = Membership()
-        membership.team_id = new_team.id
+        membership.team_id = team.id
         membership.user_id = g.user.id
         membership.role = "Captain" 
         db.session.add(membership)
@@ -341,7 +326,7 @@ def create_team():
     else:
         return render_template('create_team.html', create_team_form=form)
 
-@scrim_app.route('/quit_team/<int:team_id>', methods=['POST'])
+@scrim_app.route('/team/quit/<int:team_id>', methods=['POST'])
 @login_required
 def quit_team(team_id):
     if team_id < 1:
@@ -482,9 +467,7 @@ def team_page(team_id):
                 'scrim': scrim
             })
 
-    # What's the team availability in days
-    days = team.week_days
-    aval = map_days(days)
+    aval = convert_bits_to_days(team.week_days)
     
     if form.validate_on_submit():
         com = Comment()
