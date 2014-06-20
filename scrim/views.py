@@ -94,7 +94,7 @@ def logout():
     """
 
     logout_user()
-    flash("Logged out")
+    flash("Logged out", "success")
     return redirect(url_for('index'))
 
 @scrim_app.route('/user/<steam_id>')
@@ -103,11 +103,12 @@ def user_page(steam_id):
     Return the user page, containing a list of tuples of Team and Membership, 
     for instance, [(TeamA,"Captain"),(TeamB,"Coach")].
     """
-
+    from forms import CreateTeamForm
+    create_team_form = CreateTeamForm()
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
-        flash("User not found")
+        flash("User not found", "danger")
         return redirect(url_for('index'))
 
     team_roles = []
@@ -116,7 +117,7 @@ def user_page(steam_id):
         team = Team.query.filter_by(id=mem.team_id).one()
         team_roles.append((team, mem.role))
 
-    return render_template('user.html', user=user, team_roles=team_roles)
+    return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form)
 
 @scrim_app.route('/users')
 @scrim_app.route('/users/page/<int:page>')
@@ -130,7 +131,7 @@ def all_users(page=1):
     try:
         users_list = User.query.paginate(page, per_page=USERS_PER_PAGE)
     except OperationalError:
-        flash("No users in the database.")
+        flash("No users in the database.", "danger")
         users_list = None
     
     return render_template('all_users.html', users_list=users_list)
@@ -166,7 +167,7 @@ def all_teams(page=1):
     try:
         teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
     except OperationalError:
-        flash("No teams in the database.")
+        flash("No teams in the database.", "danger")
         teams_list = None
     
     return render_template('all_teams.html', teams_list=teams_list, form=form)
@@ -185,7 +186,7 @@ def all_scrims(page=1):
 
     player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
     if len(player_memberships) == 0:
-        flash('You are not in a team. Cannot search for scrims.')
+        flash('You are not in a team. Cannot search for scrims.', "warning")
         return render_template('all_scrims.html', teams_list=None, form=form)
 
     # Ignore your own teams
@@ -273,13 +274,13 @@ def edit_team(team_id):
             have_edit_rights = True
     
     if not have_edit_rights:
-        flash("You should not be here")
+        flash("You should not be here", "danger")
         return redirect(url_for('index'))
 
     try:
         team_edit = Team.query.filter_by(id=team_id).one()
     except NoResultFound, e:
-        flash("Team not found")
+        flash("Team not found", "warning")
         return redirect(url_for('index'))
 
     from forms import EditTeamForm
@@ -317,7 +318,7 @@ def create_team():
 
     player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
     if len(player_memberships) == 3:
-        flash('You are in three teams already. Chill.')
+        flash('You are in three teams already. Chill.', "warning")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
     if form.validate_on_submit():
@@ -353,7 +354,7 @@ def quit_team(team_id):
             team_membership = membership
 
     if team_membership is None:
-        flash("Dude you are not in this team")
+        flash("Dude you are not in this team", "warning")
         redirect(url_for('user_page'), steam_id=g.user.steam_id)
     else:
         db.session.delete(team_membership)
@@ -366,9 +367,9 @@ def quit_team(team_id):
             db.session.delete(user_team)
             db.session.commit()
             flash("You quit from team " + user_team_name + " , and since \
-                    there's no one left in the team, the team is deleted")
+                    there's no one left in the team, the team is deleted", "info")
         else:
-            flash("You quit from team " + user_team_name)
+            flash("You quit from team " + user_team_name, "success")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
 @scrim_app.route('/team/<int:team_id>', methods=['GET','POST'])
@@ -387,7 +388,7 @@ def team_page(team_id):
     try:
         team = Team.query.filter_by(id=team_id).one()
     except NoResultFound as e:
-        flash("Team not found")
+        flash("Team not found", "danger")
         return redirect(url_for('index'))
 
     all_members = Membership.query.join(Team).filter_by(id=team_id).all()
@@ -532,10 +533,10 @@ def promote(team_id, user_id):
         mem.role = "Captain"
         db.session.add(mem)
         db.session.commit()
-        flash("User promoted")
+        flash("User promoted", "success")
         return redirect(url_for('team_page', team_id=team_id))
     except NoResultFound, e:
-        flash("Invalid user or team")
+        flash("Invalid user or team", "danger")
         return redirect(url_form('team_page', team_id=team_id))
 
 @scrim_app.route('/team/<team_id>/demote/<user_id>')
@@ -552,10 +553,10 @@ def demote(team_id, user_id):
         mem.role = "Member"
         db.session.add(mem)
         db.session.commit()
-        flash("User promoted")
+        flash("User promoted", "success")
         return redirect(url_for('team_page', team_id=team_id))
     except NoResultFound, e:
-        flash("Invalid user or team")
+        flash("Invalid user or team", "danger")
         return redirect(url_form('team_page', team_id=team_id))
 
 
@@ -570,7 +571,7 @@ def team_join(team_id):
     try:
         user = User.query.filter_by(id=g.user.id).one()
     except NoResultFound, e:
-        flash("User not found")
+        flash("User not found", "danger")
         return redirect(url_for('index'))
     
     user_memberships = Membership.query.filter_by(user_id=user.id).all()
@@ -587,7 +588,7 @@ def team_join(team_id):
         req.user_id = user.id
         db.session.add(req)
         db.session.commit()
-        flash("Request made")
+        flash("Request made", "success")
 
     return redirect(url_for('team_page', team_id=team_id))
 
@@ -601,7 +602,7 @@ def team_accept_user(team_id, user_id):
     try:
         user = Request.query.filter(and_(Request.team_id==team_id, Request.user_id==user_id)).one()
     except NoResultFound, e:
-        flash("No user")
+        flash("No user", "danger")
         return redirect(url_for('index'))
 
     db.session.delete(user)
@@ -615,7 +616,7 @@ def team_accept_user(team_id, user_id):
     db.session.add(new_membership)
     db.session.commit()
     
-    flash("Accepted")
+    flash("Accepted", "success")
     return redirect(url_for('team_page', team_id=team_id))         
 
 def hack_timezone(utc_offset):
@@ -630,7 +631,7 @@ def propose_scrim(opponent_team_id):
     try:
         opponent_team = Team.query.filter_by(id=opponent_team_id).one()
     except NoResultFound as e:
-        flash('Cannot find the team')
+        flash('Cannot find the team', "danger")
         return redirect(url_for('index'))
 
     # Check if the user is a captain
@@ -644,7 +645,7 @@ def propose_scrim(opponent_team_id):
                 your_teams_id.append(mem.team_id)
 
     if not a_captain:
-        flash('You are not a captain. Cannot propose scrims.')
+        flash('You are not a captain. Cannot propose scrims.', "warning")
         return redirect(url_for('team_page', team_id=opponent_team_id))
 
     # Set form choices
@@ -687,10 +688,10 @@ def propose_scrim(opponent_team_id):
         db.session.add(new_scrim)
         db.session.commit()
 
-        flash('Scrim proposed')
+        flash('Scrim proposed', "success")
         return redirect(url_for('team_page', team_id=opponent_team_id))
     elif request.method == 'POST':
-        flash('Scrim proposal not validated')
+        flash('Scrim proposal not validated', "danger")
     
     return render_template('propose_scrim.html', form=form)
 
@@ -713,7 +714,7 @@ def accept_scrim(scrim_id):
         try:
             scrim = Scrim.query.filter_by(id=scrim_id).one()
         except NoResultFound as e:
-            flash('Cannot find scrim with id: ' + str(scrim_id))
+            flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
             return render_template('accept_scrim.html', form=form)
 
         accepting_team_id = scrim.team2_id
@@ -747,7 +748,7 @@ def reject_scrim(scrim_id):
     try:
         scrim = Scrim.query.filter_by(id=scrim_id).one()
     except NoResultFound as e:
-        flash('Cannot find scrim with id: ' + str(scrim_id))
+        flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
         return redirect(url_for('index.html'))
 
     accepting_team_id = scrim.team2_id
