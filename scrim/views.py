@@ -145,8 +145,10 @@ def all_teams(page=1):
     from forms import FilterTeamForm
 
     form = FilterTeamForm()
-    
     query = Team.query
+    
+    from utils import scrim_filter
+
     if form.validate_on_submit():
         if form.team_name.data != "":
             query = query.filter(Team.name.like('%'+form.team_name.data+'%'))
@@ -154,6 +156,10 @@ def all_teams(page=1):
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
             query = query.filter_by(time_zone=form.team_time_zone.data)
+
+        scrim_days = form.read_scrim_days()
+        matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
+        query = query.filter(Team.week_days.in_(matched_scrim_days))
 
     from config import TEAMS_PER_PAGE
 
