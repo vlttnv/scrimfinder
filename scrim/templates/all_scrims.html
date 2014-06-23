@@ -1,55 +1,143 @@
 {% extends "layout.html" %}
 {% block body %}
-Find scrims:
 
-<form id="filter_scrims_form" action="{{ url_for('all_scrims') }}" method="POST" name="filter_scrims">
+<div class="page-header">
+		<h1>Scrims</h1>
+</div>
+<div class="row">
+		<div class="col-md-4">
+<form class="form-horizontal" id="filter_scrims_form" action="{{ url_for('all_scrims') }}" method="POST" name="filter_scrims">
   {{form.hidden_tag()}}
-  <table>
-    <tr>
-        <td>Team Skill Level:</td>
-        <td>{{form.team_skill_level()}}</td>
-    </tr>
-    <tr>
-        <td>Time Zone</td>
-        <td>{{form.team_time_zone()}}</td>
-    </tr>
-    <tr>
-      <td>Monday</td>
-      <td>{{form.mon()}}</td>
-    </tr>
-    <tr>
-        <td>Tuesday</td>
-        <td>{{form.tue()}}</td>
-    </tr>
-    <tr>
-        <td>Wednesday</td>
-        <td>{{form.wed()}}</td>
-    </tr>
-    <tr>
-        <td>Thursday</td>
-        <td>{{form.thu()}}</td>
-    </tr>
-    <tr>
-        <td>Friday</td>
-        <td>{{form.fri()}}</td>
-    </tr>
-    <tr>
-        <td>Saturday</td>
-        <td>{{form.sat()}}</td>
-    </tr>
-    <tr>
-        <td>Sunday</td>
-        <td>{{form.sun()}}</td>
-    </tr>
-    <tr>
-        <td>{{form.clear()}}</td>
-    </tr>
-    <tr>
-        <td><input type="submit" value="Search"></td>
-        <td><input type="button" onclick="clearSearch();" value="Clear"></td>
-    </tr>
-  </table>
+<fieldset>
+				
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Skill</label>
+						<div class="col-lg-10">
+								{{form.team_skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Time</label>
+						<div class="col-lg-10">
+								{{form.team_time_zone(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Availability</label>
+						<div class="col-lg-10">
+								<div class="row">
+										<div class="col-xs-6">
+												<div class="checkbox">
+										<label>
+												{{form.mon()}} Monday 
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.tue()}} Tuesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.wed()}} Wednesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.thu()}} Thursdy
+										</label>
+								</div>
+										</div>
+										<div class="col-xs-6">
+												<div class="checkbox">
+										<label>
+												{{form.fri()}} Friday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.sat()}} Saturday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.sun()}} Sunday
+										</label>
+								</div>
+										</div>
+								</div>
+
+
+
+						</div>
+				</div>
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+
+<input type="submit" class="btn btn-primary" value="Search">
+<input type="submit" class="btn btn-primary" value="Clear">
+      </div>
+    </div>
+		</fieldset>
 </form>
+		</div>
+		<div class="col-md-8">
+{% if teams_list %}
+  <table class="table table-striped table-hover">
+		  <thead>
+				  <tr>
+						  <th>Name</th>
+						  <th>Skill Level</th>
+						  <th>Time Zone</th>
+						  <th>Week Days</th>
+						  <th>Rank?</th>
+				  </tr>
+		  </thead>
+		  <tbody>
+
+
+    {% for team in teams_list.items %}
+		  <tr>
+				  <td> <a href="{{ url_for('team_page', team_id=team.id) }}">{{ team.name }}</a></td>
+				  <td>{{ team.skill_level }}</td>
+				  <td>{{ team.time_zone }}</td>
+				  <td>{{ team.week_days }}</td>
+				  <td></td>
+		  </tr>
+
+    {% endfor %}
+    
+	</tbody>
+	</table>
+	<ul class="pagination" style="margin-top:0;">
+    <!-- previous page -->
+    {% if teams_list.has_prev %}
+	<li> <a href="{{ url_for('all_teams', page=teams_list.prev_num) }}">Previous</a></li>
+    {% endif %}
+
+    <!-- all page numbers -->
+    {% for page_num in teams_list.iter_pages() %}
+      {% if page_num %}
+        {% if page_num != teams_list.page %}
+		<li> <a href="{{ url_for('all_teams', page=page_num) }}">{{ page_num }}</a></li>
+        {% else %}
+		<li class="active"><a href="#">{{ page_num }}</a></li>
+      {% endif %}
+      {% else %}
+	  <li class="disabled"><a href="#">…</a></li>
+      {% endif %}
+    {% endfor %}
+
+    <!-- next page -->
+    {% if teams_list.has_next %}
+	<li><a href="{{ url_for('all_teams', page=teams_list.next_num) }}">Next</a></li>
+    {% endif %}
+  {% endif %}
+		</div>
+
+
+</div>
+
 
 <script type="text/javascript">
   $('#clear').hide();
@@ -60,34 +148,5 @@ Find scrims:
   }
 </script>
 
-{% if teams_list %}
-  <ul>
-  {% for team in teams_list.items %}
-    <li>name: {{ team.name }}, skill_level: {{ team.skill_level }}, time_zone: {{ team.time_zone }}, week_days: {{ team.week_days }} <a href="{{ url_for('team_page', team_id=team.id) }}">go to team page</a></li>
-  {% endfor %}
-  </ul>
 
-  <!-- previous page -->
-  {% if teams_list.has_prev %}
-    <a href="{{ url_for('all_scrims', page=teams_list.prev_num) }}">Previous</a>
-  {% endif %}
-
-  <!-- all page numbers -->
-  {% for page_num in teams_list.iter_pages() %}
-    {% if page_num %}
-      {% if page_num != teams_list.page %}
-        <a href="{{ url_for('all_scrims', page=page_num) }}">{{ page_num }}</a>
-      {% else %}
-        <strong>{{ page_num }}</strong>
-    {% endif %}
-    {% else %}
-      <span class=ellipsis>…</span>
-    {% endif %}
-  {% endfor %}
-
-  <!-- next page -->
-  {% if teams_list.has_next %}
-    <a href="{{ url_for('all_scrims', page=teams_list.next_num) }}">Next</a>
-  {% endif %}
-{% endif %}
 {% endblock %}
