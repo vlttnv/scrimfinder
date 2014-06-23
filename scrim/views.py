@@ -272,17 +272,17 @@ def edit_team(team_id):
     have_edit_rights = False
     teams = Membership.query.filter_by(user_id=g.user.id).all()
     for team in teams:
-        if team.team_id == int(team_id) and team.role == "Captain":
+        if team.team_id == team_id and team.role == "Captain":
             have_edit_rights = True
     
     if not have_edit_rights:
-        flash("You should not be here", "danger")
-        return redirect(url_for('index'))
+        flash("You do not have the rights to edit this team.", "danger")
+        return redirect(url_for('team_page', team_id=team_id))
 
     try:
         team_edit = Team.query.filter_by(id=team_id).one()
     except NoResultFound, e:
-        flash("Team not found", "warning")
+        flash("The team you are about to edit does not exist.", "warning")
         return redirect(url_for('index'))
 
     from forms import EditTeamForm
