@@ -10,19 +10,19 @@
 	{{form.hidden_tag()}}
 		<fieldset>
 				<div class="form-group">
-						<label for="teamName" class="col-lg-2 control-label">Email</label>
+						<label for="teamName" class="col-lg-2 control-label">Name</label>
 						<div class="col-lg-10">
 {{form.team_name(type="text", class_="form-control", id="teamName", placeholder="Super Team")}}
 						</div>
 				</div>
 				<div class="form-group">
-						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<label for="select" class="col-lg-2 control-label">Skill Level</label>
 						<div class="col-lg-10">
 								{{form.team_skill_level(class_="form-control")}}
 						</div>
 				</div>
 				<div class="form-group">
-						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<label for="select" class="col-lg-2 control-label">Time zone</label>
 						<div class="col-lg-10">
 								{{form.team_time_zone(class_="form-control")}}
 						</div>
@@ -80,6 +80,7 @@
       <div class="col-lg-10 col-lg-offset-2">
 
 <input type="submit" class="btn btn-primary" value="Search">
+<input type="submit" class="btn btn-primary" value="Clear">
       </div>
     </div>
 		</fieldset>
