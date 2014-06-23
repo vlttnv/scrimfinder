@@ -178,21 +178,23 @@ def all_teams(page=1):
 def all_scrims(page=1):
     """
     Scrim search page. Only visible for users who are part of a team.
+
+    Search results do not include your own teams. HACK: default search
+    parameters are from the user's first team.
     """
 
     from forms import FilterScrimForm
 
     form = FilterScrimForm()
 
-    player_memberships = Membership.query.filter_by(user_id=g.user.id).all()
-    if len(player_memberships) == 0:
+    user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(user_memberships) == 0:
         flash('You are not in a team. Cannot search for scrims.', "warning")
         return render_template('all_scrims.html', teams_list=None, form=form)
 
-    # Ignore your own teams
     query = Team.query
-    for mem in player_memberships:
-            query = query.filter(Team.id != mem.team_id)
+    for mem in user_memberships:
+        query = query.filter(Team.id != mem.team_id)
    
     if form.clear.data == True:
         form.reset()
@@ -200,18 +202,18 @@ def all_scrims(page=1):
     from utils import scrim_filter
 
     if form.validate_on_submit():
-        if form.team_skill_level.data != 'ALL':
+        if form.team_skill_level.data != "ALL":
             query = query.filter_by(skill_level=form.team_skill_level.data)
-        if form.team_time_zone.data != 'ALL':
+        if form.team_time_zone.data != "ALL":
             query = query.filter_by(time_zone=form.team_time_zone.data)
 
         scrim_days = form.read_scrim_days()
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
         query = query.filter(Team.week_days.in_(matched_scrim_days))
     else:
-        # HACK - set default values using the player's 1st team info
+        # HACK
         try:
-            player_1st_team_id = player_memberships[0].team_id
+            player_1st_team_id = user_memberships[0].team_id
             player_1st_team = Team.query.filter_by(id=player_1st_team_id).one()
             scrim_days = player_1st_team.week_days
 
