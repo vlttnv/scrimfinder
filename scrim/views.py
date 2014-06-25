@@ -148,6 +148,9 @@ def all_teams(page=1):
     form = FilterTeamForm()
     query = Team.query
     
+    if form.clear.data == True:
+        form.reset()
+
     from utils import scrim_filter
 
     if form.validate_on_submit():

@@ -75,7 +75,8 @@
       <div class="col-lg-10 col-lg-offset-2">
 
 <input type="submit" class="btn btn-primary" value="Search">
-<input type="submit" class="btn btn-primary" value="Clear">
+{{ form.clear() }} <!-- necessary! -->
+<input type="button" onclick="clearSearch();" class="btn btn-primary" value="Clear">
       </div>
     </div>
 		</fieldset>
@@ -138,7 +139,6 @@
 
 </div>
 
-
 <script type="text/javascript">
   $('#clear').hide();
 
@@ -147,6 +147,5 @@
     $('#filter_scrims_form').submit();
   }
 </script>
-
 
 {% endblock %}

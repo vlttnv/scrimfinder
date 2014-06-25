@@ -68,11 +68,13 @@ class CommentTeamForm(Form):
 class BaseSearchForm(BaseScrimDay):
     team_skill_level = SelectField('team_skill_level', choices=FILTER_SKILLS)
     team_time_zone   = SelectField('team_time_zone', choices=FILTER_ZONES)
+    clear = BooleanField('Clear')
 
     def reset(self):
         super(BaseSearchForm, self).reset()
         self.team_skill_level.data = 'ALL'
         self.team_time_zone.data = 'ALL'
+        self.clear.data = False;
 
 class FilterTeamForm(BaseSearchForm):
     team_name = TextField('team_name')
@@ -82,11 +84,9 @@ class FilterTeamForm(BaseSearchForm):
         self.team_name.data = ''
 
 class FilterScrimForm(BaseSearchForm):
-    clear = BooleanField('Clear')
 
     def reset(self):
         super(FilterScrimForm, self).reset()
-        self.clear.data = False
 
 # SCRIM PROPOSAL
 
