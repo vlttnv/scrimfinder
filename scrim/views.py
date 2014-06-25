@@ -119,22 +119,27 @@ def user_page(steam_id):
 
     return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form)
 
-@scrim_app.route('/users')
-@scrim_app.route('/users/page/<int:page>')
+@scrim_app.route('/users', methods=['GET','POST'])
+@scrim_app.route('/users/page/<int:page>', methods=['GET','POST'])
 def all_users(page=1):
     """
     Show all users, 50 results per page.
     """
 
+    from forms import FilterUserForm
+
+    form = FilterUserForm()
+    query = User.query
+
     from config import USERS_PER_PAGE
 
     try:
-        users_list = User.query.paginate(page, per_page=USERS_PER_PAGE)
+        users_list = query.paginate(page, per_page=USERS_PER_PAGE)
     except OperationalError:
         flash("No users in the database.", "danger")
         users_list = None
     
-    return render_template('all_users.html', users_list=users_list)
+    return render_template('all_users.html', users_list=users_list, form=form)
 
 @scrim_app.route('/teams', methods=['GET','POST'])
 @scrim_app.route('/teams/page/<int:page>', methods=['GET','POST'])
