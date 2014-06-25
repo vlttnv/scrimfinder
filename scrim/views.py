@@ -131,6 +131,13 @@ def all_users(page=1):
     form = FilterUserForm()
     query = User.query
 
+    if form.clear.data == True:
+        form.reset()
+
+    if form.validate_on_submit():
+        if form.nickname.data != "":
+            query = query.filter(User.nickname.like('%'+form.nickname.data+'%'))
+
     from config import USERS_PER_PAGE
 
     try:
