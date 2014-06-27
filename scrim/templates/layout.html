@@ -38,7 +38,8 @@
       <input type="text" class="form-control col-lg-8" placeholder="Search Teams">
     </form>
 <ul class="nav navbar-nav navbar-right">
-		<li><a href="#"><i class="fa fa-envelope"></i> 0</a></li>
+		<!--<li><a href="#"><i class="fa fa-envelope"></i> 0</a></li>-->
+		<li><img src="{{g.user.avatar_url_full}}" width="45px" height="45px"></li>
 {% if current_user.is_authenticated() %}
 
 <li {% if '/user/' in request.path %}class='profile-button dropdown' {% else %} class='profile-button dropdown' {% endif %}>
