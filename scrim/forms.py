@@ -40,7 +40,7 @@ class BaseScrimDay(Form):
         self.sat.data = bool(int(scrim_days[5]))
         self.sun.data = bool(int(scrim_days[6]))
 
-    def reset(self):
+    def reset_scrim_days(self):
         self.mon.data = False
         self.tue.data = False
         self.wed.data = False
@@ -65,35 +65,40 @@ class CommentTeamForm(Form):
 
 # SEARCHES
 
-class BaseSearchForm(BaseScrimDay):
-    team_skill_level = SelectField('team_skill_level', choices=FILTER_SKILLS)
-    team_time_zone   = SelectField('team_time_zone', choices=FILTER_ZONES)
-    clear            = BooleanField('Clear')
+class BaseSearchForm(Form):
+    clear = BooleanField('Clear')
 
-    def reset(self):
-        super(BaseSearchForm, self).reset()
-        self.team_skill_level.data = 'ALL'
-        self.team_time_zone.data = 'ALL'
+    def reset_clear(self):
         self.clear.data = False;
 
 class FilterUserForm(BaseSearchForm):
     nickname = TextField('nickname')
 
-    def reset(self):
-        super(FilterUserForm, self).reset()
+    def reset_user_filter(self):
+        super(FilterUserForm, self).reset_clear()
         self.nickname.data = ''
 
-class FilterTeamForm(BaseSearchForm):
+class TeamSearchForm(BaseSearchForm, BaseScrimDay):
     team_name = TextField('team_name')
+    team_skill_level = SelectField('team_skill_level', choices=FILTER_SKILLS)
+    team_time_zone   = SelectField('team_time_zone', choices=FILTER_ZONES)
 
-    def reset(self):
-        super(FilterTeamForm, self).reset()
+    def reset_team_search(self):
+        super(TeamSearchForm, self).reset_clear()
+        super(TeamSearchForm, self).reset_scrim_days()
         self.team_name.data = ''
+        self.team_skill_level.data = 'ALL'
+        self.team_time_zone.data = 'ALL'
 
-class FilterScrimForm(BaseSearchForm):
+class FilterTeamForm(TeamSearchForm):
+    
+    def reset_team_filter(self):
+        super(FilterTeamForm, self).reset_team_search()
 
-    def reset(self):
-        super(FilterScrimForm, self).reset()
+class FilterScrimForm(TeamSearchForm):
+
+    def reset_scrim_filter(self):
+        super(FilterScrimForm, self).reset_team_search()
 
 # SCRIM PROPOSAL
 
