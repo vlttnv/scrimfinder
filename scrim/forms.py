@@ -73,10 +73,12 @@ class BaseSearchForm(Form):
 
 class FilterUserForm(BaseSearchForm):
     nickname = TextField('nickname')
+    steam_id = TextField('steam_id')
 
     def reset_user_filter(self):
         super(FilterUserForm, self).reset_clear()
-        self.nickname.data = ''
+        self.nickname.data = ""
+        self.steam_id.data = ""
 
 class TeamSearchForm(BaseSearchForm, BaseScrimDay):
     team_name = TextField('team_name')
@@ -86,9 +88,9 @@ class TeamSearchForm(BaseSearchForm, BaseScrimDay):
     def reset_team_search(self):
         super(TeamSearchForm, self).reset_clear()
         super(TeamSearchForm, self).reset_scrim_days()
-        self.team_name.data = ''
-        self.team_skill_level.data = 'ALL'
-        self.team_time_zone.data = 'ALL'
+        self.team_name.data = ""
+        self.team_skill_level.data = "ALL"
+        self.team_time_zone.data = "ALL"
 
 class FilterTeamForm(TeamSearchForm):
     

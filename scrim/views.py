@@ -134,11 +134,11 @@ def all_users(page=1):
     if form.clear.data == True:
         form.reset_user_filter()
 
-    from utils import scrim_filter
-
     if form.validate_on_submit():
         if form.nickname.data != "":
             query = query.filter(User.nickname.like('%'+form.nickname.data+'%'))
+        if form.steam_id.data != "":
+            query = query.filter(User.steam_id.like('%'+form.steam_id.data+'%'))
 
     from config import USERS_PER_PAGE
 
