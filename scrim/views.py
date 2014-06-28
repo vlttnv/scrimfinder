@@ -714,7 +714,7 @@ def propose_scrim(opponent_team_id):
     
     return render_template('propose_scrim.html', form=form)
 
-@scrim_app.route('/scrim/accept/<int:scrim_id>', methods=['GET', 'POST'])
+@scrim_app.route('/scrim/accept/<int:scrim_id>', methods=['POST'])
 @login_required
 def accept_scrim(scrim_id):
     """
@@ -722,41 +722,23 @@ def accept_scrim(scrim_id):
     # team2 = who accepts/rejects scrim
     """
 
-    from forms import AcceptScrimForm
-
     if g.user is None:
         abort(404)
 
-    form = AcceptScrimForm()
+    from consts import SCRIM_ACCEPTED
 
-    if form.validate_on_submit():
-        try:
-            scrim = Scrim.query.filter_by(id=scrim_id).one()
-        except NoResultFound as e:
-            flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
-            return render_template('accept_scrim.html', form=form)
-
+    try:
+        scrim = Scrim.query.filter_by(id=scrim_id).one()
         accepting_team_id = scrim.team2_id
 
-        # is user the captain of team2
-        # try:
-        #     team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
-        # except NoResultFound as e:
-        #     flash('You are not part of the team')
-        #     return render_template('accept_scrim.html', form=form)
-
-        # the_captain = team_membership.role == 'Captain'
-        # if not the_captain:
-        #     flash('You are not the captain of the responding team')
-        #     return render_template('accept_scrim.html', form=form)
-
-        from consts import SCRIM_ACCEPTED
-        scrim.map2  = form.map.data
+        scrim.map2  = request.form['map']
         scrim.state = SCRIM_ACCEPTED
         db.session.commit()
-        return redirect(url_for('team_page', team_id=accepting_team_id))
-    else:
-        return render_template('accept_scrim.html', form=form)
+
+    except NoResultFound as e:
+        flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
+    
+    return redirect(url_for('team_page', team_id=accepting_team_id))
 
 @scrim_app.route('/scrim/reject/<int:scrim_id>', methods=['GET'])
 @login_required
