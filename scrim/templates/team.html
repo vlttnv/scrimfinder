@@ -128,7 +128,8 @@
 		<a href="#">Waiting for response</a>
 	{% elif scrim_info.state == "Received" %}
 		<span class="label label-info">{{ scrim_info.scrim.state }}</span>
-		<a href="#">Accept</a> <a href="#">Reject</a>
+		<a href="{{ url_for('accept_scrim', scrim_id=scrim_info.scrim.id) }}">Accept</a>
+		<a href="{{ url_for('reject_scrim', scrim_id=scrim_info.scrim.id) }}">Reject</a>
 	{% endif %}
 	</li>
 {% endfor %}

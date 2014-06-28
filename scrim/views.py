@@ -787,6 +787,8 @@ def reject_scrim(scrim_id):
     from consts import SCRIM_REJECTED
     scrim.state = SCRIM_REJECTED
     db.session.commit()
+
+    flash('Scrim rejected.', "danger")
     return redirect(url_for('team_page', team_id=accepting_team_id))
 
 @scrim_app.route('/scrim/history/<int:team_id>/page/<int:page>', methods=['GET'])
