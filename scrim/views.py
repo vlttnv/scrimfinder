@@ -729,20 +729,17 @@ def accept_scrim():
     scrim_map = request.form['map']
 
     if (scrim_id == None or scrim_id == ""):
-        flash('The form is invalid', "danger")
-        return redirect(url_for('index'))
+        return "The form is invalid"
 
     try:
         scrim = Scrim.query.filter_by(id=request.form['scrim_id']).one()
     except NoResultFound as e:
-        flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
-        return redirect(url_for('index'))
+        return "Cannot find scrim with id: " + scrim_id
 
     accepting_team_id = scrim.team2_id
 
     if (scrim_map == None or scrim_map == ""):
-        flash('Map field is empty', "danger")
-        return redirect(url_for('team_page', team_id=accepting_team_id))
+        return "Map field is empty"
 
     # is user the captain of team2
     # try:
@@ -762,7 +759,7 @@ def accept_scrim():
     scrim.state = SCRIM_ACCEPTED
     db.session.commit()
 
-    flash('Scrim accepted')
+    flash('Scrim accepted', "success")
     return redirect(url_for('team_page', team_id=accepting_team_id))
 
 @scrim_app.route('/scrim/reject/<int:scrim_id>', methods=['GET'])

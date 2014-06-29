@@ -151,7 +151,7 @@
     {% elif scrim_info.state == "Received" %}
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
         <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="acceptScrim(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
-        <span id="acceptScrimBox{{ scrim_info.scrim.id }}"></span>
+        <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
         <a href="{{ url_for('reject_scrim', scrim_id=scrim_info.scrim.id) }}" class="confirmation">Reject</a>
     {% endif %}
     </li>
@@ -160,29 +160,35 @@
 
 <script type="text/javascript">
     function acceptScrim(post_url, scrim_id) {
-        var uniqueFormID = ""
+        var acceptScrimButton = "#acceptScrimButton" + scrim_id
+        $(acceptScrimButton).attr('disabled','disabled');
 
-        var form = "<form action="+post_url+" id= \"acceptScrimForm\" method=\"post\" name=\"accept_scrim\">"
-        form += "Scrim ID: <input type=\"text\" id=\"acceptScrimFormScrimID\""+scrim_id+" name=\"scrim_id\"/>"
+        var uniqueFormID = "acceptScrimForm" + scrim_id;
+        var uniqueWarningID = "warning" + scrim_id;
+        var form = "<form action="+post_url+" id="+uniqueFormID+" method=\"post\" name=\"accept_scrim\">"
+        form += "<input type=\"text\" name=\"scrim_id\"/>"
         form += "Your Map: <input type=\"text\" name=\"map\"/>"
         form += "<input type=\"button\" onclick=\"submitAcceptScrimForm("+scrim_id+");\" value=\"Submit\">"
+        form += "<span id="+uniqueWarningID+" style=\"color:Red;\"></span>"
         form += "</form>"
 
-        var boxName = "#acceptScrimBox" + scrim_id
-        var scrimIDInput = "#acceptScrimFormScrimID" + scrim_id
-        var acceptScrimButton = "#acceptScrimButton" +scrim_id
+        var formArea = "#acceptScrimFormArea" + scrim_id
+        $(formArea).append(form);
 
-        $(boxName).append(form);
-        $(scrimIDInput).hide();
-        $(scrimIDInput).val(scrim_id);
-        $(acceptScrimButton).attr('disabled','disabled');
+        var form_scrim_id = "#" + uniqueFormID + " input[name=scrim_id]"
+        $(form_scrim_id).hide();
+        $(form_scrim_id).val(scrim_id);
     }
 
     function submitAcceptScrimForm(scrim_id) {
-        if ($('#acceptScrimFormScrimID'+scrim_id).val() != "") {
-            $('#acceptScrimForm'+scrim_id).submit();
+        var form = "#acceptScrimForm" + scrim_id
+        var form_map = form + " input[name=map]"
+
+        if ($(form_map).val() != "") {
+            $(form).submit();
         } else {
-            alert('HACK: Please enter map field.');
+            var warning = "#warning" + scrim_id
+            $(warning).text(" Please enter map field");
         }
     }
 
@@ -231,15 +237,6 @@
                 </div>
         </div>
 </div>
-
-
-
-
-
-
-
-
-
 
 
 
