@@ -844,3 +844,14 @@ def bots_scrims():
     bots.create_scrims()
 
     return 'Does it work?', 200
+
+@scrim_app.route('/bots/finished_scrims')
+def bots_finished_scrims():
+    """
+    """
+
+    from scrim import bots
+
+    team_id = bots.create_finished_scrims()
+
+    redirect(url_for('team_page', team_id=team_id))

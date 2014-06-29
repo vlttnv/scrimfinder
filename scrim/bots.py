@@ -146,3 +146,14 @@ def create_scrims():
     db.session.add(scrim_finished)
 
     db.session.commit()
+
+def create_finished_scrims():
+    from consts import UGC_PLATINUM
+    from consts import SCRIM_PROPOSED, SCRIM_ACCEPTED, SCRIM_REJECTED, SCRIM_FINISHED
+    from datetime import datetime, timedelta
+    
+    team1 = Team()
+    team1.name = 'Scrim Team 1'
+    team1.skill_level = UGC_PLATINUM
+    team1.time_zone = "CET"
+    db.session.add(team1)
