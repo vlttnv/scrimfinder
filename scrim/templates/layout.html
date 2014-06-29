@@ -39,9 +39,9 @@
     </form>
 <ul class="nav navbar-nav navbar-right">
 		<!--<li><a href="#"><i class="fa fa-envelope"></i> 0</a></li>-->
-		<li><img src="{{g.user.avatar_url_full}}" width="45px" height="45px"></li>
 {% if current_user.is_authenticated() %}
 
+		<li><img src="{{g.user.avatar_url_full}}" width="45px" height="45px"></li>
 <li {% if '/user/' in request.path %}class='profile-button dropdown' {% else %} class='profile-button dropdown' {% endif %}>
 <a href="{{ url_for('user_page', steam_id=g.user.steam_id)  }}" class="profile-button dropdown-toggle" data-toggle="dropdown">{{g.user.nickname}} <b class="caret"></b></a>
 
