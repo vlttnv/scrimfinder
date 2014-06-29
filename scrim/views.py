@@ -451,8 +451,13 @@ def team_page(team_id):
     #   'scrim'
     # }
 
-    # still need to cover scrim finished
+    from datetime import datetime
+
     for scrim in all_scrims.all():
+        # ACCEPTED -> FINISHED when time passes
+        if scrim.date < datetime.utcnow():
+            scrim.state = SCRIM_FINISHED
+
         if scrim.state == SCRIM_FINISHED:
             opponent = None
             if scrim.team1_id == team_id:
@@ -845,13 +850,13 @@ def bots_scrims():
 
     return 'Does it work?', 200
 
-@scrim_app.route('/bots/finished_scrims')
-def bots_finished_scrims():
+@scrim_app.route('/bots/accepted_scrim')
+def bots_accepted_scrim():
     """
     """
 
     from scrim import bots
 
-    team_id = bots.create_finished_scrims()
+    team_id = bots.create_accepted_scrim()
 
-    redirect(url_for('team_page', team_id=team_id))
+    return redirect(url_for('team_page', team_id=team_id))

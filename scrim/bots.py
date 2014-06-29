@@ -147,13 +147,37 @@ def create_scrims():
 
     db.session.commit()
 
-def create_finished_scrims():
+def create_accepted_scrim():
     from consts import UGC_PLATINUM
-    from consts import SCRIM_PROPOSED, SCRIM_ACCEPTED, SCRIM_REJECTED, SCRIM_FINISHED
+    from consts import SCRIM_ACCEPTED
     from datetime import datetime, timedelta
     
     team1 = Team()
-    team1.name = 'Scrim Team 1'
+    team1.name = 'Team Test Finished Scrim1'
     team1.skill_level = UGC_PLATINUM
     team1.time_zone = "CET"
     db.session.add(team1)
+
+    team2 = Team()
+    team2.name = 'Team Test Finished Scrim2'
+    team2.skill_level = UGC_PLATINUM
+    team2.time_zone = "CET"
+    db.session.add(team2)
+
+    now = datetime.utcnow()
+    past_day = now - timedelta(days=now.weekday() - 4)
+
+    scrim_proposed = Scrim()
+    scrim_proposed.date     = past_day
+    scrim_proposed.map1     = 'Team Map1'
+    scrim_proposed.team1_id = team1.id
+    scrim_proposed.team1    = team1
+    scrim_proposed.team2_id = team2.id
+    scrim_proposed.team2    = team2
+    scrim_proposed.type     = 'Test scrim'
+    scrim_proposed.state    = SCRIM_ACCEPTED
+    db.session.add(scrim_proposed)
+
+    db.session.commit()
+
+    return team1.id
