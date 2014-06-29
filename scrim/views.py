@@ -714,9 +714,9 @@ def propose_scrim(opponent_team_id):
     
     return render_template('propose_scrim.html', form=form)
 
-@scrim_app.route('/scrim/accept/<int:scrim_id>', methods=['POST'])
+@scrim_app.route('/scrim/accept/', methods=['POST'])
 @login_required
-def accept_scrim(scrim_id):
+def accept_scrim():
     """
     # team1 = who proposes scrim
     # team2 = who accepts/rejects scrim
@@ -725,19 +725,44 @@ def accept_scrim(scrim_id):
     if g.user is None:
         abort(404)
 
-    from consts import SCRIM_ACCEPTED
+    scrim_id = request.form['scrim_id']
+    scrim_map = request.form['map']
+
+    if (scrim_id == None or scrim_id == ""):
+        flash('The form is invalid', "danger")
+        return redirect(url_for('index'))
 
     try:
-        scrim = Scrim.query.filter_by(id=scrim_id).one()
-        accepting_team_id = scrim.team2_id
-
-        scrim.map2  = request.form['map']
-        scrim.state = SCRIM_ACCEPTED
-        db.session.commit()
-
+        scrim = Scrim.query.filter_by(id=request.form['scrim_id']).one()
     except NoResultFound as e:
         flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
-    
+        return redirect(url_for('index'))
+
+    accepting_team_id = scrim.team2_id
+
+    if (scrim_map == None or scrim_map == ""):
+        flash('Map field is empty', "danger")
+        return redirect(url_for('team_page', team_id=accepting_team_id))
+
+    # is user the captain of team2
+    # try:
+    #     team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
+    # except NoResultFound as e:
+    #     flash('You are not part of the team', "danger")
+    #     return redirect(url_for('team_page', team_id=accepting_team_id))
+
+    # the_captain = team_membership.role == 'Captain'
+    # if not the_captain:
+    #     flash('You are not the captain of the team', "danger")
+    #     return redirect(url_for('team_page', team_id=accepting_team_id))
+
+    from consts import SCRIM_ACCEPTED
+
+    scrim.map2  = scrim_map
+    scrim.state = SCRIM_ACCEPTED
+    db.session.commit()
+
+    flash('Scrim accepted')
     return redirect(url_for('team_page', team_id=accepting_team_id))
 
 @scrim_app.route('/scrim/reject/<int:scrim_id>', methods=['GET'])
