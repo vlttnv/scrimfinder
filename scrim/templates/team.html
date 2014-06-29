@@ -160,9 +160,9 @@
 {% if not com_list %}
 <p class="text-muted">There is no feedback for this team yet.</p>
 {% else %}
-{% for name,text in com_list %}
+{% for name,text,ava in com_list %}
 <div class="col-lg-2">
-        ava
+		<img src="{{ava}}" width="32px", height="32px" style="margin-top:4px;">
 </div>
 <div class="col-lg-10">
         <strong>{{name}}</strong><br>
