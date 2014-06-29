@@ -52,18 +52,28 @@
                         </div>
                         <div class="col-md-8" style="height: 200px;">
 <div id="cal-heatmap"></div>
+<div id="click">
 <script type="text/javascript">
 	var cal = new CalHeatMap();
 	cal.init({
+				itemSelector: "#click",
 				domain: "day",
 				subDomain: "hour",
 				range: 7,
 				cellSize: 15,
 				tooltip: true,
 				weekStartOnMonday: true,
-				highlight: ["now"]
+				highlight: ["now"],
+				onClick: function(date, nb) {
+		$("#click-a").html("You just clicked <br/>on <b>" +
+			date + "</b> <br/>with <b>" +
+			(nb === null ? "unknown" : nb) + "</b> items"
+		);
+	}
 			});
 </script>
+
+<div id="click-a"></div></div>
                         </div>
                 </div>
                 <div class="row">
@@ -194,12 +204,12 @@
 {% if not com_list %}
 <p class="text-muted">There is no feedback for this team yet.</p>
 {% else %}
-{% for name,text,ava in com_list %}
+{% for name,text,ava,comment_steam in com_list %}
 <div class="col-lg-2">
 		<img src="{{ava}}" width="32px", height="32px" style="margin-top:4px;">
 </div>
 <div class="col-lg-10">
-        <strong>{{name}}</strong><br>
+		<strong><a href="{{url_for('user_page', steam_id=comment_steam)}}">{{name}}</a></strong><br>
         {{text}}
 </div>
 <hr>
