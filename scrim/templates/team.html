@@ -50,8 +50,20 @@
 
                                 </ul>
                         </div>
-                        <div class="col-md-8 well" style="height: 200px;">
-                                this here will be a graph
+                        <div class="col-md-8" style="height: 200px;">
+<div id="cal-heatmap"></div>
+<script type="text/javascript">
+	var cal = new CalHeatMap();
+	cal.init({
+				domain: "day",
+				subDomain: "hour",
+				range: 7,
+				cellSize: 15,
+				tooltip: true,
+				weekStartOnMonday: true,
+				highlight: ["now"]
+			});
+</script>
                         </div>
                 </div>
                 <div class="row">
