@@ -41,9 +41,11 @@
 								<p>Week days: {{ team.week_days }}</p>
 														</div>
 						</div>
+						{% if g.user.steam_id in request.path  %}
 <form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
     <input type="submit" class="btn btn-danger pull-right" value="Quit">
     </form>
+	{% endif %}
 						</div>
 				</div>
 				{% endfor %}
