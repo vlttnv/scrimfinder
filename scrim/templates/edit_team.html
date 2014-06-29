@@ -1,59 +1,104 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Edit Your Team Profile</h1>
-<form action="{{url_for('edit_team', team_id=team_id)}}" method="post" name="edit_team">
-    {{form.hidden_tag()}}
-    <table>
-		<tr>
-			<td>Team Name</td>
-			<td>{{form.team_name()}}</td>
-		</tr>
-        <tr>
-            <td>Team Skill Level:</td>
-            <td>{{form.team_skill_level()}}</td>
-        </tr>
-        <tr>
-            <td>Team Time Zone:</td>
-            <td>{{form.team_time_zone()}}</td>
-        </tr>
-		<tr>
-				<td>Monday</td>
-				<td>{{form.mon()}}</td>
-		</tr>
-        <tr>
-		<tr>
-				<td>Tuesday</td>
-				<td>{{form.tue()}}</td>
-		</tr>
-		<tr>
-				<td>Wednesday</td>
-				<td>{{form.wed()}}</td>
-		</tr>
-		<tr>
-				<td>Thursday</td>
-				<td>{{form.thu()}}</td>
-		</tr>
-		<tr>
-				<td>Friday</td>
-				<td>{{form.fri()}}</td>
-		</tr>
-		<tr>
-				<td>Saturday</td>
-				<td>{{form.sat()}}</td>
-		</tr>
-		<tr>
-				<td>Sunday</td>
-				<td>{{form.sun()}}</td>
-		</tr>
-		<tr>
-				<td>Preferred Start Time</td>
-				<td>{{form.time_from}}</td>
-		</tr>
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Save Changes"></td>
-        </tr>
-    </table>
+
+<br>
+
+<div class="col-lg-6 col-lg-offset-3 well">
+
+<form class="form-horizontal" action="" method="post"  name="create_team">
+
+	{{form.hidden_tag()}}
+		<fieldset>
+				<legend>Edit Team</legend>
+				<div class="form-group">
+						<label for="teamName" class="col-lg-2 control-label">Email</label>
+						<div class="col-lg-10">
+{{form.team_name(type="text", class_="form-control", id="teamName", placeholder="Super Team")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<div class="col-lg-10">
+								{{form.team_skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Selects</label>
+						<div class="col-lg-10">
+								{{form.team_time_zone(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Start Time</label>
+						<div class="col-lg-10">
+								{{form.time_from(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Availability</label>
+						<div class="col-lg-10">
+								<div class="checkbox">
+										<label>
+												{{form.mon()}} Monday 
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.tue()}} Tuesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.wed()}} Wednesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.thu()}} Thursdy
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.fri()}} Friday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.sat()}} Saturday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.sun()}} Sunday
+										</label>
+								</div>
+
+						</div>
+				</div>
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+
+			  <a href="{{url_for('team_page', team_id=team_id)}}"class="btn btn-default">Cancel</a>
+<input id="lol" data-toggle="tooltip" data-placement="right" title="" data-original-title="Tooltip on right" class="btn btn-success" type="submit" value="Save Team">
+      </div>
+    </div>
+		</fieldset>
+
+
+</div>
+<form action="" method="post"  name="create_team">
 </form>
+
+
+<script language="javascript">
+document.getElementById('teamName').setAttribute('data-toggle','popover')
+document.getElementById('teamName').setAttribute('data-placement','right')
+document.getElementById('teamName').setAttribute('data-content','Team name can be changed later.')
+document.getElementById('teamName').setAttribute('onBlur',"$(this).popover('hide')")
+
+$(document).ready(function(){
+				$('#teamName').popover(trigger='focus');
+});
+</script>
 {% endblock %}
