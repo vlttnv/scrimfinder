@@ -514,7 +514,7 @@ def team_page(team_id):
     else:
         comment_list =[]
         try:
-            cmnts = Comment.query.join(User).all()
+            cmnts = Comment.query.join(User).filter(Comment.team_id==team_id).all()
             for x in cmnts:
                 comment_list.append((x.user.nickname,x.comment))
 
