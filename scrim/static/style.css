@@ -68,6 +68,9 @@ body {
 		background-position: center center;
 		background-size: cover;
 }
-.jumbotron h1, p {
+.jumbotron h1 {
+		color: #ffffff;
+}
+.jumbotron p {
 		color: #ffffff;
 }
