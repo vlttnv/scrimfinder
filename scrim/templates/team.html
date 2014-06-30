@@ -130,7 +130,7 @@
     
     </span>
 
-    <strong>Versus:</strong> {{ scrim_info.opponent.name }}<br>
+    <strong>Versus:</strong> <a href="{{ url_for('team_page', team_id=scrim_info.opponent.id) }}">{{ scrim_info.opponent.name }}</a><br>
     <em>Map 1:</em> {{ scrim_info.scrim.map1 }}, <em>Map 2:</em> {{ scrim_info.scrim.map2 }}<br>
     Type: {{ scrim_info.scrim.type }}
     

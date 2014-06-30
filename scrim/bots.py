@@ -153,13 +153,13 @@ def create_accepted_scrim():
     from datetime import datetime, timedelta
     
     team1 = Team()
-    team1.name = 'Team Test Finished Scrim1'
+    team1.name = "Team Test Finished Scrim1"
     team1.skill_level = UGC_PLATINUM
     team1.time_zone = "CET"
     db.session.add(team1)
 
     team2 = Team()
-    team2.name = 'Team Test Finished Scrim2'
+    team2.name = "Team Test Finished Scrim2"
     team2.skill_level = UGC_PLATINUM
     team2.time_zone = "CET"
     db.session.add(team2)
@@ -167,16 +167,17 @@ def create_accepted_scrim():
     now = datetime.utcnow()
     past_day = now - timedelta(days=now.weekday() - 4)
 
-    scrim_proposed = Scrim()
-    scrim_proposed.date     = past_day
-    scrim_proposed.map1     = 'Team Map1'
-    scrim_proposed.team1_id = team1.id
-    scrim_proposed.team1    = team1
-    scrim_proposed.team2_id = team2.id
-    scrim_proposed.team2    = team2
-    scrim_proposed.type     = 'Test scrim'
-    scrim_proposed.state    = SCRIM_ACCEPTED
-    db.session.add(scrim_proposed)
+    scrim_accepted = Scrim()
+    scrim_accepted.date     = past_day
+    scrim_accepted.map1     = "Map1"
+    scrim_accepted.map2     = "Map2"
+    scrim_accepted.team1_id = team1.id
+    scrim_accepted.team1    = team1
+    scrim_accepted.team2_id = team2.id
+    scrim_accepted.team2    = team2
+    scrim_accepted.type     = "Accepted scrim"
+    scrim_accepted.state    = SCRIM_ACCEPTED
+    db.session.add(scrim_accepted)
 
     db.session.commit()
 
