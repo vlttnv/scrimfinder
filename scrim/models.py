@@ -80,6 +80,8 @@ class Team(db.Model):
     reputation      = db.Column(db.Integer)
     week_days       = db.Column(db.String(7), default="0000000")
     avatar_url      = db.Column(db.String(80))
+    num_wins        = db.Column(db.Integer)
+    num_losses      = db.Column(db.Integer)
     membership      = db.relationship('Membership',
             backref='team',
             lazy='dynamic')

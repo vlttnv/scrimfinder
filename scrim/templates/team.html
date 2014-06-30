@@ -32,11 +32,11 @@
                                         Reputation
                                         </li>
                                         <li class="list-group-item">
-                                        <span class="badge">2</span>
+										<span class="badge">{{team.num_wins}}</span>
                                         Wins
                                         </li>
                                         <li class="list-group-item">
-                                        <span class="badge">1</span>
+										<span class="badge">{{team.num_losses}}</span>
                                         Losses
                                         </li>
                                         <li class="list-group-item">
@@ -64,10 +64,10 @@
 				tooltip: true,
 				weekStartOnMonday: true,
 				highlight: ["now"],
+				displayLegend: false,
 				onClick: function(date, nb) {
-		$("#click-a").html("You just clicked <br/>on <b>" +
-			date + "</b> <br/>with <b>" +
-			(nb === null ? "unknown" : nb) + "</b> items"
+				$("#click-a").html("<a href='#' class='btn btn-primary btn-xs'>Book</a> <em>" +
+			date + "</em>"
 		);
 	}
 			});
