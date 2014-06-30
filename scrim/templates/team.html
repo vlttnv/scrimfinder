@@ -136,21 +136,34 @@
     
     {% if scrim_info.state == "Finished" %}
         <span class="label label-default">{{ scrim_info.scrim.state }}</span>
-        {% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
-            Result: {{ scrim_info.scrim.result }}
-        {% else %}
-            Result: Opposite of {{ scrim_info.scrim.result }}
-        {% endif %}
         <br />
-        Upload results form:
-        <form action="{{ url_for('upload_scrim_result') }}">
-            <input type="text" name="result" />
-            <select name="team_color">
-                <option value="blue">Blue</option>
-                <option value="red">Red</option>
-            </select>
-            <input type="button" onclick="submitUploadScrimResultForm();" value="Submit">
-        </form>
+        {% if scrim_info.scrim.result is none %}
+            Upload results form:
+            <form action="{{ url_for('upload_scrim_result') }}">
+                Logs.tf Link: <input type="text" name="result" />
+                Team Color: <select name="team_color">
+                    <option value="blue">Blue</option>
+                    <option value="red">Red</option>
+                </select>
+                <input type="button" onclick="submitUploadScrimResultForm();" value="Submit">
+            </form>
+        {% else %}
+            {% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
+                Result: {{ scrim_info.scrim.result }}
+            {% else %}
+                Result: Opposite of {{ scrim_info.scrim.result }}
+            {% endif %}
+
+            Edit results form:
+            <form action="{{ url_for('upload_scrim_result') }}">
+                Logs.tf Link: <input type="text" name="result" />
+                Team Color: <select name="team_color">
+                    <option value="blue">Blue</option>
+                    <option value="red">Red</option>
+                </select>
+                <input type="button" onclick="submitUploadScrimResultForm();" value="Submit">
+            </form>
+        {% endif %}
     {% elif scrim_info.state == "Accepted" %}
         <span class="label label-success">{{ scrim_info.scrim.state }}</span>
     {% elif scrim_info.state == "Rejected" %}
