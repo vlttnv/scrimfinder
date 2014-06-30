@@ -455,8 +455,9 @@ def team_page(team_id):
 
     for scrim in all_scrims.all():
         # ACCEPTED -> FINISHED when time passes
-        if scrim.date < datetime.utcnow():
+        if scrim.state == SCRIM_ACCEPTED and scrim.date < datetime.utcnow():
             scrim.state = SCRIM_FINISHED
+            db.session.commit()
 
         if scrim.state == SCRIM_FINISHED:
             opponent = None
@@ -799,6 +800,10 @@ def reject_scrim(scrim_id):
 
     flash('Scrim rejected.', "danger")
     return redirect(url_for('team_page', team_id=accepting_team_id))
+
+@scrim_app.route('/scrim/upload_result/', methods=['POST'])
+def upload_scrim_result():
+    pass
 
 @scrim_app.route('/scrim/history/<int:team_id>/page/<int:page>', methods=['GET'])
 @login_required

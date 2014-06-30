@@ -120,7 +120,10 @@ class Scrim(db.Model):
     type            = db.Column(db.String(80))
     # possible values in consts.py
     state           = db.Column(db.String(20))
-    result          = db.Column(db.String(20))
+    log1            = db.Column(db.String(40))
+    log2            = db.Column(db.String(40))
+    log_team1       = db.Column(db.String(10))
+    log_team2       = db.Column(db.String(10))
 
 class Comment(db.Model):
     id              = db.Column(db.Integer, primary_key=True)

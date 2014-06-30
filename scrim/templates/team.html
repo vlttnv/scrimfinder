@@ -141,6 +141,15 @@
         {% else %}
             Result: Opposite of {{ scrim_info.scrim.result }}
         {% endif %}
+        <br />
+        Upload results form:
+        <form action="{{ url_for('upload_scrim_result') }}">
+            <select name="result">
+                <option value="victory">Victory</option>
+                <option value="defeat">Defeat</option>
+            </select>
+            <input type="button" onclick="submitUploadScrimResultForm();" value="Submit">
+        </form>
     {% elif scrim_info.state == "Accepted" %}
         <span class="label label-success">{{ scrim_info.scrim.state }}</span>
     {% elif scrim_info.state == "Rejected" %}
@@ -159,6 +168,10 @@
 </ul>
 
 <script type="text/javascript">
+    function submitUploadScrimResultForm() {
+
+    }
+
     function acceptScrim(post_url, scrim_id) {
         var acceptScrimButton = "#acceptScrimButton" + scrim_id
         $(acceptScrimButton).attr('disabled','disabled');
