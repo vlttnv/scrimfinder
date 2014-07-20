@@ -138,15 +138,8 @@
         <span class="label label-default">{{ scrim_info.scrim.state }}</span>
         <br />
         {% if scrim_info.scrim.result is none %}
-            Upload results form:
-            <form action="{{ url_for('upload_scrim_result') }}">
-                Logs.tf Link: <input type="text" name="result" />
-                Team Color: <select name="team_color">
-                    <option value="blue">Blue</option>
-                    <option value="red">Red</option>
-                </select>
-                <input type="button" onclick="submitUploadScrimResultForm();" value="Submit">
-            </form>
+            <input type="button" id="uploadResultButton{{ scrim_info.scrim.id }}" value="Submit result" onclick="createUploadResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
+            <span id="uploadResultFormArea{{ scrim_info.scrim.id }}"></span>
         {% else %}
             {% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
                 Result: {{ scrim_info.scrim.result }}
@@ -161,7 +154,7 @@
                     <option value="blue">Blue</option>
                     <option value="red">Red</option>
                 </select>
-                <input type="button" onclick="submitUploadScrimResultForm();" value="Submit">
+                <input type="button" onclick="uploadScrimResult();" value="Submit">
             </form>
         {% endif %}
     {% elif scrim_info.state == "Accepted" %}
@@ -173,7 +166,7 @@
         <a href="#">Waiting for response</a>
     {% elif scrim_info.state == "Received" %}
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
-        <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="acceptScrim(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
+        <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
         <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
         <a href="{{ url_for('reject_scrim', scrim_id=scrim_info.scrim.id) }}" class="confirmation">Reject</a>
     {% endif %}
@@ -182,21 +175,61 @@
 </ul>
 
 <script type="text/javascript">
-    function submitUploadScrimResultForm() {
+    function createUploadResultForm(post_url, scrim_id) {
+        var uploadResultButton = "#uploadResultButton" + scrim_id
+        $(uploadResultButton).prop("disabled", true);
 
+        var uniqueFormID = "uploadResultForm" + scrim_id;
+        var uniqueErrorID = "uploadResultFormError" + scrim_id;
+        var form = "<form action="+post_url+" id="+uniqueFormID+" method=\"post\" name=\"upload_result\">"
+        form += "<input type=\"text\" name=\"scrim_id\"/>"
+        form += "Logs.tf: <input type=\"text\" name=\"logs_tf_link\"/>"
+        form += "Team Color: <select name=\"team_color\">"
+        form += "<option value=\"blue\">Blue</option><option value=\"red\">Red</option></select>"
+        form += "<input type=\"button\" onclick=\"uploadScrimResult("+scrim_id+");\" value=\"Submit\">"
+        form += "<input type=\"button\" onclick=\"cancelUploadScrimResult("+scrim_id+");\" value=\"Cancel\">"
+        form += "<span id="+uniqueErrorID+" style=\"color:Red;\"></span>"
+        form += "</form>"
+
+        var formArea = "#uploadResultFormArea" + scrim_id
+        $(formArea).append(form);
+
+        var form_scrim_id = "#" + uniqueFormID + " input[name=scrim_id]"
+        $(form_scrim_id).hide();
+        $(form_scrim_id).val(scrim_id);
     }
 
-    function acceptScrim(post_url, scrim_id) {
+    function uploadScrimResult(scrim_id) {
+        var form = "#uploadResultForm" + scrim_id
+        var logs_tf = form + " input[name=logs_tf_link]"
+
+        if ($(logs_tf).val() != "") {
+            $(form).submit();
+        } else {
+            var warning = "#uploadResultFormError" + scrim_id
+            $(warning).text(" Please enter the log.tf link");
+        }
+    }
+
+    function cancelUploadScrimResult(scrim_id) {
+        var form = "#uploadResultForm" + scrim_id
+        $(form).remove();
+        var uploadResultButton = "#uploadResultButton" + scrim_id
+        $(uploadResultButton).prop("disabled", false);
+    }
+
+    function createAcceptScrimForm(post_url, scrim_id) {
         var acceptScrimButton = "#acceptScrimButton" + scrim_id
-        $(acceptScrimButton).attr('disabled','disabled');
+        $(acceptScrimButton).prop("disabled", true);
 
         var uniqueFormID = "acceptScrimForm" + scrim_id;
-        var uniqueWarningID = "warning" + scrim_id;
+        var uniqueErrorID = "acceptScrimFormError" + scrim_id;
         var form = "<form action="+post_url+" id="+uniqueFormID+" method=\"post\" name=\"accept_scrim\">"
         form += "<input type=\"text\" name=\"scrim_id\"/>"
         form += "Your Map: <input type=\"text\" name=\"map\"/>"
-        form += "<input type=\"button\" onclick=\"submitAcceptScrimForm("+scrim_id+");\" value=\"Submit\">"
-        form += "<span id="+uniqueWarningID+" style=\"color:Red;\"></span>"
+        form += "<input type=\"button\" onclick=\"acceptScrim("+scrim_id+");\" value=\"Submit\">"
+        form += "<input type=\"button\" onclick=\"cancelAcceptScrim("+scrim_id+");\" value=\"Cancel\">"
+        form += "<span id="+uniqueErrorID+" style=\"color:Red;\"></span>"
         form += "</form>"
 
         var formArea = "#acceptScrimFormArea" + scrim_id
@@ -207,16 +240,23 @@
         $(form_scrim_id).val(scrim_id);
     }
 
-    function submitAcceptScrimForm(scrim_id) {
+    function acceptScrim(scrim_id) {
         var form = "#acceptScrimForm" + scrim_id
         var form_map = form + " input[name=map]"
 
         if ($(form_map).val() != "") {
             $(form).submit();
         } else {
-            var warning = "#warning" + scrim_id
+            var warning = "#acceptScrimFormError" + scrim_id
             $(warning).text(" Please enter map field");
         }
+    }
+
+    function cancelAcceptScrim(scrim_id) {
+        var form = "#acceptScrimForm" + scrim_id
+        $(form).remove();
+        var acceptScrimButton = "#acceptScrimButton" + scrim_id
+        $(acceptScrimButton).prop("disabled", false);
     }
 
     $('.confirmation').on('click', function () {
