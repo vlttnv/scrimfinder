@@ -258,6 +258,10 @@ def all_scrims(page=1):
 @lm.user_loader
 def load_user(id):
     return User.query.get(int(id))
+@lm.unauthorized_handler
+def unauthorized():
+    flash("You need to log in through Steam to access this page. Please do so using the button in the top right corner.", "danger")
+    return redirect(url_for('index'))
 
 @scrim_app.route('/profile/edit', methods = ['GET', 'POST'])
 @login_required
