@@ -9,11 +9,11 @@ import re
 from sqlalchemy import func, and_, or_, desc
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
+import MySQLdb
 
 #========================
 # Helper function
 #========================
-
 def convert_bits_to_days(bit_string):
     days_of_week = [
         "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
