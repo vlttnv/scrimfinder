@@ -19,11 +19,20 @@
 								<p><a href="http://www.ugcleague.com/players_page.cfm?player_id={{user.steam_id}}">UGC Profile</a></p>
 								<p><a href="http://logs.tf/profile/{{user.steam_id}}">Logs</a></p>
 
+
 						</div>
 				</div>
 <br>
+{% if g.user.steam_id == user.steam_id %}
+				<p>
+				<!-- Button trigger modal -->
+<button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
+  Create a team
+</button>
+				<a href="{{url_for('all_teams')}}" class="btn btn-primary btn-lg">Join a team</a></p>{% endif %}
 		</div>
 		<div class="col-lg-6">
+
 				{% for team, role in team_roles %}
 
 				<div class="panel panel-primary">
@@ -41,24 +50,21 @@
 						</div>
 						<div class="col-xs-6">
 								<p>Time zone:  {{ team.time_zone }}</p>
-								<p>Week days: {{ team.week_days }}</p>
+								<p>Week days: {% for day in convert_days(team.week_days) %}
+								<span class="label label-info">	{{day}}</span>
+								{% endfor %}</p>
 														</div>
 						</div>
 						{% if g.user != None and g.user.steam_id in request.path  %}
 <form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
+<a class="btn btn-primary pull-left" href="{{ url_for('team_page', team_id=team.id) }}">View Team</a>
     <input type="submit" class="btn btn-danger pull-right" value="Quit">
     </form>
 	{% endif %}
 						</div>
 				</div>
 				{% endfor %}
-				{% if g.user.steam_id == user.steam_id %}
-				<p>
-				<!-- Button trigger modal -->
-<button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
-  Create a team
-</button>
-				<a href="{{url_for('all_teams')}}" class="btn btn-primary btn-lg">Join a team</a></p>{% endif %}
+				
 
 
 
