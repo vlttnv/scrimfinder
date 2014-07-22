@@ -168,7 +168,7 @@
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
         <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
         <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
-        <a href="{{ url_for('reject_scrim', scrim_id=scrim_info.scrim.id) }}" class="confirmation">Reject</a>
+        <input type="button" id="rejectScrimButton{{ scrim_info.scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
     {% endif %}
     </li>
 {% endfor %}
@@ -257,6 +257,16 @@
         $(form).remove();
         var acceptScrimButton = "#acceptScrimButton" + scrim_id
         $(acceptScrimButton).prop("disabled", false);
+    }
+
+    function rejectScrim(post_url, scrim_id) {
+        console.log("here");
+        $.post(post_url, {'scrim_id': scrim_id}, function(resp){
+            if (resp == "OK") {
+                // hack
+                location.reload();
+            }
+        });
     }
 
     $('.confirmation').on('click', function () {

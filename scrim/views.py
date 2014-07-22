@@ -772,17 +772,21 @@ def accept_scrim():
     flash('Scrim accepted', "success")
     return redirect(url_for('team_page', team_id=accepting_team_id))
 
-@scrim_app.route('/scrim/reject/<int:scrim_id>', methods=['GET'])
+@scrim_app.route('/scrim/reject/', methods=['POST'])
 @login_required
-def reject_scrim(scrim_id):
+def reject_scrim():
+    scrim_id = request.form['scrim_id']
+
     if g.user is None:
-        abort(404)
+        return "You are not logged in"
+
+    if scrim_id == None or scrim_id == "":
+        return "'scrim_id' is invalid"
 
     try:
         scrim = Scrim.query.filter_by(id=scrim_id).one()
     except NoResultFound as e:
-        flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
-        return redirect(url_for('index.html'))
+        return "No such scrim id"
 
     accepting_team_id = scrim.team2_id
 
@@ -803,7 +807,7 @@ def reject_scrim(scrim_id):
     db.session.commit()
 
     flash('Scrim rejected.', "danger")
-    return redirect(url_for('team_page', team_id=accepting_team_id))
+    return "OK"
 
 @scrim_app.route('/scrim/upload_result/', methods=['POST'])
 def upload_scrim_result():
