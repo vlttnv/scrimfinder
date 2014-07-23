@@ -52,6 +52,8 @@
 
         <ul class="dropdown-menu">
 				<li><a href="{{ url_for('user_page', steam_id=g.user.steam_id)}}"><i class="fa fa-user"></i> Account</a></li>
+				<li><a href="{{url_for('create_team')}}">Create Team</a></li>
+<li><a href="{{url_for('all_teams')}}">Join Team</a></li>
           <li class="divider"></li>
 		  <li><a href="{{ url_for('logout') }}"><i class="fa fa-power-off"></i> Log Out</a></li>
         </ul>

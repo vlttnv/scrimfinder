@@ -2,23 +2,18 @@
 
 {% block body %}
 <div class="page-header" >
-        <h1>{{team.name}}  
-<div class="btn-group">
-            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                          <li> {% if (g.user, "Captain") in members_roles %}
-                <a href="{{url_for('edit_team', team_id=team.id)}}"><i class="fa fa-pencil"></i> Edit Team</a>{% endif %}</li>
-                                  <li> {% if not in_team %}
+		<h1>{{team.name}}<h4>  
+
+            
+                           {% if (g.user, "Captain") in members_roles %}
+                <a href="{{url_for('edit_team', team_id=team.id)}}"><i class="fa fa-pencil"></i> Edit Team</a>{% endif %}
+                                   {% if not in_team %}
                                   <a href="{{url_for('team_join', team_id=team.id)}}" ><i class="fa fa-envelope"></i> Request to join</a>
-{% endif %}</li>
-<li>
-{% if propose_scrim %}
+{% endif %}{% if propose_scrim %}
 <a href="{{url_for('propose_scrim', opponent_team_id=team.id)}}"><i class="fa fa-bullseye"></i> Propose Scrim</a>
 {% endif %}
 
-</li>
-                                            </ul>
-                                    </div>
+	</h4>                                
 </h1>
 </div>
 

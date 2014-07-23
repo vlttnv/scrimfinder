@@ -724,7 +724,7 @@ def propose_scrim(opponent_team_id):
     elif request.method == 'POST':
         flash('Scrim proposal not validated', "danger")
     
-    return render_template('propose_scrim.html', form=form)
+    return render_template('propose_scrim.html', form=form, team_id=opponent_team_id)
 
 @scrim_app.route('/scrim/accept/', methods=['POST'])
 @login_required

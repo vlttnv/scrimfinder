@@ -1,7 +1,58 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1> Propose scrim: </h1>
+<div class="col-lg-6 col-lg-offset-3">
+		<br>
+<form class="form-horizontal well" id="proposeScrimForm" action="" method="post" name="proposeScrim">
+{{form.hidden_tag()}}
+<legend>Propose Scrim</legend>
+<div class="form-group">
+		<label for="select" class="col-lg-2 control-label">Your team</label>
+		<div class="col-lg-10">
+				{{form.team(class_="form-control")}}
+		</div>
+</div>
+
+<div class="form-group">
+		<label for="select" class="col-lg-2 control-label">Your team time zone</label>
+		<div class="col-lg-10">
+				{{form.time_zone(class_="form-control")}}
+		</div>
+</div>
+<div class="form-group">
+		<label for="select" class="col-lg-2 control-label">Day</label>
+		<div class="col-lg-10">
+				{{form.day(class_="form-control")}}
+		</div>
+</div>
+<div class="form-group">
+		<label for="select" class="col-lg-2 control-label">Your time</label>
+		<div class="col-lg-10">
+				{{form.start_time(class_="form-control")}}
+{{ form.utc_time() }}
+		</div>
+</div>
+<div class="form-group">
+		<label for="map1" class="col-lg-2 control-label">Map 1</label>
+		<div class="col-lg-10">
+				{{form.map(type="text", class_="form-control", id="map1", placeholder="")}}
+		</div>
+</div>
+<div class="form-group">
+		<label for="select" class="col-lg-2 control-label">Type</label>
+		<div class="col-lg-10">
+				{{form.type(class_="form-control")}}
+		</div>
+</div>
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+<a class="btn btn-default" href="{{url_for('team_page', team_id=team_id)}}">Cancel</a>
+<input class="btn btn-success" type="submit" value="Propose Scrim">
+</div>
+</div>
+</form>
+</div>
+<!--<h1> Propose scrim: </h1>
 <form id="proposeScrimForm" action="" method="post" name="proposeScrim">
 	{{form.hidden_tag()}}
 	<table>
@@ -28,7 +79,7 @@
 		</tr>
 	</table>
 	<input type="submit" value="Propose Scrim">
-</form>
+</form>-->
 
 <script src="/static/js/moment.min.js"></script>
 <script src="/static/js/moment-timezone.min.js"></script>
