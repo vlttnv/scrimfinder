@@ -169,6 +169,7 @@
         <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
         <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
         <input type="button" id="rejectScrimButton{{ scrim_info.scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
+        <span id="rejectScrimError{{ scrim_info.scrim.id }}"></span>
     {% endif %}
     </li>
 {% endfor %}
@@ -202,12 +203,20 @@
     function uploadScrimResult(scrim_id) {
         var form = "#uploadResultForm" + scrim_id
         var logs_tf = form + " input[name=logs_tf_link]"
-
-        if ($(logs_tf).val() != "") {
-            $(form).submit();
-        } else {
-            var warning = "#uploadResultFormError" + scrim_id
-            $(warning).text(" Please enter the log.tf link");
+        if ($(logs_tf).val().indexOf("logs.tf/") == 0) {
+            // hack
+            $.post($(form).attr("action"), $(form).serialize(), function(resp){
+                if (resp == "OK")
+                {
+                    location.reload();
+                } else {
+                    var error = "#uploadResultFormError" + scrim_id
+                    $(error).text("Error: " + resp);
+                }
+            });
+        } else{
+            var error = "#uploadResultFormError" + scrim_id
+            $(error).text("Please enter a correct log.tf link");
         }
     }
 
@@ -248,7 +257,7 @@
             $(form).submit();
         } else {
             var warning = "#acceptScrimFormError" + scrim_id
-            $(warning).text(" Please enter map field");
+            $(warning).text("Please enter map field");
         }
     }
 
@@ -265,6 +274,10 @@
             if (resp == "OK") {
                 // hack
                 location.reload();
+            }
+            else {
+                var error = "#rejectScrimError" + scrim_id
+                $(error).text("Error: " + resp);
             }
         });
     }

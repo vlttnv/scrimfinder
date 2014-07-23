@@ -775,11 +775,10 @@ def accept_scrim():
 @scrim_app.route('/scrim/reject/', methods=['POST'])
 @login_required
 def reject_scrim():
-    scrim_id = request.form['scrim_id']
-
     if g.user is None:
         return "You are not logged in"
 
+    scrim_id = request.form['scrim_id']
     if scrim_id == None or scrim_id == "":
         return "'scrim_id' is invalid"
 
@@ -811,7 +810,50 @@ def reject_scrim():
 
 @scrim_app.route('/scrim/upload_result/', methods=['POST'])
 def upload_scrim_result():
-    pass
+    if g.user is None:
+        return "You are not logged in"
+
+    scrim_id = request.form['scrim_id']
+    logs_tf_link = request.form['logs_tf_link']
+    team_color = request.form['team_color']
+
+    if scrim_id == None or scrim_id == "":
+        return "'scrim_id' is invalid"
+    if logs_tf_link == None or logs_tf_link == "":
+        return "'logs_tf_link' is invalid"
+    if team_color == None or team_color == "":
+        return "'team_color' is invalid"
+
+    try:
+        scrim = Scrim.query.filter_by(id=scrim_id).one()
+    except NoResultFound as e:
+        return "No such scrim id"
+
+    user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(user_memberships) == 0:
+        return "You don't belong in a team."
+    is_team_1 = False;
+    is_team_2 = False;
+    for mem in user_memberships:
+        if (mem.team_id == scrim.team1_id):
+            is_team_1 = True
+            break
+        elif (mem.team_id == scrim.team2_id):
+            is_team_2 = True
+            break
+
+    if is_team_1 == False and is_team_2 == False:
+        return "You are not in the team"
+    if is_team_1 == True:
+        scrim.team1_log_tf = logs_tf_link
+        scrim.team1_color = team_color
+    else:
+        scrim.team2_log_tf = logs_tf_link
+        scrim.team2_color = team_color
+    # TODO
+    scrim.result = "TODO"
+    db.session.commit()
+    return "OK"
 
 @scrim_app.route('/scrim/history/<int:team_id>/page/<int:page>', methods=['GET'])
 @login_required
