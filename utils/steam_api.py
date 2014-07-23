@@ -5,7 +5,7 @@ import requests
 
 def get_user_info(steam_id):
     """
-    Return player summaries of the user with steam id = steam_id.
+    Return player summaries of the user that has the steam_id.
 
     Example:
     {

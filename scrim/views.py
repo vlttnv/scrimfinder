@@ -1,6 +1,6 @@
 from scrim import scrim_app, oid, db, models, lm
 from models import User, Team, Request, Membership, Comment, Scrim
-from utils import steam_api
+from utils import steam_api, logs_tf_api
 from consts import *
 from flask import request, redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
@@ -847,12 +847,29 @@ def upload_scrim_result():
     if is_team_1 == True:
         scrim.team1_log_tf = logs_tf_link
         scrim.team1_color = team_color
+        team1_color = team_color
     else:
         scrim.team2_log_tf = logs_tf_link
         scrim.team2_color = team_color
-    # TODO
-    # Let say team1 won
-    scrim.result = "Won"
+        if team_color == "Blue":
+            team1_color = "Red"
+        else:
+            team1_color = "Blue"
+
+    if logs_tf_link.startswith("http://logs.tf/"):
+        log_tf_id = logs_tf_link.split("http://logs.tf/")[1]
+    elif logs_tf_link.startswith("logs.tf/"):
+        log_tf_id = logs_tf_link.split("logs.tf/")[1]
+    else:
+        return "'logs_tf_link' is invalid"
+
+    if not log_tf_id.isdigit():
+        return "'logs_tf_link' is invalid"
+
+    if team1_color == "Blue":
+        scrim.result = logs_tf_api.get_match_result(True, log_tf_id)
+    else:
+        scrim.result = logs_tf_api.get_match_result(False, log_tf_id)
     db.session.commit()
     return "OK"
 

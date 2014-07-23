@@ -191,7 +191,7 @@
         form += "<input type=\"text\" name=\"scrim_id\"/>"
         form += "Logs.tf: <input type=\"text\" name=\"logs_tf_link\"/>"
         form += "Team Color: <select name=\"team_color\">"
-        form += "<option value=\"blue\">Blue</option><option value=\"red\">Red</option></select>"
+        form += "<option value=\"Blue\">Blue</option><option value=\"Red\">Red</option></select>"
         form += "<input type=\"button\" onclick=\"uploadScrimResult("+scrim_id+");\" value=\"Submit\">"
         form += "<input type=\"button\" onclick=\"cancelUploadScrimResult("+scrim_id+");\" value=\"Cancel\">"
         form += "<span id="+uniqueErrorID+" style=\"color:Red;\"></span>"
@@ -208,7 +208,7 @@
     function uploadScrimResult(scrim_id) {
         var form = "#uploadResultForm" + scrim_id
         var logs_tf = form + " input[name=logs_tf_link]"
-        if ($(logs_tf).val().indexOf("logs.tf/") == 0) {
+        if ($(logs_tf).val().indexOf("http://logs.tf/") == 0 || $(logs_tf).val().indexOf("logs.tf/") == 0) {
             // hack
             $.post($(form).attr("action"), $(form).serialize(), function(resp){
                 if (resp == "OK")
@@ -242,7 +242,7 @@
         form += "<input type=\"text\" name=\"scrim_id\"/>"
         form += "Logs.tf: <input type=\"text\" name=\"logs_tf_link\"/>"
         form += "Team Color: <select name=\"team_color\">"
-        form += "<option value=\"blue\">Blue</option><option value=\"red\">Red</option></select>"
+        form += "<option value=\"Blue\">Blue</option><option value=\"Red\">Red</option></select>"
         form += "<input type=\"button\" onclick=\"editScrimResult("+scrim_id+");\" value=\"Submit\">"
         form += "<input type=\"button\" onclick=\"cancelEditScrimResult("+scrim_id+");\" value=\"Cancel\">"
         form += "<span id="+uniqueErrorID+" style=\"color:Red;\"></span>"
@@ -259,7 +259,7 @@
     function editScrimResult(scrim_id) {
         var form = "#editResultForm" + scrim_id
         var logs_tf = form + " input[name=logs_tf_link]"
-        if ($(logs_tf).val().indexOf("logs.tf/") == 0) {
+        if ($(logs_tf).val().indexOf("http://logs.tf/") == 0 || $(logs_tf).val().indexOf("logs.tf/") == 0) {
             // hack
             $.post($(form).attr("action"), $(form).serialize(), function(resp){
                 if (resp == "OK")
