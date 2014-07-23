@@ -851,7 +851,8 @@ def upload_scrim_result():
         scrim.team2_log_tf = logs_tf_link
         scrim.team2_color = team_color
     # TODO
-    scrim.result = "TODO"
+    # Let say team1 won
+    scrim.result = "Won"
     db.session.commit()
     return "OK"
 

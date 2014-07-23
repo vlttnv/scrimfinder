@@ -141,10 +141,21 @@
             <input type="button" id="uploadResultButton{{ scrim_info.scrim.id }}" value="Submit result" onclick="createUploadResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
             <span id="uploadResultFormArea{{ scrim_info.scrim.id }}"></span>
         {% else %}
-            {% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
-                Result: {{ scrim_info.scrim.result }}
+            {% if team.id == scrim_info.scrim.team1_id %}
+                {% if scrim_info.scrim.result == "Won" %}
+                    <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
+                {% elif scrim_info.scrim.result == "Lost" %}
+                    <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+                {% else %}
+                    <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
+                {% endif %}
+            <!-- opposite -->
+            {% elif scrim_info.scrim.result == "Won" %}
+                <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+            {% elif scrim_info.scrim.result == "Lost" %}
+                <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
             {% else %}
-                Result: Opposite of {{ scrim_info.scrim.result }}
+                <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
             {% endif %}
 
             Edit results form:
