@@ -397,6 +397,25 @@ def quit_team(team_id):
             flash("You quit from team " + user_team_name, "success")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
+@scrim_app.route('/team/times/<team_id>')
+def team_times_json(team_id):
+    all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
+    
+    import time
+    import datetime
+    json_s = '{'
+    for scrim in all_scrims.all():
+        a = time.strptime(str(scrim.date), "%Y-%m-%d %H:%M:%S")
+        fdate = datetime.datetime(a.tm_year,a.tm_mon,a.tm_mday,a.tm_hour,a.tm_min).strftime('%s')
+        json_s = json_s + '"' + fdate + '"' + ': 1,'
+
+    json_s = json_s + '"0": 1}'
+
+    return json_s
+
+
+
+
 @scrim_app.route('/team/<int:team_id>', methods=['GET','POST'])
 def team_page(team_id):
     """
@@ -458,7 +477,6 @@ def team_page(team_id):
     # }
 
     from datetime import datetime
-
     for scrim in all_scrims.all():
         # ACCEPTED -> FINISHED when time passes
         if scrim.state == SCRIM_ACCEPTED and scrim.date < datetime.utcnow():
@@ -512,7 +530,6 @@ def team_page(team_id):
                 'opponent': responding_team,
                 'scrim': scrim
             })
-
     aval = convert_bits_to_days(team.week_days)
     
     if form.validate_on_submit():

@@ -60,6 +60,7 @@
 				weekStartOnMonday: true,
 				highlight: ["now"],
 				displayLegend: false,
+				data: "http://5.101.103.141:5000/team/times/{{team.id}}",
 				onClick: function(date, nb) {
 				$("#click-a").html("<a href='#' class='btn btn-primary btn-xs'>Book</a> <em>" +
 			date + "</em>"
@@ -82,8 +83,8 @@
                                                 <tr>
                                                         <th>Nickname</th>
                                                         <th>Role</th>
-                                                        <th>Column heading</th>
-                                                        <th>Column heading</th>
+                                                        <th>Class</th>
+                                                        <th>Options</th>
                                                 </tr>
                                         </thead>
                                         <tbody>
@@ -91,9 +92,10 @@
                                         <tr>
                                                 <td> <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a></td>
                                                 <td> {{role}} </td>
+												<td>Coming Soon</td>
                                                 {% if (g.user, "Captain") in members_roles %}
-                                                <td><a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a></td>
-                                                <td><a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a></td>
+                                                <td><a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
+                                                 / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a></td>
 
 {% endif %}
 </tr>
@@ -118,6 +120,11 @@
   </div>
 
 <ul class="list-group">
+		{% if not scrims_list %}
+		<li class="list-group-item">
+		No scrims yet.
+		</li>
+		{% endif %}
 {% for scrim_info in scrims_list %}
     <li class="list-group-item">
     <span class="badge">{{ scrim_info.scrim.date }}

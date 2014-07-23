@@ -6,6 +6,8 @@
 </div>
 <div class="row">
 		<div class="col-md-4">
+<p>Find the most suitable team to scrim with! The page automatically loads with suggestion based on your team's availability. You can customize the filter to search even further.</p>
+<br>
 <form class="form-horizontal" id="filter_scrims_form" action="{{ url_for('all_scrims') }}" method="POST" name="filter_scrims">
   {{form.hidden_tag()}}
 <fieldset>
@@ -81,6 +83,7 @@
     </div>
 		</fieldset>
 </form>
+
 		</div>
 		<div class="col-md-8">
 {% if teams_list %}
@@ -113,14 +116,14 @@
 	<ul class="pagination" style="margin-top:0;">
     <!-- previous page -->
     {% if teams_list.has_prev %}
-	<li> <a href="{{ url_for('all_teams', page=teams_list.prev_num) }}">Previous</a></li>
+	<li> <a href="{{ url_for('all_scrims', page=teams_list.prev_num) }}">Previous</a></li>
     {% endif %}
 
     <!-- all page numbers -->
     {% for page_num in teams_list.iter_pages() %}
       {% if page_num %}
         {% if page_num != teams_list.page %}
-		<li> <a href="{{ url_for('all_teams', page=page_num) }}">{{ page_num }}</a></li>
+		<li> <a href="{{ url_for('all_scrims', page=page_num) }}">{{ page_num }}</a></li>
         {% else %}
 		<li class="active"><a href="#">{{ page_num }}</a></li>
       {% endif %}
@@ -131,7 +134,7 @@
 
     <!-- next page -->
     {% if teams_list.has_next %}
-	<li><a href="{{ url_for('all_teams', page=teams_list.next_num) }}">Next</a></li>
+	<li><a href="{{ url_for('all_scrims', page=teams_list.next_num) }}">Next</a></li>
     {% endif %}
   {% endif %}
 		</div>
