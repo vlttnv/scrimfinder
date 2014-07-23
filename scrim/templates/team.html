@@ -141,21 +141,26 @@
             <input type="button" id="uploadResultButton{{ scrim_info.scrim.id }}" value="Submit result" onclick="createUploadResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
             <span id="uploadResultFormArea{{ scrim_info.scrim.id }}"></span>
         {% else %}
-            {% if scrim_info.opponent.id == scrim_info.scrim.team2_id %}
-                Result: {{ scrim_info.scrim.result }}
+            {% if team.id == scrim_info.scrim.team1_id %}
+                {% if scrim_info.scrim.result == "Won" %}
+                    <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
+                {% elif scrim_info.scrim.result == "Lost" %}
+                    <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+                {% else %}
+                    <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
+                {% endif %}
+            <!-- opposite -->
+            {% elif scrim_info.scrim.result == "Won" %}
+                <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+            {% elif scrim_info.scrim.result == "Lost" %}
+                <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
             {% else %}
-                Result: Opposite of {{ scrim_info.scrim.result }}
+                <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
             {% endif %}
 
-            Edit results form:
-            <form action="{{ url_for('upload_scrim_result') }}">
-                Logs.tf Link: <input type="text" name="result" />
-                Team Color: <select name="team_color">
-                    <option value="blue">Blue</option>
-                    <option value="red">Red</option>
-                </select>
-                <input type="button" onclick="uploadScrimResult();" value="Submit">
-            </form>
+            <!-- edit result -->
+            <input type="button" id="editResultButton{{ scrim_info.scrim.id }}" value="Edit result" onclick="createEditResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
+            <span id="editResultFormArea{{ scrim_info.scrim.id }}"></span>
         {% endif %}
     {% elif scrim_info.state == "Accepted" %}
         <span class="label label-success">{{ scrim_info.scrim.state }}</span>
@@ -168,7 +173,8 @@
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
         <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
         <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
-        <a href="{{ url_for('reject_scrim', scrim_id=scrim_info.scrim.id) }}" class="confirmation">Reject</a>
+        <input type="button" id="rejectScrimButton{{ scrim_info.scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
+        <span id="rejectScrimError{{ scrim_info.scrim.id }}"></span>
     {% endif %}
     </li>
 {% endfor %}
@@ -185,7 +191,7 @@
         form += "<input type=\"text\" name=\"scrim_id\"/>"
         form += "Logs.tf: <input type=\"text\" name=\"logs_tf_link\"/>"
         form += "Team Color: <select name=\"team_color\">"
-        form += "<option value=\"blue\">Blue</option><option value=\"red\">Red</option></select>"
+        form += "<option value=\"Blue\">Blue</option><option value=\"Red\">Red</option></select>"
         form += "<input type=\"button\" onclick=\"uploadScrimResult("+scrim_id+");\" value=\"Submit\">"
         form += "<input type=\"button\" onclick=\"cancelUploadScrimResult("+scrim_id+");\" value=\"Cancel\">"
         form += "<span id="+uniqueErrorID+" style=\"color:Red;\"></span>"
@@ -202,12 +208,20 @@
     function uploadScrimResult(scrim_id) {
         var form = "#uploadResultForm" + scrim_id
         var logs_tf = form + " input[name=logs_tf_link]"
-
-        if ($(logs_tf).val() != "") {
-            $(form).submit();
-        } else {
-            var warning = "#uploadResultFormError" + scrim_id
-            $(warning).text(" Please enter the log.tf link");
+        if ($(logs_tf).val().indexOf("http://logs.tf/") == 0 || $(logs_tf).val().indexOf("logs.tf/") == 0) {
+            // hack
+            $.post($(form).attr("action"), $(form).serialize(), function(resp){
+                if (resp == "OK")
+                {
+                    location.reload();
+                } else {
+                    var error = "#uploadResultFormError" + scrim_id
+                    $(error).text("Error: " + resp);
+                }
+            });
+        } else{
+            var error = "#uploadResultFormError" + scrim_id
+            $(error).text("Please enter a correct log.tf link");
         }
     }
 
@@ -216,6 +230,57 @@
         $(form).remove();
         var uploadResultButton = "#uploadResultButton" + scrim_id
         $(uploadResultButton).prop("disabled", false);
+    }
+
+    function createEditResultForm(post_url, scrim_id) {
+        var uploadResultButton = "#editResultButton" + scrim_id
+        $(uploadResultButton).prop("disabled", true);
+
+        var uniqueFormID = "editResultForm" + scrim_id;
+        var uniqueErrorID = "editResultFormError" + scrim_id;
+        var form = "<form action="+post_url+" id="+uniqueFormID+" method=\"post\" name=\"edit_result\">"
+        form += "<input type=\"text\" name=\"scrim_id\"/>"
+        form += "Logs.tf: <input type=\"text\" name=\"logs_tf_link\"/>"
+        form += "Team Color: <select name=\"team_color\">"
+        form += "<option value=\"Blue\">Blue</option><option value=\"Red\">Red</option></select>"
+        form += "<input type=\"button\" onclick=\"editScrimResult("+scrim_id+");\" value=\"Submit\">"
+        form += "<input type=\"button\" onclick=\"cancelEditScrimResult("+scrim_id+");\" value=\"Cancel\">"
+        form += "<span id="+uniqueErrorID+" style=\"color:Red;\"></span>"
+        form += "</form>"
+
+        var formArea = "#editResultFormArea" + scrim_id
+        $(formArea).append(form);
+
+        var form_scrim_id = "#" + uniqueFormID + " input[name=scrim_id]"
+        $(form_scrim_id).hide();
+        $(form_scrim_id).val(scrim_id);
+    }
+
+    function editScrimResult(scrim_id) {
+        var form = "#editResultForm" + scrim_id
+        var logs_tf = form + " input[name=logs_tf_link]"
+        if ($(logs_tf).val().indexOf("http://logs.tf/") == 0 || $(logs_tf).val().indexOf("logs.tf/") == 0) {
+            // hack
+            $.post($(form).attr("action"), $(form).serialize(), function(resp){
+                if (resp == "OK")
+                {
+                    location.reload();
+                } else {
+                    var error = "#editResultFormError" + scrim_id
+                    $(error).text("Error: " + resp);
+                }
+            });
+        } else{
+            var error = "#editResultFormError" + scrim_id
+            $(error).text("Please enter a correct log.tf link");
+        }
+    }
+
+    function cancelEditScrimResult(scrim_id) {
+        var form = "#editResultForm" + scrim_id
+        $(form).remove();
+        var editResultButton = "#editResultButton" + scrim_id
+        $(editResultButton).prop("disabled", false);
     }
 
     function createAcceptScrimForm(post_url, scrim_id) {
@@ -248,7 +313,7 @@
             $(form).submit();
         } else {
             var warning = "#acceptScrimFormError" + scrim_id
-            $(warning).text(" Please enter map field");
+            $(warning).text("Please enter map field");
         }
     }
 
@@ -257,6 +322,20 @@
         $(form).remove();
         var acceptScrimButton = "#acceptScrimButton" + scrim_id
         $(acceptScrimButton).prop("disabled", false);
+    }
+
+    function rejectScrim(post_url, scrim_id) {
+        console.log("here");
+        $.post(post_url, {'scrim_id': scrim_id}, function(resp){
+            if (resp == "OK") {
+                // hack
+                location.reload();
+            }
+            else {
+                var error = "#rejectScrimError" + scrim_id
+                $(error).text("Error: " + resp);
+            }
+        });
     }
 
     $('.confirmation').on('click', function () {

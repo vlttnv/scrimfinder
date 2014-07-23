@@ -1,6 +1,6 @@
 from scrim import scrim_app, oid, db, models, lm
 from models import User, Team, Request, Membership, Comment, Scrim
-from utils import steam_api
+from utils import steam_api, logs_tf_api
 from consts import *
 from flask import request, redirect, session, g, json, render_template, flash, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
@@ -774,17 +774,20 @@ def accept_scrim():
     flash('Scrim accepted', "success")
     return redirect(url_for('team_page', team_id=accepting_team_id))
 
-@scrim_app.route('/scrim/reject/<int:scrim_id>', methods=['GET'])
+@scrim_app.route('/scrim/reject/', methods=['POST'])
 @login_required
-def reject_scrim(scrim_id):
+def reject_scrim():
     if g.user is None:
-        abort(404)
+        return "You are not logged in"
+
+    scrim_id = request.form['scrim_id']
+    if scrim_id == None or scrim_id == "":
+        return "'scrim_id' is invalid"
 
     try:
         scrim = Scrim.query.filter_by(id=scrim_id).one()
     except NoResultFound as e:
-        flash('Cannot find scrim with id: ' + str(scrim_id), "danger")
-        return redirect(url_for('index.html'))
+        return "No such scrim id"
 
     accepting_team_id = scrim.team2_id
 
@@ -805,11 +808,72 @@ def reject_scrim(scrim_id):
     db.session.commit()
 
     flash('Scrim rejected.', "danger")
-    return redirect(url_for('team_page', team_id=accepting_team_id))
+    return "OK"
 
 @scrim_app.route('/scrim/upload_result/', methods=['POST'])
 def upload_scrim_result():
-    pass
+    if g.user is None:
+        return "You are not logged in"
+
+    scrim_id = request.form['scrim_id']
+    logs_tf_link = request.form['logs_tf_link']
+    team_color = request.form['team_color']
+
+    if scrim_id == None or scrim_id == "":
+        return "'scrim_id' is invalid"
+    if logs_tf_link == None or logs_tf_link == "":
+        return "'logs_tf_link' is invalid"
+    if team_color == None or team_color == "":
+        return "'team_color' is invalid"
+
+    try:
+        scrim = Scrim.query.filter_by(id=scrim_id).one()
+    except NoResultFound as e:
+        return "No such scrim id"
+
+    user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
+    if len(user_memberships) == 0:
+        return "You don't belong in a team."
+    is_team_1 = False;
+    is_team_2 = False;
+    for mem in user_memberships:
+        if (mem.team_id == scrim.team1_id):
+            is_team_1 = True
+            break
+        elif (mem.team_id == scrim.team2_id):
+            is_team_2 = True
+            break
+
+    if is_team_1 == False and is_team_2 == False:
+        return "You are not in the team"
+    if is_team_1 == True:
+        scrim.team1_log_tf = logs_tf_link
+        scrim.team1_color = team_color
+        team1_color = team_color
+    else:
+        scrim.team2_log_tf = logs_tf_link
+        scrim.team2_color = team_color
+        if team_color == "Blue":
+            team1_color = "Red"
+        else:
+            team1_color = "Blue"
+
+    if logs_tf_link.startswith("http://logs.tf/"):
+        log_tf_id = logs_tf_link.split("http://logs.tf/")[1]
+    elif logs_tf_link.startswith("logs.tf/"):
+        log_tf_id = logs_tf_link.split("logs.tf/")[1]
+    else:
+        return "'logs_tf_link' is invalid"
+
+    if not log_tf_id.isdigit():
+        return "'logs_tf_link' is invalid"
+
+    if team1_color == "Blue":
+        scrim.result = logs_tf_api.get_match_result(True, log_tf_id)
+    else:
+        scrim.result = logs_tf_api.get_match_result(False, log_tf_id)
+    db.session.commit()
+    return "OK"
 
 @scrim_app.route('/scrim/history/<int:team_id>/page/<int:page>', methods=['GET'])
 @login_required
