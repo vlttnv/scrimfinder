@@ -55,9 +55,10 @@
 								{% endfor %}</p>
 														</div>
 						</div>
+
+<a class="btn btn-primary pull-left" href="{{ url_for('team_page', team_id=team.id) }}">View Team</a>
 						{% if g.user != None and g.user.steam_id in request.path  %}
 <form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
-<a class="btn btn-primary pull-left" href="{{ url_for('team_page', team_id=team.id) }}">View Team</a>
     <input type="submit" class="btn btn-danger pull-right" value="Quit">
     </form>
 	{% endif %}

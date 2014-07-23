@@ -69,32 +69,24 @@
 
 					  </div>
 					  <div class="col-md-4">
-							  <h3>Most Active Teams</h3>
+							  <h3>Latest Teams</h3>
+
 <ul class="list-group">
-  <li class="list-group-item">
-    <span class="badge">14</span>
-    Cras justo odio
-  </li>
-  <li class="list-group-item">
-    <span class="badge">2</span>
-    Dapibus ac facilisis in
-  </li>
-  <li class="list-group-item">
-    <span class="badge">1</span>
-    Morbi leo risus
-  </li>
-<li class="list-group-item">
-    <span class="badge">14</span>
-    Cras justo odio
-  </li>
-  <li class="list-group-item">
-    <span class="badge">2</span>
-    Dapibus ac facilisis in
-  </li>
-  <li class="list-group-item">
-    <span class="badge">1</span>
-    Morbi leo risus
-  </li>
+		{% for team in teams %}
+		<li class="list-group-item">
+		<a href="{{url_for('team_page', team_id=team.id)}}">{{team.name}}</a>
+		</li>
+		{% endfor %}
+ 
+</ul>
+<h3>Latest Users</h3>
+<ul class="list-group">
+		{% for user in users %}
+		<li class="list-group-item">
+		<a href="{{url_for('user_page', steam_id=user.steam_id)}}">{{user.nickname}}</a>
+		</li>
+		{% endfor %}
+ 
 </ul>
 					  </div>
 			  </div>
