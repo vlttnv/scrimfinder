@@ -352,15 +352,7 @@ def create_team():
         team = Team()
         team.name = form.team_name.data
         team.skill_level = form.team_skill_level.data
-
-        time_zone_label = None
-        for item in TIME_ZONES_DICT:
-            if item['time_zone'] == form.team_time_zone.data:
-                time_zone_label = item['label']
-                print time_zone_label
-                break
         team.time_zone = form.team_time_zone.data
-
         team.week_days = form.read_scrim_days()
         db.session.add(team)
         db.session.commit()
@@ -703,13 +695,22 @@ def propose_scrim(opponent_team_id):
         flash('You are not a captain. Cannot propose scrims.', "warning")
         return redirect(url_for('team_page', team_id=opponent_team_id))
 
+    from consts import TIME_ZONES_DICT
+
     # Set form choices
     your_team = []
     your_team_timezone = []
     for team_id in your_teams_id:
         team = Team.query.filter_by(id=team_id).one()
         your_team.append((str(team.id), str(team.name)))
-        your_team_timezone.append((str(team.time_zone), str(team.time_zone)))
+
+        time_zone_label = None
+        for item in TIME_ZONES_DICT:
+            if item['time_zone'] == team.time_zone:
+                time_zone_label = item['label']
+                print time_zone_label
+                break
+        your_team_timezone.append((team.time_zone, time_zone_label))
     opponent_day = [('1','Mon'),('2','Tue'),('3','Wed'), \
                     ('4','Thurs'),('5','Fri'),('6','Sat'),('7','Sun')]
     opponent_start_time = [('0','0:00'),('1','1:00'),('2','2:00'),('3','3:00'),
