@@ -346,11 +346,21 @@ def create_team():
         flash('You are in three teams already. Chill.', "warning")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
+    from consts import TIME_ZONES_DICT
+
     if form.validate_on_submit():
         team = Team()
         team.name = form.team_name.data
         team.skill_level = form.team_skill_level.data
+
+        time_zone_label = None
+        for item in TIME_ZONES_DICT:
+            if item['time_zone'] == form.team_time_zone.data:
+                time_zone_label = item['label']
+                print time_zone_label
+                break
         team.time_zone = form.team_time_zone.data
+
         team.week_days = form.read_scrim_days()
         db.session.add(team)
         db.session.commit()
@@ -412,9 +422,6 @@ def team_times_json(team_id):
     json_s = json_s + '"0": 1}'
 
     return json_s
-
-
-
 
 @scrim_app.route('/team/<int:team_id>', methods=['GET','POST'])
 def team_page(team_id):
@@ -705,7 +712,12 @@ def propose_scrim(opponent_team_id):
         your_team_timezone.append((str(team.time_zone), str(team.time_zone)))
     opponent_day = [('1','Mon'),('2','Tue'),('3','Wed'), \
                     ('4','Thurs'),('5','Fri'),('6','Sat'),('7','Sun')]
-    opponent_start_time = [('8','8:00'),('9','9:00'),('10','10:00')]
+    opponent_start_time = [('0','0:00'),('1','1:00'),('2','2:00'),('3','3:00'),
+                            ('4','4:00'),('5','5:00'),('6','6:00'),('7','7:00'),
+                            ('8','8:00'),('9','9:00'),('10','10:00'),('11','11:00'),
+                            ('12','12:00'),('13','13:00'),('14','14:00'),('15','15:00'),
+                            ('16','16:00'),('17','17:00'),('18','18:00'),('19','19:00'),
+                            ('20','20:00'),('21','21:00'),('22','22:00'),('23','23:00')]
 
     from wtforms import SelectField
     ProposeScrimForm.team = SelectField('team', choices=your_team)

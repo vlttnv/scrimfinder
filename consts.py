@@ -32,7 +32,6 @@ CHOICES_SKILLS = [
 FILTER_SKILLS = [(ALL, ALL)]
 FILTER_SKILLS.extend(CHOICES_SKILLS)
 
-
 TIME_ZONES_DICT = [
     {
         'label': "UTC",
