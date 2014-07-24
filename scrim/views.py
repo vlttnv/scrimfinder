@@ -708,7 +708,6 @@ def propose_scrim(opponent_team_id):
         for item in TIME_ZONES_DICT:
             if item['time_zone'] == team.time_zone:
                 time_zone_label = item['label']
-                print time_zone_label
                 break
         your_team_timezone.append((team.time_zone, time_zone_label))
     opponent_day = [('1','Mon'),('2','Tue'),('3','Wed'), \
