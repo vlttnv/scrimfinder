@@ -1,7 +1,5 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.admin import Admin
-from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.openid import OpenID
 from flask.ext.login import LoginManager
 
@@ -11,16 +9,12 @@ scrim_app.config.from_pyfile('../config.py')
 lm      = LoginManager()
 db      = SQLAlchemy(scrim_app)
 oid     = OpenID(scrim_app)
-admin   = Admin(scrim_app, name='Scrim Finder')
 
 lm.init_app(scrim_app)
 
 from scrim import views, models
 from models import User, Team, Scrim
 
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Team, db.session))
-admin.add_view(ModelView(Scrim, db.session))
 
 @scrim_app.context_processor
 def utility_processor():
