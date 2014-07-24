@@ -103,7 +103,7 @@
 		  <tr>
 				  <td> <a href="{{ url_for('team_page', team_id=team.id) }}">{{ team.name }}</a></td>
 				  <td>{{ team.skill_level }}</td>
-				  <td>{{ team.time_zone }}</td>
+				  <td>{{ get_time_zone_label(team.time_zone) }}</td>
 				  <td>{% for day in convert_days(team.week_days) %}
 						  <span class="label label-info">{{day}}</span>
 						  {% endfor %}</td>
