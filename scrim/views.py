@@ -37,10 +37,11 @@ def index():
     """
     Home page. TODO: More.
     """
-    five_teams = Team.query.order_by(Team.id.desc()).limit(5).all()
-    five_users = User.query.order_by(User.id.desc()).limit(5).all()
+    #five_teams = Team.query.order_by(Team.id.desc()).limit(5).all()
+    #five_users = User.query.order_by(User.id.desc()).limit(5).all()
 
-    return render_template('index.html', teams=five_teams, users=five_users)
+    #return render_template('index.html', teams=five_teams, users=five_users)
+    return render_template('index2.html')
 
 @scrim_app.route('/login')
 @oid.loginhandler
