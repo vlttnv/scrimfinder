@@ -127,10 +127,7 @@
 		{% endif %}
 {% for scrim_info in scrims_list %}
     <li class="list-group-item">
-    <span class="badge">{{ scrim_info.scrim.date }}
-    
-    
-    </span>
+    <span class="badge team_time_zone">{{ scrim_info.scrim.date }}</span>
 
     <strong>Versus:</strong> <a href="{{ url_for('team_page', team_id=scrim_info.opponent.id) }}">{{ scrim_info.opponent.name }}</a><br>
     <em>Map 1:</em> {{ scrim_info.scrim.map1 }}, <em>Map 2:</em> {{ scrim_info.scrim.map2 }}<br>
@@ -390,5 +387,21 @@
 
 <p>Scrim History <a href="{{ url_for('scrim_history', team_id=team.id, page=1) }}"> Link </a></p>
 
+<script src="/static/js/moment27.min.js"></script>
+<script src="/static/js/moment-timezone-with-data.min.js"></script>
+<script>
+    var scrim_dates = $("span[class='badge team_time_zone']")
+    convertScrimDates();
 
+    function convertScrimDates() {
+        console.log(scrim_dates);
+        scrim_dates.each(function() {
+            utc_time = $(this)[0].innerText;
+            team_time = moment.utc(utc_time).tz("{{ team.time_zone }}").format("LLLL");
+            $(this)[0].innerText = team_time;
+            console.log("utc: " + utc_time);
+            console.log("team timezone time: " + team_time + " using {{team.time_zone}}");
+        });
+    }
+</script>
 {% endblock %}
