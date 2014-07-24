@@ -9,7 +9,6 @@ import re
 from sqlalchemy import func, and_, or_, desc
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import OperationalError
-import MySQLdb
 
 #========================
 # Helper function
@@ -952,3 +951,8 @@ def bots_accepted_scrim():
     team_id = bots.create_accepted_scrim()
 
     return redirect(url_for('team_page', team_id=team_id))
+
+@scrim_app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+    

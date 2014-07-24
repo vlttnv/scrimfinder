@@ -5,6 +5,8 @@
 </div>
 <div class="row">
 <div class="col-md-4">
+		<p>Looking to join a team? Find one that fits your playstyle and playtimes by using the filter below. You can send a request by clicking the button on the team's page.</p>
+		<br>
   <form class="form-horizontal" id="filter_teams_form" action="{{ url_for('all_teams') }}" method="POST" name="filter_teams">
 
 	{{form.hidden_tag()}}
@@ -100,7 +102,6 @@
 						  <th>Skill Level</th>
 						  <th>Time Zone</th>
 						  <th>Week Days</th>
-						  <th>Rank?</th>
 				  </tr>
 		  </thead>
 		  <tbody>
@@ -111,8 +112,11 @@
 				  <td> <a href="{{ url_for('team_page', team_id=team.id) }}">{{ team.name }}</a></td>
 				  <td>{{ team.skill_level }}</td>
 				  <td>{{ team.time_zone }}</td>
-				  <td>{{ team.week_days }}</td>
-				  <td></td>
+				  <td>
+						  {% for day in convert_days(team.week_days) %}	
+						  <span class="label label-info">{{day}}</span>
+						  {% endfor %}		  
+				  </td>
 		  </tr>
 
     {% endfor %}

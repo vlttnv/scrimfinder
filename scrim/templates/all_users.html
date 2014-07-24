@@ -44,7 +44,7 @@
 	  <th>Avatar</th>	
       <th>Nickname</th>
       <th>SteamID</th>
-	  <th>Has team</th>
+	  <th>Join Date</th>
     </tr>
   </thead>
   <tbody>
@@ -54,7 +54,7 @@
 			  <td><img src="{{user.avatar_url}}" /></td>
 			  <td><a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}}</a></td>
 			  <td>{{user.steam_id}}</td>
-			  <td></td>
+			  <td>{{user.join_date}}</td>
 	  </tr>
     {% endfor %}
 
