@@ -941,13 +941,9 @@ def scrim_history(team_id, page=1):
         abort(404)
 
     scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
-   
-    # check if scrims expired 
-    current_time = dt.utcnow()
-    scrims_finished = scrims.filter_by(state=SCRIM_FINISHED)
-
+    
     try:
-        scrims_list = scrims_finished.paginate(page, per_page=SCRIMS_PER_PAGE)
+        scrims_list = scrims.paginate(page, per_page=SCRIMS_PER_PAGE)
     except OperationalError:
         scrims_list = None
     
