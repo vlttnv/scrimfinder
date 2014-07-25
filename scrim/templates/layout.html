@@ -68,6 +68,11 @@
 	</div>
 			{% block jumbo %} {% endblock %}	
 	<div class="container" >
+<div class="alert alert-dismissable alert-warning" style="margin-top: 10px">
+  <button type="button" class="close" data-dismiss="alert">×</button>
+  <h4>Warning!</h4>
+  <p>Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, <a href="#" class="alert-link">vel scelerisque nisl consectetur et</a>.</p>
+</div>
 			{% with messages = get_flashed_messages(with_categories=true) %}
 
 			{% if messages  %}

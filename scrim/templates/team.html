@@ -178,7 +178,7 @@
         <span class="label label-danger">{{ scrim_info.scrim.state }}</span>
     {% elif scrim_info.state == "Sent" %}
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
-        <a href="#">Waiting for response</a>
+		Waiting for response
     {% elif scrim_info.state == "Received" %}
 
 {% if (g.user, "Captain") in members_roles %}
@@ -357,7 +357,11 @@
 </script>
 
 
-</div>                  </div>
+</div>
+<a href="{{url_for('scrim_history', team_id=team.id, page=1)}}">Scrim History</a>
+
+				  </div>
+
                 </div>
         </div>
         <div class="col-lg-4">
