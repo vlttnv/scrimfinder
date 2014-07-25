@@ -28,9 +28,9 @@ def utility_processor():
 				return item['label']
 		return None
     def get_all_time_zones():
-        from consts import TIME_ZONES_DICT
+        from consts import TIME_ZONES_DICT_SHORT
         time_zones = []
-        for item in TIME_ZONES_DICT:
+        for item in TIME_ZONES_DICT_SHORT:
             time_zones.append(item['time_zone'])
         return time_zones
     return dict(convert_days=convert_days, get_time_zone_label=get_time_zone_label,

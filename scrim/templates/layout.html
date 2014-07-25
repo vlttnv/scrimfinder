@@ -69,9 +69,8 @@
 			{% block jumbo %} {% endblock %}	
 	<div class="container" >
 <div class="alert alert-dismissable alert-warning" style="margin-top: 10px">
-  <button type="button" class="close" data-dismiss="alert">×</button>
   <h4>Warning!</h4>
-  <p>Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, <a href="#" class="alert-link">vel scelerisque nisl consectetur et</a>.</p>
+  <p>We are currently in Beta, which means things might break. If this happens please let us know at <a href="#" class="alert-link">support@scrim.me</a> and we will try to fix them right away.</p>
 </div>
 			{% with messages = get_flashed_messages(with_categories=true) %}
 
@@ -104,8 +103,9 @@
 				</div>
 				<div class="col-md-4">
 						<h2>Time Zones</h2>
+						<p>
 						{% for time_zone in get_all_time_zones() %}
-						<p><small>{{ time_zone }}: <span class="time_zone" timezone="{{ time_zone }}"></span></small></p>
+						<small>{{ time_zone }}: <span class="time_zone" timezone="{{ time_zone }}"></span></small><br>
 						{% endfor %}
 						</p>
 				</div>

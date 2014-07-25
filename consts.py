@@ -86,6 +86,32 @@ TIME_ZONES_DICT = [
         'time_zone': "Europe/Sofia"
     }
 ]
+TIME_ZONES_DICT_SHORT = [
+    {
+        'label': "UTC",
+        'time_zone': "Etc/UTC"
+    },
+    {
+        'label': "CET",
+        'time_zone': "CET"
+    },
+    {
+        'label': "Los Angeles",
+        'time_zone': "America/Los_Angeles"
+    },
+    {
+        'label': "Seoul",
+        'time_zone': "Asia/Seoul"
+    },
+    {
+        'label': "Sydney",
+        'time_zone': "Australia/Sydney"
+    },
+    {
+        'label': "Amsterdam",
+        'time_zone': "Europe/Amsterdam"
+    }
+]
 
 CHOICES_ZONES = []
 for time in TIME_ZONES_DICT:
