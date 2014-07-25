@@ -32,7 +32,6 @@ def before_request():
         g.user = None
 
 @scrim_app.route('/')
-@scrim_app.route('/index')
 def index():
     """
     Home page. TODO: More.
