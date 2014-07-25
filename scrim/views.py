@@ -631,6 +631,13 @@ def team_join(team_id):
             already_in_team = True
             break
 
+    try:
+        req = Request.query.filter(and_(Request.team_id==team_id, Request.user_id==g.user.id)).one()
+        flash("You already made a request", "warning")
+        return redirect(url_for('team_page', team_id=team_id))
+    except NoResultFound, e:
+        pass
+
     if not already_in_team:
         req = Request()
         req.team_id = team_id
@@ -667,6 +674,27 @@ def team_accept_user(team_id, user_id):
     
     flash("Accepted", "success")
     return redirect(url_for('team_page', team_id=team_id))         
+
+@scrim_app.route('/team/<team_id>/reject_user/<user_id>')
+@login_required
+def team_reject_user(team_id, user_id):
+    """
+    Deletes the request
+    """
+
+    try:
+        user = Request.query.filter(and_(Request.team_id==team_id, Request.user_id==user_id)).one()
+    except NoResultFound, e:
+        flash("No user", "danger")
+        return redirect(url_for('index'))
+
+    db.session.delete(user)
+    db.session.commit()
+
+    
+    
+    flash("Rejected", "success")
+    return redirect(url_for('team_page', team_id=team_id))
 
 def hack_timezone(utc_offset):
     print 'something'

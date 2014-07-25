@@ -107,7 +107,7 @@
         <td>{{pending.nickname}}</td>
         <td></td>
         <td></td>
-        <td>  <a  href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-warning">Accept user</span></a>
+        <td>  <a  href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-warning">Accept</span></a> <a  href="{{ url_for('team_reject_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-danger">Reject</span></a>
   </td>
 </tr> 
 {% endfor %}
