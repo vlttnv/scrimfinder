@@ -104,21 +104,30 @@
 				</div>
 				<div class="col-md-4">
 						<h2>Time Zones</h2>
-						<p><small>America/Los Angeles - PDT, 
-						America/Vancouver - PDT, 
-						Asia/Seoul - KST, 
-						Asia/Singapore - SGT, 
-						Australia/Perth - WST, 
-						Australia/Sidney - EST, 
-						Europe/Amsterdam - CEST, 
-						Europe/London - BST, 
-						Europe/Sofia - EEST, 
-						Europe/Moscow - MSK</small></p>
+						{% for time_zone in get_all_time_zones() %}
+						<p><small>{{ time_zone }}: <span class="time_zone" timezone="{{ time_zone }}"></span></small></p>
+						{% endfor %}
+						</p>
 				</div>
 		</div>
       </div>
     </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	
+	<script src="/static/js/moment27.min.js"></script>
+	<script src="/static/js/moment-timezone-with-data.min.js"></script>
+	<script>
+		var time_zones = $("span[class='time_zone']")
+		convertTimeZones();
+
+		function convertTimeZones() {
+        time_zones.each(function() {
+            team_time = moment.utc().tz($(this).attr("timezone")).format("LLLL");
+            $(this)[0].innerText = team_time;
+        });
+    }
+	</script>
+
 	</body>
 </html>
