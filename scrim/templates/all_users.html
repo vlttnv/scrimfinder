@@ -54,7 +54,7 @@
 			  <td><img src="{{user.avatar_url}}" /></td>
 			  <td><a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}}</a></td>
 			  <td>{{user.steam_id}}</td>
-			  <td>{{user.join_date}}</td>
+			  <td><span class="convert_utc_time">{{user.join_date}}</span></td>
 	  </tr>
     {% endfor %}
 
@@ -98,6 +98,19 @@
   function clearSearch() {
     $('#clear').prop('checked', true);
     $('#filter_users_form').submit();
+  }
+</script>
+
+<script src="/static/js/moment27.min.js"></script>
+<script src="/static/js/moment-timezone-with-data.min.js"></script>
+<script type="text/javascript">
+  var utc_time = $("span[class='convert_utc_time']")
+  formatUTCTime();
+  function formatUTCTime() {
+    utc_time.each(function() {
+      formatted_time = moment.utc($(this)[0].innerText).format("LLLL")
+      $(this)[0].innerText = formatted_time;
+    });
   }
 </script>
 
