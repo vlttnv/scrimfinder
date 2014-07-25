@@ -323,10 +323,19 @@
         var form_map = form + " input[name=map]"
 
         if ($(form_map).val() != "") {
-            $(form).submit();
+            // hack
+            $.post($(form).attr("action"), $(form).serialize(), function(resp){
+                if (resp == "OK")
+                {
+                    location.reload();
+                } else {
+                    var error = "#acceptScrimFormError" + scrim_id
+                    $(error).text("Error: " + resp);
+                }
+            });
         } else {
-            var warning = "#acceptScrimFormError" + scrim_id
-            $(warning).text("Please enter map field");
+            var error = "#acceptScrimFormError" + scrim_id
+            $(error).text("Please enter a map");
         }
     }
 
@@ -338,7 +347,6 @@
     }
 
     function rejectScrim(post_url, scrim_id) {
-        console.log("here");
         $.post(post_url, {'scrim_id': scrim_id}, function(resp){
             if (resp == "OK") {
                 // hack

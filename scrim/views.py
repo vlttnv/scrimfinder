@@ -813,16 +813,14 @@ def accept_scrim():
         return "Map field is empty"
 
     # is user the captain of team2
-    # try:
-    #     team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
-    # except NoResultFound as e:
-    #     flash('You are not part of the team', "danger")
-    #     return redirect(url_for('team_page', team_id=accepting_team_id))
+    try:
+        team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
+    except NoResultFound as e:
+        return "You are not part of the team"
 
-    # the_captain = team_membership.role == 'Captain'
-    # if not the_captain:
-    #     flash('You are not the captain of the team', "danger")
-    #     return redirect(url_for('team_page', team_id=accepting_team_id))
+    the_captain = team_membership.role == "Captain"
+    if not the_captain:
+        return "You are not the team captain"
 
     from consts import SCRIM_ACCEPTED
 
@@ -831,7 +829,7 @@ def accept_scrim():
     db.session.commit()
 
     flash('Scrim accepted', "success")
-    return redirect(url_for('team_page', team_id=accepting_team_id))
+    return "OK"
 
 @scrim_app.route('/scrim/reject/', methods=['POST'])
 @login_required
@@ -851,16 +849,14 @@ def reject_scrim():
     accepting_team_id = scrim.team2_id
 
     # is user the captain of team2
-    # try:
-    #     team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
-    # except NoResultFound as e:
-    #     flash('You are not part of the team')
-    #     return render_template('accept_scrim.html', form=form)
+    try:
+        team_membership = Membership.query.filter(and_(Membership.team_id==accepting_team_id, Membership.user_id==g.user.id)).one()
+    except NoResultFound:
+        return "You are not part of the team"
 
-    # the_captain = team_membership.role == 'Captain'
-    # if not the_captain:
-    #     flash('You are not the captain of the responding team')
-    #     return render_template('accept_scrim.html', form=form)
+    the_captain = team_membership.role == "Captain"
+    if not the_captain:
+        return "You are not the team captain"
 
     from consts import SCRIM_REJECTED
     scrim.state = SCRIM_REJECTED
