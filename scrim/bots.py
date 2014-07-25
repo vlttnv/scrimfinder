@@ -38,7 +38,7 @@ def create_bot_teams():
 
     for skill,_ in CHOICES_SKILLS:
         for time,_ in CHOICES_ZONES:
-            combinations = scrim_filter.scrim_days_combinations('0000000')
+            combinations = scrim_filter.scrim_days_combinations('1111111')
             for scrim_days in combinations:
                 bot_team = Team()
                 bot_team.name = fake_name + '_' + str(skill) + '_' + str(time) + '_' + str(scrim_days)

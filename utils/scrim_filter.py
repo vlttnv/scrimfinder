@@ -20,7 +20,7 @@ def scrim_days_combinations(bit_string):
     n = len(bit_string)
     all_binaries = [''.join(seq) for seq in itools.product('01', repeat=n)]
 
-    matched_scrim_days = []
+    matched_scrim_days = ["0000000"]
     for binary in all_binaries:
         bits_list = list(binary)
         contains_any_scrim_day = False
