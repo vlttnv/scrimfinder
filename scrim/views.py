@@ -382,7 +382,7 @@ def quit_team(team_id):
 
     if team_membership is None:
         flash("Dude you are not in this team", "warning")
-        redirect(url_for('user_page'), steam_id=g.user.steam_id)
+        return redirect(url_for('user_page'), steam_id=g.user.steam_id)
     else:
         db.session.delete(team_membership)
         db.session.commit()

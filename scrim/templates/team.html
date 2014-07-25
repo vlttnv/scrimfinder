@@ -23,15 +23,15 @@
                         <div class="col-md-4">
                                 <ul class="list-group">
                                         <li class="list-group-item">
-                                        <span class="badge">{{team.reputation}}</span>
+                                        <span class="badge">soon</span>
                                         Reputation
                                         </li>
                                         <li class="list-group-item">
-										<span class="badge">{{team.num_wins}}</span>
+										<span class="badge">soon</span>
                                         Wins
                                         </li>
                                         <li class="list-group-item">
-										<span class="badge">{{team.num_losses}}</span>
+										<span class="badge">soon</span>
                                         Losses
                                         </li>
                                         <li class="list-group-item">
@@ -52,20 +52,22 @@
 	var cal = new CalHeatMap();
 	cal.init({
 				itemSelector: "#click",
-				domain: "day",
-				subDomain: "hour",
-				range: 7,
+				domain: "month",
+				subDomain: "day",
+				subDomainTextFormat: "%d",
+				domainGutter: 10,
+				range: 5,
 				cellSize: 15,
 				tooltip: true,
 				weekStartOnMonday: true,
 				highlight: ["now"],
 				displayLegend: false,
-				data: "http://5.101.103.141:5000/team/times/{{team.id}}",
-				onClick: function(date, nb) {
-				$("#click-a").html("<a href='#' class='btn btn-primary btn-xs'>Book</a> <em>" +
-			date + "</em>"
-		);
-	}
+				data: "http://5.101.103.141:5000/team/times/{{team.id}}"
+				//onClick: function(date, nb) {
+				//$("#click-a").html("<a href='#' class='btn btn-primary btn-xs'>Book</a> <em>" +
+			//date + "</em>"
+		//);
+	//}
 			});
 </script>
 
