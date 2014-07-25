@@ -41,13 +41,13 @@ class BaseScrimDay(Form):
         self.sun.data = bool(int(scrim_days[6]))
 
     def reset_scrim_days(self):
-        self.mon.data = False
-        self.tue.data = False
-        self.wed.data = False
-        self.thu.data = False
-        self.fri.data = False
-        self.sat.data = False
-        self.sun.data = False
+        self.mon.data = True
+        self.tue.data = True
+        self.wed.data = True
+        self.thu.data = True
+        self.fri.data = True
+        self.sat.data = True
+        self.sun.data = True
 
 # CREATE TEAM
 
