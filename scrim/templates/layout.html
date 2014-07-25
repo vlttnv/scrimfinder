@@ -114,14 +114,16 @@
 	<script src="/static/js/moment-timezone-with-data.min.js"></script>
 	<script>
 		var time_zones = $("span[class='time_zone']")
-		convertTimeZones();
-
+		
 		function convertTimeZones() {
-        time_zones.each(function() {
-            team_time = moment.utc().tz($(this).attr("timezone")).format("LLLL");
-            $(this)[0].innerText = team_time;
-        });
-    }
+        	time_zones.each(function() {
+            	team_time = moment.utc().tz($(this).attr("timezone")).format("LLLL");
+            	$(this)[0].innerText = team_time;
+        	});
+        }
+
+        convertTimeZones();
+		setInterval(convertTimeZones, 60000);
 	</script>
 
 	</body>
