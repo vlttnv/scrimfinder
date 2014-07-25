@@ -27,7 +27,14 @@ def utility_processor():
 			if item['time_zone'] == time_zone:
 				return item['label']
 		return None
-    return dict(convert_days=convert_days, get_time_zone_label=get_time_zone_label)
+    def get_all_time_zones():
+        from consts import TIME_ZONES_DICT
+        time_zones = []
+        for item in TIME_ZONES_DICT:
+            time_zones.append(item['time_zone'])
+        return time_zones
+    return dict(convert_days=convert_days, get_time_zone_label=get_time_zone_label,
+                get_all_time_zones=get_all_time_zones)
 
 # Blueprints - Not Working
 # from scrim.teams.views import teams as teams_module
