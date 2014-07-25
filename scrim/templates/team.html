@@ -103,13 +103,17 @@
 </tr>
 {% endfor %}
 {% for pending in pendings %}
+{% if (g.user, "Captain") in members_roles %}
 <tr class="warning">
         <td>{{pending.nickname}}</td>
         <td></td>
         <td></td>
-        <td>  <a  href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-warning">Accept</span></a> <a  href="{{ url_for('team_reject_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-danger">Reject</span></a>
+        <td>  
+				
+				<a  href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-warning">Accept</span></a> <a  href="{{ url_for('team_reject_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-danger">Reject</span></a>
   </td>
 </tr> 
+{% endif %}
 {% endfor %}
 
       </tbody>
@@ -139,8 +143,11 @@
         <span class="label label-default">{{ scrim_info.scrim.state }}</span>
         <br />
         {% if scrim_info.scrim.result is none %}
+
+{% if (g.user, "Captain") in members_roles %}
             <input type="button" id="uploadResultButton{{ scrim_info.scrim.id }}" value="Submit result" onclick="createUploadResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
             <span id="uploadResultFormArea{{ scrim_info.scrim.id }}"></span>
+			{% endif %}
         {% else %}
             {% if team.id == scrim_info.scrim.team1_id %}
                 {% if scrim_info.scrim.result == "Won" %}
@@ -159,10 +166,12 @@
                 <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
             {% endif %}
 
+{% if (g.user, "Captain") in members_roles %}
             <!-- edit result -->
             <input type="button" id="editResultButton{{ scrim_info.scrim.id }}" value="Edit result" onclick="createEditResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
             <span id="editResultFormArea{{ scrim_info.scrim.id }}"></span>
         {% endif %}
+		{% endif %}
     {% elif scrim_info.state == "Accepted" %}
         <span class="label label-success">{{ scrim_info.scrim.state }}</span>
     {% elif scrim_info.state == "Rejected" %}
@@ -171,11 +180,14 @@
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
         <a href="#">Waiting for response</a>
     {% elif scrim_info.state == "Received" %}
+
+{% if (g.user, "Captain") in members_roles %}
         <span class="label label-info">{{ scrim_info.scrim.state }}</span>
         <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
         <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
         <input type="button" id="rejectScrimButton{{ scrim_info.scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
         <span id="rejectScrimError{{ scrim_info.scrim.id }}"></span>
+		{% endif %}
     {% endif %}
     </li>
 {% endfor %}
@@ -387,7 +399,6 @@
 
 
 
-<p>Scrim History <a href="{{ url_for('scrim_history', team_id=team.id, page=1) }}"> Link </a></p>
 
 <script src="/static/js/moment27.min.js"></script>
 <script src="/static/js/moment-timezone-with-data.min.js"></script>
