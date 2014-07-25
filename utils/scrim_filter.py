@@ -23,12 +23,12 @@ def scrim_days_combinations(bit_string):
     matched_scrim_days = []
     for binary in all_binaries:
         bits_list = list(binary)
-
+        contains_any_scrim_day = False
         for i in indices_scrim_days:
-            bits_list[i] = '1'
-        
-        combination = ''.join(bits_list)
-        if combination not in matched_scrim_days:
-            matched_scrim_days.append(combination)
-
+            if bits_list[i] == "1":
+                contains_any_scrim_day = True
+        if contains_any_scrim_day:
+            combination = ''.join(bits_list)
+            if combination not in matched_scrim_days:
+                matched_scrim_days.append(combination)
     return matched_scrim_days
