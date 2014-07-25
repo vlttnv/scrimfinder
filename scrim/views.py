@@ -425,6 +425,7 @@ def team_page(team_id):
     """
 
     from forms import CommentTeamForm
+    from config import API_ADDRESS
 
     form = CommentTeamForm()
 
@@ -564,7 +565,8 @@ def team_page(team_id):
                 com_list=comment_list,
                 dont_show=dont_show,
                 propose_scrim=propose_scrim,
-                scrims_list=scrims_list)
+                scrims_list=scrims_list,
+                addr=API_ADDRESS)
 
 @scrim_app.route('/team/<team_id>/promote/<user_id>')
 @login_required
