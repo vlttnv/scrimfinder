@@ -949,21 +949,21 @@ def scrim_history(team_id, page=1):
     return render_template('scrim_history.html', team_id=team_id, scrims_list=scrims_list)
 
 # Bots stuff
-@scrim_app.route('/bots/boom')
-def bots_boom():
-    """
-    Make sure stuff works. Let's say no error = It works!
+# @scrim_app.route('/bots/boom')
+# def bots_boom():
+#     """
+#     Make sure stuff works. Let's say no error = It works!
 
-    See bots.py
-    """
+#     See bots.py
+#     """
 
-    from scrim import bots
+#     from scrim import bots
 
-    bots.create_bot_users()
-    bots.create_bot_teams()
-    bots.make_bot_join_team()
+#     bots.create_bot_users()
+#     bots.create_bot_teams()
+#     bots.make_bot_join_team()
 
-    return 'Trust me. It worked.', 200
+#     return 'Trust me. It worked.', 200
 
 # @scrim_app.route('/bots/scrims')
 # def bots_scrims():
