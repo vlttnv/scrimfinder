@@ -39,7 +39,10 @@ def index():
     five_teams = Team.query.order_by(Team.id.desc()).limit(5).all()
     five_users = User.query.order_by(User.id.desc()).limit(5).all()
 
-    return render_template('index.html', teams=five_teams, users=five_users)
+    count_teams = Team.query.count()
+    count_users = User.query.count()
+
+    return render_template('index.html', teams=five_teams, users=five_users,count_teams=count_teams,count_users=count_users)
     #return render_template('index2.html')
 
 @scrim_app.route('/login')

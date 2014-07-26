@@ -9,7 +9,15 @@
 <p>A platform for organizing and scheduling Team Fortress 2 scrims. Browse and filter the available teams to find the perfect match. Hire mercs or find the team that suits you. It’s really simple, have a go.
 </p>
 <a class="btn btn-primary btn-lg" role="button" href="{{url_for('all_scrims')}}">Find a scrim &raquo;</a></div>
-      </div>
+	  <div class="col-md-4 col-md-offset-3">
+			  <h1>latest info</h1>
+			  <p>
+			  We are currently working on the one off scrim feature. Join the discussion on our <a href="http://steamcommunity.com/groups/scrim-me/discussions/0/38596748115051787/">steam group</a> to decide how it will work.<br>
+			  Number of users: {{count_users}}<br>
+			  Number of teams: {{count_teams}}
+			  </p>
+	  </div>
+	  </div>
 	  </div>
 	  </div>
 	  {% endblock %}
