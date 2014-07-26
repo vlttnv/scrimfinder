@@ -25,7 +25,7 @@
                                         <li class="list-group-item">
                                         <span class="badge">soon</span>
                                         Reputation
-                                        </li>
+										                                        </li>
                                         <li class="list-group-item">
 										<span class="badge">soon</span>
                                         Wins
@@ -39,9 +39,22 @@
                                         Skill level
                                         </li>
                                         <li class="list-group-item">
-                                        <span class="badge">{{team.time_zone}}</span>
+                                        <span class="badge">
+												{% for z in tz %}
+												{% if z['time_zone'] == team.time_zone %}
+												{{z['label']}}
+												{% endif %}
+												{% endfor %}
+												
+												</span>
                                         Time zone
                                         </li>
+										<li class="list-group-item">
+{% for day in convert_days(team.week_days) %}
+										<span class="label label-info">{{day}}</span>
+										{% endfor %}
+
+										</li>
 
                                 </ul>
                         </div>

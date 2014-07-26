@@ -425,6 +425,7 @@ def team_page(team_id):
 
     from forms import CommentTeamForm
     from config import API_ADDRESS
+    from consts import TIME_ZONES_DICT
 
     form = CommentTeamForm()
 
@@ -565,7 +566,8 @@ def team_page(team_id):
                 dont_show=dont_show,
                 propose_scrim=propose_scrim,
                 scrims_list=scrims_list,
-                addr=API_ADDRESS)
+                addr=API_ADDRESS,
+                tz=TIME_ZONES_DICT)
 
 @scrim_app.route('/team/<team_id>/promote/<user_id>')
 @login_required

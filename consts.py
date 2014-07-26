@@ -31,7 +31,6 @@ CHOICES_SKILLS = [
         
 FILTER_SKILLS = [(ALL, ALL)]
 FILTER_SKILLS.extend(CHOICES_SKILLS)
-
 TIME_ZONES_DICT = [
     {
         'label': "UTC",
@@ -42,50 +41,53 @@ TIME_ZONES_DICT = [
         'time_zone': "CET"
     },
     {
-        'label': "Los Angeles",
+        'label': "PDT (UTC-8)",
         'time_zone': "America/Los_Angeles"
     },
     {
-        'label': "Vancouver",
-        'time_zone': "America/Vancouver"
+        'label': "MDT (UTC-7)",
+        'time_zone': "America/Denver"
     },
     {
-        'label': "Seoul",
-        'time_zone': "Asia/Seoul"
+        'label': "CDT (UTC-6)",
+        'time_zone': "America/Chicago"
     },
     {
-        'label': "Singapore",
-        'time_zone': "Asia/Singapore"
+        'label': "EDT (UTC-5)",
+        'time_zone': "America/New_York"
     },
     {
-        'label': "Perth",
-        'time_zone': "Australia/Perth"
+        'label': "UTC+0",
+        'time_zone': "Europe/London"
     },
     {
-        'label': "Sydney",
-        'time_zone': "Australia/Sydney"
-    },
-    {
-        'label': "Amsterdam",
+        'label': "UTC+1",
         'time_zone': "Europe/Amsterdam"
     },
     {
-        'label': "London",
-        'time_zone': "Europe/London"
-    },
-        {
-        'label': "Luxembourg",
-        'time_zone': "Europe/Luxembourg"
+        'label': "UTC+2",
+        'time_zone': "Europe/Sofia"
     },
     {
-        'label': "Moscow",
+        'label': "UTC+4",
         'time_zone': "Europe/Moscow"
     },
     {
-        'label': "Sofia",
-        'time_zone': "Europe/Sofia"
+
+        'label': "UTC+8",
+        'time_zone': "Asia/Singapore"
+    },
+    {
+        'label': "UTC+9",
+        'time_zone': "Asia/Seoul"
+    }, 
+    {
+        'label': "UTC+10",
+        'time_zone': "Australia/Sydney"
     }
 ]
+
+
 TIME_ZONES_DICT_SHORT = [
     {
         'label': "UTC",
@@ -96,19 +98,19 @@ TIME_ZONES_DICT_SHORT = [
         'time_zone': "CET"
     },
     {
-        'label': "Los Angeles",
+        'label': "Los Angeles (PDT/UTC-8)",
         'time_zone': "America/Los_Angeles"
     },
     {
-        'label': "Seoul",
+        'label': "Seoul (UTC+9)",
         'time_zone': "Asia/Seoul"
     },
     {
-        'label': "Sydney",
+        'label': "Sydney (UTC+10)",
         'time_zone': "Australia/Sydney"
     },
     {
-        'label': "Amsterdam",
+        'label': "Amsterdam (UTC+1)",
         'time_zone': "Europe/Amsterdam"
     }
 ]
