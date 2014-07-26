@@ -317,7 +317,8 @@ def edit_team(team_id):
         team_edit.skill_level = form.team_skill_level.data
         team_edit.time_zone = form.team_time_zone.data
         team_edit.week_days = form.read_scrim_days()
-        team_edit.time_from = form.time_from.data
+        #team_edit.time_from = form.time_from.data
+        team_edit.type = form.team_type.data
         db.session.add(team_edit)
         db.session.commit()
 
@@ -327,7 +328,8 @@ def edit_team(team_id):
         form.team_skill_level.data = team_edit.skill_level
         form.team_time_zone.data = team_edit.time_zone
         form.fill_scrim_days(team_edit.week_days)
-        form.time_from.data = team_edit.time_from
+        #form.time_from.data = team_edit.time_from
+        form.team_type.data = team_edit.type
 
         return render_template('edit_team.html', form=form, team_id=team_id)
 
@@ -355,6 +357,7 @@ def create_team():
         team.skill_level = form.team_skill_level.data
         team.time_zone = form.team_time_zone.data
         team.week_days = form.read_scrim_days()
+        team.type = form.team_type.data
         db.session.add(team)
         db.session.commit()
 

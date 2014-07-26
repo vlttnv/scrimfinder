@@ -102,6 +102,7 @@
 						  <th>Skill Level</th>
 						  <th>Time Zone</th>
 						  <th>Week Days</th>
+						  <th>Type</th>
 				  </tr>
 		  </thead>
 		  <tbody>
@@ -116,6 +117,9 @@
 						  {% for day in convert_days(team.week_days) %}	
 						  <span class="label label-info">{{day}}</span>
 						  {% endfor %}		  
+				  </td>
+				  <td>
+						  {{team.type}}
 				  </td>
 		  </tr>
 

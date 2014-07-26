@@ -14,6 +14,8 @@ ETF_DIVISION_4  = "ETF2L Division 4"
 ETF_DIVISION_5  = "ETF2L Division 5"
 ETF_DIVISION_6  = "ETF2L Division 6"
 
+CHOICES_TEAM_TYPE = [("4v4","4v4"),("6v6","6v6"),("9v9","9v9")]
+
 CHOICES_SKILLS = [
     (UGC_PLATINUM,UGC_PLATINUM),
     (UGC_GOLD,UGC_GOLD),

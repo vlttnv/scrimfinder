@@ -82,6 +82,7 @@ class Team(db.Model):
     avatar_url      = db.Column(db.String(80))
     num_wins        = db.Column(db.Integer)
     num_losses      = db.Column(db.Integer)
+    type            = db.Column(db.String(80))
     membership      = db.relationship('Membership',
             backref='team',
             lazy='dynamic')

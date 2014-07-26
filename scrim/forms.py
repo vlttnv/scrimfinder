@@ -55,10 +55,12 @@ class CreateTeamForm(BaseScrimDay):
     team_name        = TextField('team_name', validators=[Required()])
     team_skill_level = SelectField('team_skill_level', choices=CHOICES_SKILLS)
     team_time_zone   = SelectField('team_time_zone', choices=CHOICES_ZONES)
+    team_type        = SelectField('team_type', choices=CHOICES_TEAM_TYPE)
 
 class EditTeamForm(CreateTeamForm):
-    time_from = SelectField('time_from', 
-                    choices=[("8:00","8:00"),("9:00","9:00"),("10:00","10:00")])
+    team_type        = SelectField('team_type', choices=CHOICES_TEAM_TYPE)
+    #time_from = SelectField('time_from', 
+    #                choices=[("8:00","8:00"),("9:00","9:00"),("10:00","10:00")])
 
 class CommentTeamForm(Form):
     text = TextAreaField('text', validators=[Required()])

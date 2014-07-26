@@ -59,6 +59,7 @@
 								<p>Week days: {% for day in convert_days(team.week_days) %}
 								<span class="label label-info">	{{day}}</span>
 								{% endfor %}</p>
+								<p>Type: {{team.type}}</p>
 														</div>
 						</div>
 
@@ -101,6 +102,12 @@
 						<label for="select" class="col-lg-2 control-label">Skill Level</label>
 						<div class="col-lg-10">
 								{{create_team_form.team_skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Skill Level</label>
+						<div class="col-lg-10">
+								{{create_team_form.team_type(class_="form-control")}}
 						</div>
 				</div>
 				<div class="form-group">
