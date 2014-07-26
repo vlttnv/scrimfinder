@@ -105,6 +105,7 @@ def user_page(steam_id):
     for instance, [(TeamA,"Captain"),(TeamB,"Coach")].
     """
     from forms import CreateTeamForm
+    from consts import TIME_ZONES_DICT
     create_team_form = CreateTeamForm()
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
@@ -118,7 +119,7 @@ def user_page(steam_id):
         team = Team.query.filter_by(id=mem.team_id).one()
         team_roles.append((team, mem.role))
 
-    return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form)
+    return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form,tz=TIME_ZONES_DICT)
 
 @scrim_app.route('/users', methods=['GET','POST'])
 @scrim_app.route('/users/page/<int:page>', methods=['GET','POST'])
@@ -137,14 +138,15 @@ def all_users(page=1):
 
     if form.validate_on_submit():
         if form.nickname.data != "":
-            query = query.filter(User.nickname.like('%'+form.nickname.data+'%'))
+            query = query.filter(User.nickname.like('%'+form.nickname.data+'%')).order_by(User.id.desc())
         if form.steam_id.data != "":
-            query = query.filter(User.steam_id.like('%'+form.steam_id.data+'%'))
+            query = query.filter(User.steam_id.like('%'+form.steam_id.data+'%')).order_by(User.id.desc())
+
 
     from config import USERS_PER_PAGE
 
     try:
-        users_list = query.paginate(page, per_page=USERS_PER_PAGE)
+        users_list = query.order_by(User.id.desc()).paginate(page, per_page=USERS_PER_PAGE)
     except OperationalError:
         flash("No users in the database.", "danger")
         users_list = None
@@ -183,7 +185,7 @@ def all_teams(page=1):
     from config import TEAMS_PER_PAGE
 
     try:
-        teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
+        teams_list = query.order_by(Team.id.desc()).paginate(page, per_page=TEAMS_PER_PAGE)
     except OperationalError:
         flash("No teams in the database.", "danger")
         teams_list = None

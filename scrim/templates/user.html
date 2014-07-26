@@ -49,7 +49,13 @@
 
 						</div>
 						<div class="col-xs-6">
-								<p>Time zone:  {{ team.time_zone }}</p>
+								<p>Time zone:  
+							{% for z in tz %}
+												{% if z['time_zone'] == team.time_zone %}
+												{{z['label']}}
+												{% endif %}
+												{% endfor %}	
+								</p>
 								<p>Week days: {% for day in convert_days(team.week_days) %}
 								<span class="label label-info">	{{day}}</span>
 								{% endfor %}</p>
