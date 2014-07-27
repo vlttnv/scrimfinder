@@ -26,14 +26,7 @@
                                         <span class="badge">soon</span>
                                         Reputation
 										                                        </li>
-                                        <li class="list-group-item">
-										<span class="badge">soon</span>
-                                        Wins
-                                        </li>
-                                        <li class="list-group-item">
-										<span class="badge">soon</span>
-                                        Losses
-                                        </li>
+                                        
                                         <li class="list-group-item">
                                         <span class="badge">{{team.skill_level}}</span>
                                         Skill level
@@ -102,7 +95,7 @@
                                                 <tr>
                                                         <th>Nickname</th>
                                                         <th>Role</th>
-                                                        <th>Class</th>
+                                                        <th>Main Class</th>
                                                         <th>Options</th>
                                                 </tr>
                                         </thead>
@@ -111,7 +104,7 @@
                                         <tr>
                                                 <td> <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a></td>
                                                 <td> {{role}} </td>
-												<td>Coming Soon</td>
+												<td>{{user.main_class}}</td>
                                                 {% if (g.user, "Captain") in members_roles %}
                                                 <td><a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
                                                  / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a></td>
