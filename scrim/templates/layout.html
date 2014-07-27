@@ -44,7 +44,7 @@
 		<div class="collapse navbar-collapse">
 		  <ul class="nav navbar-nav">
 				  <li {% if request.path == "/index" %} class="active"{% endif %}><a href="{{ url_for('index') }}"><i class="fa fa-home"></i> Home</a></li>
-				  <li {% if request.path == "/users" %}class="active"{% endif %}><a href="{{ url_for('all_users') }}"><i class="fa fa-users"></i> Users</a></li>
+				  <li {% if request.path == "/users" %}class="active"{% endif %}><a href="{{ url_for('all_users') }}"><i class="fa fa-users"></i> Users/Mercs</a></li>
 				  <li {% if request.path == "/teams" %}class="active"{% endif %}><a href="{{ url_for('all_teams') }}"><i class="fa fa-sort-alpha-asc"></i> Teams</a></li>
 
 				  {% if current_user.is_authenticated() %}
