@@ -15,24 +15,50 @@
 
 						</div>
 						<div class="col-md-8">
-								<p><strong>SteamID:</strong> {{ user.steam_id }} </p>
-								<p><a href='{{ user.profile_url }}'>Go to steam profile</a></p>
-								<p><a href="steam://friends/add/{{ user.steam_id }}">Add on Steam</a></p>
-								<p><a href="http://steamrep.com/search?q={{user.steam_id}}">Steam Rep</a></p>
-								<p><a href="http://www.ugcleague.com/players_page.cfm?player_id={{user.steam_id}}">UGC Profile</a></p>
-								<p><a href="http://logs.tf/profile/{{user.steam_id}}">Logs</a></p>
+<ul class="list-group">
+  <li class="list-group-item">
+    SteamID: {{user.steam_id}}
+  </li>
+	<li class="list-group-item">
+    Merc/Ringer:
+	{% if user.is_merc == 1 %}
+	<i class="fa fa-check"></i>
+	{% else %}
+	<i class="fa fa-times"></i>
+	{% endif %}
+  </li>
+  <li class="list-group-item">
+    Skill Level/Div: {{user.skill_level}} 
+  </li>
+  <li class="list-group-item">
+    <a href="{{user.profile_url}}">Steam Profile</a>
+  </li>
+  <li class="list-group-item">
+    <a href="http://steamrep.com/search?q={{user.steam_id}}">SteamRep</a>
+  </li>
+  <li class="list-group-item">
+    <a href="http://www.ugcleague.com/players_page.cfm?player_id={{user.steam_id}}">UGC Profile</a>
+  </li>
+  <li class="list-group-item">
+   <a href="http://logs.tf/profile/{{user.steam_id}}">Logs</a>
+  </li>
+  <li class="list-group-item">
+   <a href="steam://friends/add/{{ user.steam_id }}">Add on Steam</a>
+  </li>
+</ul>
 
-
-						</div>
-				</div>
-<br>
 {% if g.user.steam_id == user.steam_id %}
 				<p>
 				<!-- Button trigger modal -->
 <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
-  Create a team
+  Create team
 </button>
-				<a href="{{url_for('all_teams')}}" class="btn btn-primary btn-lg">Join a team</a></p>{% endif %}
+				<a href="{{url_for('all_teams')}}" class="btn btn-primary btn-lg pull-right">Join team</a></p>{% endif %}
+						</div>
+
+				</div>
+<br>
+
 		</div>
 		<div class="col-lg-6">
 
