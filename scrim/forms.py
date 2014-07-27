@@ -6,7 +6,9 @@ from consts import *
 # USER
 
 class EditUserForm(Form):
-    pass
+    skill_level = SelectField('skill_level', choices=CHOICES_SKILLS)
+    main_class  = SelectField('main_class', choices=CHOICES_CLASSES)
+    is_merc     = BooleanField('Merc')
 
 # SCRIM DAYS
 
@@ -76,11 +78,13 @@ class BaseSearchForm(Form):
 class FilterUserForm(BaseSearchForm):
     nickname = TextField('nickname')
     steam_id = TextField('steam_id')
+    is_merc  = BooleanField('is_merc')
 
     def reset_user_filter(self):
         super(FilterUserForm, self).reset_clear()
         self.nickname.data = ""
         self.steam_id.data = ""
+        self.is_merc.data  = False
 
 class TeamSearchForm(BaseSearchForm, BaseScrimDay):
     team_name = TextField('team_name')

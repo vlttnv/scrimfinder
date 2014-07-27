@@ -17,6 +17,9 @@ class User(db.Model):
     join_date           = db.Column(db.DateTime)
     last_online         = db.Column(db.DateTime)
     team_leader         = db.Column(db.Boolean)
+    is_merc             = db.Column(db.Integer)
+    main_class          = db.Column(db.String(80))
+    skill_level         = db.Column(db.String(80))
     # Stores a list of team ids to which the player
     # has given rep to prevent abuse
     # same with played_with

@@ -1,7 +1,50 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Edit Your Profile</h1>
-???
-<a href="{{ url_for('user_page', steam_id = g.user.steam_id)}}"> Back to profile</a>
+<br>
+
+<div class="col-lg-6 col-lg-offset-3 well">
+
+<form class="form-horizontal" action="" method="post"  name="create_team">
+
+	{{form.hidden_tag()}}
+		<fieldset>
+				<legend>Edit Profile</legend>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Skill Level/Div</label>
+						<div class="col-lg-10">
+								{{form.skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Main Class</label>
+						<div class="col-lg-10">
+								{{form.main_class(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Merc/Ringer</label>
+						<div class="col-lg-10">
+								{{form.is_merc()}} Would you like to be listed as available to merc/ringer.
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Steam Data</label>
+						<div class="col-lg-10">
+								<a href="#" class="btn btn-warning disabled"> Refresh Profile</a>
+						</div>
+				</div>
+				
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+
+			  <a href="{{url_for('user_page', steam_id=g.user.steam_id)}}"class="btn btn-default">Cancel</a>
+<input id="lol" data-toggle="tooltip" data-placement="right" title="" data-original-title="Tooltip on right" class="btn btn-success" type="submit" value="Save">
+      </div>
+    </div>
+		</fieldset>
+
+
+</div>
+
 {% endblock %}

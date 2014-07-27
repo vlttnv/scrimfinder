@@ -14,7 +14,12 @@ ETF_DIVISION_4  = "ETF2L Division 4"
 ETF_DIVISION_5  = "ETF2L Division 5"
 ETF_DIVISION_6  = "ETF2L Division 6"
 
+HIGHLANDER_OPEN = "Highlander Open"
+
 CHOICES_TEAM_TYPE = [("4v4","4v4"),("6v6","6v6"),("9v9","9v9")]
+
+CHOICES_CLASSES = [("Medic","Medic"),("Heavy","Heavy"),("Demoman","Demoman"),("Soldier","Soldier"),("Scout","Scout"),("Pyro","Pyro"),("Engineer","Engineer"),("Spy","Spy"),("Sniper","Sniper")]
+
 
 CHOICES_SKILLS = [
     (UGC_PLATINUM,UGC_PLATINUM),
@@ -28,7 +33,8 @@ CHOICES_SKILLS = [
     (ETF_DIVISION_3,ETF_DIVISION_3),
     (ETF_DIVISION_4,ETF_DIVISION_4),
     (ETF_DIVISION_5,ETF_DIVISION_5),
-    (ETF_DIVISION_6,ETF_DIVISION_6)
+    (ETF_DIVISION_6,ETF_DIVISION_6),
+    (HIGHLANDER_OPEN, HIGHLANDER_OPEN)
 ]
         
 FILTER_SKILLS = [(ALL, ALL)]

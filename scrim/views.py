@@ -141,9 +141,11 @@ def all_users(page=1):
 
     if form.validate_on_submit():
         if form.nickname.data != "":
-            query = query.filter(User.nickname.like('%'+form.nickname.data+'%')).order_by(User.id.desc())
+            query = query.filter(and_(User.nickname.like('%'+form.nickname.data+'%'), User.is_merc==int(form.is_merc.data))).order_by(User.id.desc())
         if form.steam_id.data != "":
-            query = query.filter(User.steam_id.like('%'+form.steam_id.data+'%')).order_by(User.id.desc())
+            query = query.filter(and_(User.steam_id.like('%'+form.steam_id.data+'%'), User.is_merc==int(form.is_merc.data))).order_by(User.id.desc())
+        if form.nickname.data == "" and form.steam_id.data =="":
+            query = query.filter(User.is_merc==int(form.is_merc.data))
 
 
     from config import USERS_PER_PAGE
@@ -279,13 +281,26 @@ def edit_profile():
 
     from forms import EditUserForm
     form = EditUserForm()
+    try:
+        user_edit = User.query.filter_by(steam_id=g.user.steam_id).one()
+    except NoResultFound, e:
+        flash("Error getting user.", "danger")
+        return redirect(url_for('index'))
 
     if form.validate_on_submit():
-        # TODO
+        user_edit.main_class = form.main_class.data
+        user_edit.is_merc = int(form.is_merc.data)
+        user_edit.skill_level = form.skill_level.data
+        db.session.add(user_edit)
+        db.session.commit()
+        flash("Profile successfully updated.", "success")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     else:
-        # TODO
+        form.main_class.data = user_edit.main_class
+        form.is_merc.data = user_edit.is_merc
+        form.skill_level.data = user_edit.skill_level
         return render_template('edit_profile.html', form = form)
+    #return render_template('edit_profile.html', form=form)
 
 @scrim_app.route('/team/edit/<int:team_id>', methods = ['GET', 'POST'])
 @login_required
