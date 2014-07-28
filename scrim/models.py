@@ -34,6 +34,9 @@ class User(db.Model):
     comment             = db.relationship('Comment',
             backref='user',
             lazy='dynamic')
+    single_scrim        = db.relationship('SingleScrim',
+            backref='user',
+            lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -135,3 +138,11 @@ class Comment(db.Model):
     team_id         = db.Column(db.Integer, db.ForeignKey('team.id'))
     user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
     comment         = db.Column(db.Text)
+
+class SingleScrim(db.Model):
+    id              = db.Column(db.Integer, primary_key=True)
+    leader_id       = db.Column(db.Integer, db.ForeignKey('user.id'))
+    skill_level     = db.Column(db.String(80))
+    is_accepted     = db.Column(db.Integer)
+    type            = db.Column(db.String(45))
+    time_zone       = db.Column(db.String(80))
