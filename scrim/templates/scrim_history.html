@@ -1,44 +1,96 @@
 {% extends "layout.html" %}
 {% block body %}
-  {% if scrims_list %}
-    <ul>
-    {% for scrim in scrims_list.items %}
-      
-      {% if scrim.team1_id == team_id %}
-        <li>Team: {{ scrim.team2_id }}</li>
+
+{% for scrim in scrims_list.items %}
+
+<!-- scrim -->
+<p>
+
+<!-- Opponent -->
+<strong>Versus:</strong>
+{% if scrim.team1_id == team_id %}
+  {{ scrim.team2.name }}
+{% else %}
+  {{ scrim.team1.name }}
+{% endif %}
+<br />
+
+<!-- Datetime -->
+<span class="badge team_time_zone">{{ scrim.date }}</span>
+<br />
+
+<!-- Map -->
+{% if scrim.team1_id == team_id %}
+  <em>Your map : {{ scrim.map1 }}</em>
+  <em>Their map: {{ scrim.map2 }}</em>
+{% else %}
+  <em>Your map : {{ scrim.map2 }}</em>
+  <em>Their map: {{ scrim.map1 }}</em>
+{% endif %}
+<br />
+
+<!-- Type -->
+Type: {{ scrim.type }}
+<br />
+
+<!-- State -->
+{% if scrim.state == "Finished"%}
+    <!-- Result -->
+    {% if scrim.team1_id == team_id %}
+      {% if scrim.result == "Won" %}
+          <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
+      {% elif scrim.result == "Lost" %}
+          <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
       {% else %}
-        <li>Team: {{ scrim.team1_id }}<li>
+          <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
       {% endif %}
+    <!-- opposite -->
+    {% elif scrim.result == "Won" %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+    {% elif scrim.result == "Lost" %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
+    {% else %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
+    {% endif %}
+    <br />
+{% elif scrim.state == "Accepted" %}
+    <span class="label label-success">Accepted</span>
+{% elif scrim.state == "Rejected" %}
+    <span class="label label-danger">Rejected</span>
+{% elif scrim.state == "Proposed" and scrim.team1_id == team_id%}
+    <span class="label label-info">Waiting for {{ scrim.team2.name }} to respond</span>
+{% elif scrim.state == "Proposed" and scrim.team2_id == team_id%}
+    <span class="label label-info">Waiting for Captain to respond</span>
+{% endif %}
+<br />
 
-      <li>Date (UTC): {{ scrim.date }}</li>
-      <li>Result: {{ scrim.result }}</li>
-      <li>Map1: {{ scrim.map1 }}</li>
-      <li>Map2: {{ scrim.map2 }}</li>
-      <li>Type: {{ scrim.type }}</li>
-    {% endfor %}
-    </ul>
+</p>
+<!-- scrim -->
 
+{% endfor %}
+
+<ul class="pagination" style="margin-top:0;">
     <!-- previous page -->
     {% if scrims_list.has_prev %}
-      <a href="{{ url_for('scrim_history', team_id=team_id, page=scrims_list.prev_num) }}">Previous</a>
+    <li> <a href="{{ url_for('scrim_history', team_id=team_id, page=scrims_list.prev_num) }}">Previous</a></li>
     {% endif %}
 
     <!-- all page numbers -->
     {% for page_num in scrims_list.iter_pages() %}
       {% if page_num %}
         {% if page_num != scrims_list.page %}
-          <a href="{{ url_for('scrim_history', team_id=team_id, page=page_num) }}">{{ page_num }}</a>
+        <li> <a href="{{ url_for('scrim_history', team_id=team_id, page=page_num) }}">{{ page_num }}</a></li>
         {% else %}
-          <strong>{{ page_num }}</strong>
+        <li class="active"><a href="#">{{ page_num }}</a></li>
       {% endif %}
       {% else %}
-        <span class=ellipsis>…</span>
+      <li class="disabled"><a href="#">…</a></li>
       {% endif %}
     {% endfor %}
 
     <!-- next page -->
     {% if scrims_list.has_next %}
-      <a href="{{ url_for('scrim_history', team_id=team_id, page=scrims_list.next_num) }}">Next</a>
+    <li><a href="{{ url_for('scrim_history', team_id=team_id, page=scrims_list.next_num) }}">Next</a></li>
     {% endif %}
-  {% endif %}
+</ul>
 {% endblock %}
