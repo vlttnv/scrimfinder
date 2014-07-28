@@ -960,7 +960,7 @@ def upload_scrim_result():
 def scrim_history(team_id, page=1):
     from datetime import datetime as dt
     from consts import SCRIM_ACCEPTED
-    from config import SCRIMS_PER_PAGE_TEAM
+    from config import SCRIMS_PER_PAGE
 
     if page < 1:
         abort(404)
@@ -976,7 +976,7 @@ def scrim_history(team_id, page=1):
         db.session.commit()
 
     try:
-        scrims_list = scrims.paginate(page, per_page=SCRIMS_PER_PAGE_TEAM)
+        scrims_list = scrims.paginate(page, per_page=SCRIMS_PER_PAGE)
     except OperationalError:
         scrims_list = None
         
