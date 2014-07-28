@@ -175,7 +175,9 @@
 		{% endif %}
         
         {% else %}
-            {% if team.id == scrim.team1_id %}
+            {% if scrim.result == "Tied" %}
+                <strong>Result:</strong> <span style="font-weight:bold;color:orange">Tied</span>
+            {% elif team.id == scrim.team1_id %}
                 {% if scrim.result == "Won" %}
                     <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
                 {% elif scrim.result == "Lost" %}
