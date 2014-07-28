@@ -141,66 +141,110 @@
 		No scrims yet.
 		</li>
 		{% endif %}
-{% for scrim_info in scrims_list %}
+{% for scrim in scrims_list.items %}
     <li class="list-group-item">
-    <span class="badge team_time_zone">{{ scrim_info.scrim.date }}</span>
+    <span class="badge team_time_zone">{{ scrim.date }}</span>
 
-    <strong>Versus:</strong> <a href="{{ url_for('team_page', team_id=scrim_info.opponent.id) }}">{{ scrim_info.opponent.name }}</a><br>
-    <em>Map 1:</em> {{ scrim_info.scrim.map1 }}, <em>Map 2:</em> {{ scrim_info.scrim.map2 }}<br>
-    Type: {{ scrim_info.scrim.type }}
+    <strong>Versus:</strong>
+    {% if scrim.team1_id == team_id %}
+      <a href="{{ url_for('team_page', team_id=scrim.team2_id) }}">{{ scrim.team2.name }}</a>
+      <em>Map: {{ scrim.map2 }}</em>
+    {% else %}
+      <a href="{{ url_for('team_page', team_id=scrim.team1_id) }}">{{ scrim.team1.name }}</a>
+      <em>Map: {{ scrim.map1 }}</em>
+    {% endif %}<br>
+
+
+    {% if scrim.team1_id == team_id %}
+      <em>Your Map: {{ scrim.map1 }}</em>
+    {% else %}
+      <em>Your Map: {{ scrim.map2 }}</em>
+    {% endif %}<br>
+
+    Type: {{ scrim.type }}
     
-    {% if scrim_info.state == "Finished" %}
-        <span class="label label-default">{{ scrim_info.scrim.state }}</span>
+    {% if scrim.state == "Finished" %}
+        <span class="label label-default">{{ scrim.state }}</span>
         <br />
-        {% if scrim_info.scrim.result is none %}
+        {% if scrim.result is none %}
 
-{% if (g.user, "Captain") in members_roles %}
-            <input type="button" id="uploadResultButton{{ scrim_info.scrim.id }}" value="Submit result" onclick="createUploadResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
-            <span id="uploadResultFormArea{{ scrim_info.scrim.id }}"></span>
-			{% endif %}
+        <!-- Upload result -->
+        {% if (g.user, "Captain") in members_roles %}
+            <input type="button" id="uploadResultButton{{ scrim.id }}" value="Submit result" onclick="createUploadResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim.id }})"/>
+            <span id="uploadResultFormArea{{ scrim.id }}"></span>
+		{% endif %}
+        
         {% else %}
-            {% if team.id == scrim_info.scrim.team1_id %}
-                {% if scrim_info.scrim.result == "Won" %}
+            {% if team.id == scrim.team1_id %}
+                {% if scrim.result == "Won" %}
                     <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
-                {% elif scrim_info.scrim.result == "Lost" %}
+                {% elif scrim.result == "Lost" %}
                     <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
                 {% else %}
                     <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
                 {% endif %}
             <!-- opposite -->
-            {% elif scrim_info.scrim.result == "Won" %}
+            {% elif scrim.result == "Won" %}
                 <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
-            {% elif scrim_info.scrim.result == "Lost" %}
+            {% elif scrim.result == "Lost" %}
                 <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
             {% else %}
                 <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
             {% endif %}
 
-{% if (g.user, "Captain") in members_roles %}
             <!-- edit result -->
-            <input type="button" id="editResultButton{{ scrim_info.scrim.id }}" value="Edit result" onclick="createEditResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim_info.scrim.id }})"/>
-            <span id="editResultFormArea{{ scrim_info.scrim.id }}"></span>
-        {% endif %}
+            {% if (g.user, "Captain") in members_roles %}
+                <input type="button" id="editResultButton{{ scrim.id }}" value="Edit result" onclick="createEditResultForm(post_url='{{ url_for('upload_scrim_result') }}', scrim_id={{ scrim.id }})"/>
+                <span id="editResultFormArea{{ scrim.id }}"></span>
+            {% endif %}
 		{% endif %}
-    {% elif scrim_info.state == "Accepted" %}
-        <span class="label label-success">{{ scrim_info.scrim.state }}</span>
-    {% elif scrim_info.state == "Rejected" %}
-        <span class="label label-danger">{{ scrim_info.scrim.state }}</span>
-    {% elif scrim_info.state == "Sent" %}
-        <span class="label label-info">{{ scrim_info.scrim.state }}</span>
-		Waiting for response
-    {% elif scrim_info.state == "Received" %}
-
-{% if (g.user, "Captain") in members_roles %}
-        <span class="label label-info">{{ scrim_info.scrim.state }}</span>
-        <input type="button" id="acceptScrimButton{{ scrim_info.scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
-        <span id="acceptScrimFormArea{{ scrim_info.scrim.id }}"></span>
-        <input type="button" id="rejectScrimButton{{ scrim_info.scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim_info.scrim.id }})"/>
-        <span id="rejectScrimError{{ scrim_info.scrim.id }}"></span>
-		{% endif %}
+    {% elif scrim.state == "Accepted" %}
+        <span class="label label-success">Accepted</span>
+    {% elif scrim.state == "Rejected" %}
+        <span class="label label-danger">Rejected</span>
+    
+    <!-- Waiting for response -->
+    {% elif scrim.state == "Proposed" and scrim.team1_id == team_id%}
+        <span class="label label-info">Waiting for {{ scrim.team2.name }} to respond</span>
+    
+    {% elif scrim.state == "Proposed" and scrim.team2_id == team_id%}
+    <!-- Accept/Reject scrim proposal -->
+    {% if (g.user, "Captain") in members_roles %}
+        <span class="label label-info">{{ scrim.state }}</span>
+        <input type="button" id="acceptScrimButton{{ scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim.id }})"/>
+        <span id="acceptScrimFormArea{{ scrim.id }}"></span>
+        <input type="button" id="rejectScrimButton{{ scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim.id }})"/>
+        <span id="rejectScrimError{{ scrim.id }}"></span>
+    {% endif %}
+    
     {% endif %}
     </li>
 {% endfor %}
+</ul>
+
+<ul class="pagination" style="margin-top:0;">
+    <!-- previous page -->
+    {% if scrims_list.has_prev %}
+    <li> <a href="{{ url_for('team_page', team_id=team.id, scrim_page=scrims_list.prev_num) }}">Previous</a></li>
+    {% endif %}
+
+    <!-- all page numbers -->
+    {% for page_num in scrims_list.iter_pages() %}
+      {% if page_num %}
+        {% if page_num != scrims_list.page %}
+        <li> <a href="{{ url_for('team_page', team_id=team.id, scrim_page=page_num) }}">{{ page_num }}</a></li>
+        {% else %}
+        <li class="active"><a href="#">{{ page_num }}</a></li>
+      {% endif %}
+      {% else %}
+      <li class="disabled"><a href="#">…</a></li>
+      {% endif %}
+    {% endfor %}
+
+    <!-- next page -->
+    {% if scrims_list.has_next %}
+    <li><a href="{{ url_for('team_page', team_id=team.id, scrim_page=scrims_list.next_num) }}">Next</a></li>
+    {% endif %}
 </ul>
 
 <script type="text/javascript">

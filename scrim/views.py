@@ -439,7 +439,8 @@ def team_times_json(team_id):
     return json_s
 
 @scrim_app.route('/team/<int:team_id>', methods=['GET','POST'])
-def team_page(team_id):
+@scrim_app.route('/team/<int:team_id>/scrim_page/<int:scrim_page>', methods=['GET','POST'])
+def team_page(team_id, scrim_page=1):
     """
     Currently shows a specific team, with team parameters, current members
     and pending members
@@ -491,69 +492,23 @@ def team_page(team_id):
     if in_team == False and is_captain:
         propose_scrim = True
 
-    all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
-    all_scrims = all_scrims.order_by(desc(Scrim.date))
-    scrims_list = []
-    # {
-    #   'state',
-    #   'opponent',
-    #   'scrim'
-    # }
+    scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
+    scrims = scrims.order_by(desc(Scrim.date))
 
-    from datetime import datetime
-    for scrim in all_scrims.all():
-        # ACCEPTED -> FINISHED when time passes
-        if scrim.state == SCRIM_ACCEPTED and scrim.date < datetime.utcnow():
-            scrim.state = SCRIM_FINISHED
-            db.session.commit()
+    from datetime import datetime as dt
+    # ACCEPTED -> FINISHED when time passes
+    scrims_finished = scrims.filter(and_(Scrim.state == SCRIM_ACCEPTED, Scrim.date < dt.utcnow()))
+    for scrim in scrims_finished:
+        scrim.state = SCRIM_FINISHED
+    if scrims_finished.count() > 0:
+        db.session.commit()
 
-        if scrim.state == SCRIM_FINISHED:
-            opponent = None
-            if scrim.team1_id == team_id:
-                opponent = Team.query.filter_by(id=scrim.team2_id).one()
-            else:
-                opponent = Team.query.filter_by(id=scrim.team1_id).one()
-            scrims_list.append({
-                'state': SCRIM_FINISHED,
-                'opponent': opponent,
-                'scrim': scrim
-            })
-        elif scrim.state == SCRIM_ACCEPTED:
-            opponent = None
-            if scrim.team1_id == team_id:
-                opponent = Team.query.filter_by(id=scrim.team2_id).one()
-            else:
-                opponent = Team.query.filter_by(id=scrim.team1_id).one()
-            scrims_list.append({
-                'state': SCRIM_ACCEPTED,
-                'opponent': opponent,
-                'scrim': scrim
-            })
-        elif scrim.state == SCRIM_REJECTED:
-            opponent = None
-            if scrim.team1_id == team_id:
-                opponent = Team.query.filter_by(id=scrim.team2_id).one()
-            else:
-                opponent = Team.query.filter_by(id=scrim.team1_id).one()
-            scrims_list.append({
-                'state': SCRIM_REJECTED,
-                'opponent': opponent,
-                'scrim': scrim
-            })
-        elif scrim.state == SCRIM_PROPOSED and scrim.team2_id == team_id:
-            proposing_team = Team.query.filter_by(id=scrim.team1_id).one()
-            scrims_list.append({
-                'state': SCRIM_RECEIVED,
-                'opponent': proposing_team,
-                'scrim': scrim
-            })
-        elif scrim.state == SCRIM_PROPOSED and scrim.team1_id == team_id:
-            responding_team = Team.query.filter_by(id=scrim.team2_id).one()
-            scrims_list.append({
-                'state': SCRIM_SENT,
-                'opponent': responding_team,
-                'scrim': scrim
-            })
+    from config import SCRIMS_PER_PAGE_TEAM
+    try:
+        scrims_list = scrims.paginate(scrim_page, per_page=SCRIMS_PER_PAGE_TEAM)
+    except OperationalError:
+        scrims_list = None
+
     aval = convert_bits_to_days(team.week_days)
 
     if form.validate_on_submit():
@@ -979,36 +934,36 @@ def scrim_history(team_id, page=1):
         scrims_list = scrims.paginate(page, per_page=SCRIMS_PER_PAGE)
     except OperationalError:
         scrims_list = None
-        
+
     return render_template('scrim_history.html', team_id=team_id, scrims_list=scrims_list)
 
 # Bots stuff
-@scrim_app.route('/bots/boom')
-def bots_boom():
-    """
-    Make sure stuff works. Let's say no error = It works!
+# @scrim_app.route('/bots/boom')
+# def bots_boom():
+#     """
+#     Make sure stuff works. Let's say no error = It works!
 
-    See bots.py
-    """
+#     See bots.py
+#     """
 
-    from scrim import bots
+#     from scrim import bots
 
-    bots.create_bot_users()
-    bots.create_bot_teams()
-    bots.make_bot_join_team()
+#     bots.create_bot_users()
+#     bots.create_bot_teams()
+#     bots.make_bot_join_team()
 
-    return 'Trust me. It worked.', 200
+#     return 'Trust me. It worked.', 200
 
-@scrim_app.route('/bots/scrims')
-def bots_scrims():
-    """
-    """
+# @scrim_app.route('/bots/scrims')
+# def bots_scrims():
+#     """
+#     """
 
-    from scrim import bots
+#     from scrim import bots
 
-    bots.create_scrims()
+#     bots.create_scrims()
 
-    return 'Does it work?', 200
+#     return 'Does it work?', 200
 
 # @scrim_app.route('/bots/accepted_scrim')
 # def bots_accepted_scrim():
