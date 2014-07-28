@@ -235,6 +235,7 @@ def all_scrims(page=1):
         scrim_days = form.read_scrim_days()
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
         query = query.filter(Team.week_days.in_(matched_scrim_days))
+    """
     else:
         # HACK
         try:
@@ -253,7 +254,7 @@ def all_scrims(page=1):
             query = query.filter(Team.week_days.in_(matched_scrim_days))
         except NoResultFound as e:
             print e
-
+    """
     from config import TEAMS_PER_PAGE
 
     try:
