@@ -33,27 +33,27 @@
 Type: {{ scrim.type }}
 <br />
 
-<!-- Result -->
-{% if scrim.team1_id == team_id %}
-  {% if scrim.result == "Won" %}
-      <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
-  {% elif scrim.result == "Lost" %}
-      <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
-  {% else %}
-      <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
-  {% endif %}
-<!-- opposite -->
-{% elif scrim.result == "Won" %}
-    <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
-{% elif scrim.result == "Lost" %}
-    <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
-{% else %}
-    <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
-{% endif %}
-<br />
-
 <!-- State -->
-{% if scrim.state == "Accepted" %}
+{% if scrim.state == "Finished"%}
+    <!-- Result -->
+    {% if scrim.team1_id == team_id %}
+      {% if scrim.result == "Won" %}
+          <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
+      {% elif scrim.result == "Lost" %}
+          <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+      {% else %}
+          <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
+      {% endif %}
+    <!-- opposite -->
+    {% elif scrim.result == "Won" %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:red">Lost</span>
+    {% elif scrim.result == "Lost" %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
+    {% else %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:orange">Unknown</span>
+    {% endif %}
+    <br />
+{% elif scrim.state == "Accepted" %}
     <span class="label label-success">Accepted</span>
 {% elif scrim.state == "Rejected" %}
     <span class="label label-danger">Rejected</span>
