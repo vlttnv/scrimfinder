@@ -141,9 +141,9 @@ def all_users(page=1):
 
     if form.validate_on_submit():
         if form.nickname.data != "":
-            query = query.filter(and_(User.nickname.like('%'+form.nickname.data+'%'), User.is_merc==int(form.is_merc.data))).order_by(User.id.desc())
+            query = query.filter(User.nickname.like('%'+form.nickname.data+'%')).order_by(User.id.desc())
         if form.steam_id.data != "":
-            query = query.filter(and_(User.steam_id.like('%'+form.steam_id.data+'%'), User.is_merc==int(form.is_merc.data))).order_by(User.id.desc())
+            query = query.filter(User.steam_id.like('%'+form.steam_id.data+'%')).order_by(User.id.desc())
         if form.nickname.data == "" and form.steam_id.data =="":
             query = query.filter(User.is_merc==int(form.is_merc.data))
 

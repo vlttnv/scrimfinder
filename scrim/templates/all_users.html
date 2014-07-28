@@ -51,6 +51,7 @@
       <th>Nickname</th>
       <th>Skill Level/Div</th>
 	  <th>Join Date</th>
+	  <th>Main Class</th>
 	  <th>Merc</th>
     </tr>
   </thead>
@@ -62,6 +63,7 @@
 			  <td><a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}}</a></td>
 			  <td>{{user.skill_level}}</td>
 			  <td><span class="convert_utc_time">{{user.join_date}}</span></td>
+			  <td>{{user.main_class}}</td>
 			  <td>
 					  {% if user.is_merc == 1 %}
 					  <i class="fa fa-check"></i>
