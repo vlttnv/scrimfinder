@@ -7,6 +7,83 @@
 </div>
 <div class="row">
 		
+<form class="form-horizontal" id="filter_single_scrims_form" action="{{ url_for('all_singles') }}" method="POST" name="filter_scrims">
+  {{form.hidden_tag()}}
+<fieldset>
+				
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Skill</label>
+						<div class="col-lg-10">
+								{{form.team_skill_level(class_="form-control")}}
+						</div>
+				</div>
+				<div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Time</label>
+						<div class="col-lg-10">
+								{{form.team_time_zone(class_="form-control")}}
+						</div>
+				</div>
+				<!-- Weekdays -->
+				<!-- <div class="form-group">
+						<label for="select" class="col-lg-2 control-label">Availability</label>
+						<div class="col-lg-10">
+								<div class="row">
+										<div class="col-xs-6">
+												<div class="checkbox">
+										<label>
+												{{form.mon()}} Monday 
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.tue()}} Tuesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.wed()}} Wednesday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.thu()}} Thursdy
+										</label>
+								</div>
+										</div>
+										<div class="col-xs-6">
+												<div class="checkbox">
+										<label>
+												{{form.fri()}} Friday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.sat()}} Saturday
+										</label>
+								</div>
+								<div class="checkbox">
+										<label>
+												{{form.sun()}} Sunday
+										</label>
+								</div>
+										</div>
+								</div>
+
+
+
+						</div>
+				</div> -->
+<div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+
+<input type="submit" class="btn btn-primary" value="Search">
+{{ form.clear() }} <!-- necessary! -->
+<input type="button" onclick="clearSearch();" class="btn btn-primary" value="Clear">
+      </div>
+    </div>
+		</fieldset>
+</form>
+
 		<div class="col-md-12">
 			<h4 class="pull-right"><a href="{{url_for('new_single')}}" class="btn btn-success">Add Single Scrim</a></h4>
 <p>Single scrimss are one-off scrims posted by team leaders. Singles scrims are usually intended to be played in the next few days or week and are a quick way to find a suitable team to practice with. A leader does not have to be part of a team to be able to post singles scrims. It is as quick and easy as possible.</p>	
@@ -37,13 +114,12 @@
 				  <td>{{ scrim.comment }}</td>
 				  <td><a class="btn btn-info btn-xs" href="steam://friends/add/{{ scrim.user.steam_id }}"><i class="fa fa-plus"></i> Add on Steam</a></td>
 		  </tr>
-
     {% endfor %}
     
 	</tbody>
 	</table>
 	
-	<!-- pagination stuff -->
+	<!-- Pagination stuff -->
 	<ul class="pagination" style="margin-top:0;">
     <!-- previous page -->
     {% if single_scrims_list.has_prev %}
@@ -78,7 +154,7 @@
 
   function clearSearch() {
     $('#clear').prop('checked', true);
-    $('#filter_scrims_form').submit();
+    $('#filter_single_scrims_form').submit();
   }
 </script>
 

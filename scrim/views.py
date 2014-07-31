@@ -209,7 +209,6 @@ def all_scrims(page=1):
     """
 
     from forms import FilterScrimForm
-
     form = FilterScrimForm()
 
     user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
@@ -266,11 +265,24 @@ def all_scrims(page=1):
 @scrim_app.route('/singles/', methods=['GET','POST'])
 @scrim_app.route('/singles/page/<int:page>', methods=['GET','POST'])
 def all_singles(page=1):
-    #from forms import FilterSinglesForm
-#    all_singles = SingleScrim.query.all()
-    # all_singles = SingleScrim.query.join(User).filter(SingleScrim.leader_id==User.id).all()
+    from forms import FilterScrimForm
+    form = FilterScrimForm()
+
+    if form.clear.data == True:
+        form.reset_scrim_filter()
 
     single_scrims = SingleScrim.query
+    from utils import scrim_filter
+
+    if form.validate_on_submit():
+        if form.team_skill_level.data != "ALL":
+            single_scrims = single_scrims.filter_by(skill_level=form.team_skill_level.data)
+        if form.team_time_zone.data != "ALL":
+            single_scrims = single_scrims.filter_by(time_zone=form.team_time_zone.data)
+
+        scrim_days = form.read_scrim_days()
+        matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
+        single_scrims = single_scrims.filter(Team.week_days.in_(matched_scrim_days))
 
     from config import SCRIMS_PER_PAGE
     try:
@@ -278,8 +290,7 @@ def all_singles(page=1):
     except OperationalError:
         single_scrims_list = None
 
-    return render_template('all_singles.html', single_scrims_list=single_scrims_list)
-
+    return render_template('all_singles.html', single_scrims_list=single_scrims_list, form=form)
 
 @lm.user_loader
 def load_user(id):

@@ -12,15 +12,6 @@ class EditUserForm(Form):
 
 # SCRIM DAYS
 
-class AddSingleScrim(Form):
-    comment = TextAreaField('text', validators=[Required()])
-    type        = SelectField('team_type', choices=CHOICES_TEAM_TYPE)
-    maps        = TextField('maps', validators=[Required()])
-    time_zone   = SelectField('time_zone', choices=CHOICES_ZONES)
-    skill_level = SelectField('skill_level', choices=CHOICES_SKILLS)
-
-    
-
 class BaseScrimDay(Form):
     mon = BooleanField('Monday', default=True)
     tue = BooleanField('Tuesday', default=True)
@@ -84,17 +75,6 @@ class BaseSearchForm(Form):
     def reset_clear(self):
         self.clear.data = False;
 
-class FilterUserForm(BaseSearchForm):
-    nickname = TextField('nickname')
-    steam_id = TextField('steam_id')
-    is_merc  = BooleanField('is_merc')
-
-    def reset_user_filter(self):
-        super(FilterUserForm, self).reset_clear()
-        self.nickname.data = ""
-        self.steam_id.data = ""
-        self.is_merc.data  = False
-
 class TeamSearchForm(BaseSearchForm, BaseScrimDay):
     team_name = TextField('team_name')
     team_skill_level = SelectField('team_skill_level', choices=FILTER_SKILLS)
@@ -106,6 +86,19 @@ class TeamSearchForm(BaseSearchForm, BaseScrimDay):
         self.team_name.data = ""
         self.team_skill_level.data = "ALL"
         self.team_time_zone.data = "ALL"
+
+# FILTER
+
+class FilterUserForm(BaseSearchForm):
+    nickname = TextField('nickname')
+    steam_id = TextField('steam_id')
+    is_merc  = BooleanField('is_merc')
+
+    def reset_user_filter(self):
+        super(FilterUserForm, self).reset_clear()
+        self.nickname.data = ""
+        self.steam_id.data = ""
+        self.is_merc.data  = False
 
 class FilterTeamForm(TeamSearchForm):
     
@@ -141,3 +134,12 @@ class ProposeScrimForm(Form):
 
 class AcceptScrimForm(Form):
     map = TextField('map', validators=[Required()])
+
+# SINGLE SCRIM
+
+class AddSingleScrim(Form):
+    comment = TextAreaField('text', validators=[Required()])
+    type        = SelectField('team_type', choices=CHOICES_TEAM_TYPE)
+    maps        = TextField('maps', validators=[Required()])
+    time_zone   = SelectField('time_zone', choices=CHOICES_ZONES)
+    skill_level = SelectField('skill_level', choices=CHOICES_SKILLS)
