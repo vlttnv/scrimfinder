@@ -13,13 +13,13 @@ class EditUserForm(Form):
 # SCRIM DAYS
 
 class BaseScrimDay(Form):
-    mon = BooleanField('Monday')
-    tue = BooleanField('Tuesday')
-    wed = BooleanField('Wednesday')
-    thu = BooleanField('Thursday')
-    fri = BooleanField('Friday')
-    sat = BooleanField('Saturday')
-    sun = BooleanField('Sunday')
+    mon = BooleanField('Monday', default=True)
+    tue = BooleanField('Tuesday', default=True)
+    wed = BooleanField('Wednesday', default=True)
+    thu = BooleanField('Thursday', default=True)
+    fri = BooleanField('Friday', default=True)
+    sat = BooleanField('Saturday', default=True)
+    sun = BooleanField('Sunday', default=True)
 
     def read_scrim_days(self):
         scrim_days    = list('0000000')
