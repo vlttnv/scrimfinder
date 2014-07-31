@@ -1,5 +1,5 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team, Request, Membership, Comment, Scrim
+from models import User, Team, Request, Membership, Comment, Scrim, SingleScrim
 from utils import steam_api, logs_tf_api
 from consts import *
 from flask import request, redirect, session, g, json, render_template, flash, url_for
@@ -264,6 +264,18 @@ def all_scrims(page=1):
 
     return render_template('all_scrims.html', teams_list=teams_list, form=form)
 
+@scrim_app.route('/singles/', methods=['GET','POST'])
+@scrim_app.route('/singles/page/<int:page>', methods=['GET','POST'])
+@login_required
+def all_singles(page=1):
+    #from forms import FilterSinglesForm
+#    all_singles = SingleScrim.query.all()
+    all_singles = SingleScrim.query.join(User).filter(SingleScrim.leader_id==User.id).all()
+
+
+    return render_template('all_singles.html', all_singles=all_singles)
+
+
 @lm.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -391,6 +403,27 @@ def create_team():
     else:
         return render_template('create_team.html', create_team_form=form)
 
+@scrim_app.route('/new_single', methods = ['GET', 'POST'])
+@login_required
+def new_single():
+    from forms import AddSingleScrim
+    form = AddSingleScrim()
+
+    if form.validate_on_submit():
+        single =  SingleScrim()
+        single.comment = form.comment.data
+        single.type = form.type.data
+        single.time_zone = form.time_zone.data
+        single.maps = form.maps.data
+        single.leader_id = g.user.id
+        single.skill_level = form.skill_level.data
+        print form.comment.data
+        db.session.add(single)
+        db.session.commit()
+
+        return redirect(url_for('all_singles'))
+    else:
+        return render_template('create_single.html', form=form)
 @scrim_app.route('/team/quit/<int:team_id>', methods=['POST'])
 @login_required
 def quit_team(team_id):

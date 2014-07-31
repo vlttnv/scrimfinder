@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="page-header">
+		<h1>Single Scrims</h1>
+		
+</div>
+<div class="row">
+		
+		<div class="col-md-12">
+			<h4 class="pull-right"><a href="{{url_for('new_single')}}" class="btn btn-success">Add Single Scrim</a></h4>
+<p>Single scrimss are one-off scrims posted by team leaders. Singles scrims are usually intended to be played in the next few days or week and are a quick way to find a suitable team to practice with. A leader does not have to be part of a team to be able to post singles scrims. It is as quick and easy as possible.</p>	
+  <table class="table table-striped table-hover">
+		  <thead>
+				  <tr>
+						  <th></th>
+						  <th>Team Leader</th>
+						  <th>Skill Level</th>
+						  <th>Type</th>
+						  <th>Time Zone</th>
+						  <th>Maps</th>
+						  <th>Comment</th>
+						  <th>Add on Steam</th>
+				  </tr>
+		  </thead>
+		  <tbody>
+
+
+    {% for single in all_singles %}
+		  <tr>
+				  <td> <img src="{{ single.user.avatar_url }}"></td>
+				  <td><a href="{{url_for('user_page', steam_id=single.user.steam_id)}}">{{single.user.nickname}}</a></td>
+				  <td>{{ single.skill_level }}</td>
+				  <td>{{ single.type }}</td>
+				  <td>{{ get_time_zone_label(single.time_zone)  }}</td>
+				  <td>{{ single.maps }}</td>
+				  <td>{{ single.comment }}</td>
+				  <td><a class="btn btn-info btn-xs" href="steam://friends/add/{{ single.user.steam_id }}"><i class="fa fa-plus"></i> Add on Steam</a></td>
+		  </tr>
+
+    {% endfor %}
+    
+	</tbody>
+	</table>
+	<ul class="pagination" style="margin-top:0;">
+    <!-- previous page -->
+
+		</div>
+
+</div>
+
+<script type="text/javascript">
+  $('#clear').hide();
+
+  function clearSearch() {
+    $('#clear').prop('checked', true);
+    $('#filter_scrims_form').submit();
+  }
+</script>
+
+{% endblock %}

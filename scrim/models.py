@@ -146,3 +146,6 @@ class SingleScrim(db.Model):
     is_accepted     = db.Column(db.Integer)
     type            = db.Column(db.String(45))
     time_zone       = db.Column(db.String(80))
+    date            = db.Column(db.DateTime)
+    comment         = db.Column(db.Text)
+    maps            = db.Column(db.String(400))

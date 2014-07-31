@@ -12,6 +12,15 @@ class EditUserForm(Form):
 
 # SCRIM DAYS
 
+class AddSingleScrim(Form):
+    comment = TextAreaField('text', validators=[Required()])
+    type        = SelectField('team_type', choices=CHOICES_TEAM_TYPE)
+    maps        = TextField('maps', validators=[Required()])
+    time_zone   = SelectField('time_zone', choices=CHOICES_ZONES)
+    skill_level = SelectField('skill_level', choices=CHOICES_SKILLS)
+
+    
+
 class BaseScrimDay(Form):
     mon = BooleanField('Monday', default=True)
     tue = BooleanField('Tuesday', default=True)
@@ -107,6 +116,11 @@ class FilterScrimForm(TeamSearchForm):
 
     def reset_scrim_filter(self):
         super(FilterScrimForm, self).reset_team_search()
+
+class FilterSinglesForm(TeamSearchForm):
+
+    def reset_singles_filter(self):
+        super(FilterSinglesForm, self).reset_team_search()
 
 # SCRIM PROPOSAL
 
