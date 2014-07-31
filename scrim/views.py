@@ -144,6 +144,7 @@ def all_users(page=1):
             query = query.filter(User.nickname.like('%'+form.nickname.data+'%')).order_by(User.id.desc())
         if form.steam_id.data != "":
             query = query.filter(User.steam_id.like('%'+form.steam_id.data+'%')).order_by(User.id.desc())
+        # ????
         if form.nickname.data == "" and form.steam_id.data =="":
             query = query.filter(User.is_merc==int(form.is_merc.data))
 
@@ -182,6 +183,8 @@ def all_teams(page=1):
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
             query = query.filter_by(time_zone=form.team_time_zone.data)
+        if form.team_type.data != "ALL":
+            query = query.filter(or_(Team.type == form.team_type.data, Team.type == None))
 
         scrim_days = form.read_scrim_days()
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
@@ -230,6 +233,8 @@ def all_scrims(page=1):
             query = query.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
             query = query.filter_by(time_zone=form.team_time_zone.data)
+        if form.team_type.data != "ALL":
+            query = query.filter(or_(Team.type == form.team_type.data, Team.type == None))
 
         scrim_days = form.read_scrim_days()
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
@@ -265,24 +270,28 @@ def all_scrims(page=1):
 @scrim_app.route('/singles/', methods=['GET','POST'])
 @scrim_app.route('/singles/page/<int:page>', methods=['GET','POST'])
 def all_singles(page=1):
-    from forms import FilterScrimForm
-    form = FilterScrimForm()
+    from forms import FilterSinglesForm
+    form = FilterSinglesForm()
 
     if form.clear.data == True:
-        form.reset_scrim_filter()
+        form.reset_singles_filter()
 
     single_scrims = SingleScrim.query
     from utils import scrim_filter
 
     if form.validate_on_submit():
+        if form.team_leader.data != "":
+            single_scrims = single_scrims.join(User).filter(User.nickname==form.team_leader.data)
         if form.team_skill_level.data != "ALL":
             single_scrims = single_scrims.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
             single_scrims = single_scrims.filter_by(time_zone=form.team_time_zone.data)
+        if form.team_type.data != "ALL":
+            single_scrims = single_scrims.filter(or_(SingleScrim.type == form.team_type.data, SingleScrim.type == None))
 
-        scrim_days = form.read_scrim_days()
-        matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
-        single_scrims = single_scrims.filter(Team.week_days.in_(matched_scrim_days))
+        # scrim_days = form.read_scrim_days()
+        # matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
+        # single_scrims = single_scrims.filter(Team.week_days.in_(matched_scrim_days))
 
     from config import SCRIMS_PER_PAGE
     try:

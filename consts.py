@@ -20,6 +20,8 @@ ESEA_INTER = "ESEA Intermediate"
 ESEA_INV = "ESEA Invite"
 
 CHOICES_TEAM_TYPE = [("4v4","4v4"),("6v6","6v6"),("9v9","9v9")]
+FILTER_TEAM_TYPE = [(ALL, ALL)]
+FILTER_TEAM_TYPE.extend(CHOICES_TEAM_TYPE)
 
 CHOICES_CLASSES = [("Medic","Medic"),("Heavy","Heavy"),("Demoman","Demoman"),("Soldier","Soldier"),("Scout","Scout"),("Pyro","Pyro"),("Engineer","Engineer"),("Spy","Spy"),("Sniper","Sniper")]
 

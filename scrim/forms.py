@@ -79,6 +79,7 @@ class TeamSearchForm(BaseSearchForm, BaseScrimDay):
     team_name = TextField('team_name')
     team_skill_level = SelectField('team_skill_level', choices=FILTER_SKILLS)
     team_time_zone   = SelectField('team_time_zone', choices=FILTER_ZONES)
+    team_type = SelectField('team_type', choices=FILTER_TEAM_TYPE)
 
     def reset_team_search(self):
         super(TeamSearchForm, self).reset_clear()
@@ -86,6 +87,7 @@ class TeamSearchForm(BaseSearchForm, BaseScrimDay):
         self.team_name.data = ""
         self.team_skill_level.data = "ALL"
         self.team_time_zone.data = "ALL"
+        self.team_type.data = "ALL"
 
 # FILTER
 
@@ -111,9 +113,11 @@ class FilterScrimForm(TeamSearchForm):
         super(FilterScrimForm, self).reset_team_search()
 
 class FilterSinglesForm(TeamSearchForm):
+    team_leader = TextField('team_leader')
 
     def reset_singles_filter(self):
         super(FilterSinglesForm, self).reset_team_search()
+        self.team_leader.data = ""
 
 # SCRIM PROPOSAL
 
@@ -130,7 +134,7 @@ class ProposeScrimForm(Form):
     start_time = SelectField('start_time', choices=[])
     utc_time   = TextField('utc_time', validators=[Required()])
     map        = TextField('map', validators=[Required()])
-    type       = SelectField('type', choices=[('4v4','4v4'),('6v6','6v6'),('9v9','9v9')])
+    type       = SelectField('type', choices=CHOICES_TEAM_TYPE)
 
 class AcceptScrimForm(Form):
     map = TextField('map', validators=[Required()])
