@@ -266,7 +266,6 @@ def all_scrims(page=1):
 
 @scrim_app.route('/singles/', methods=['GET','POST'])
 @scrim_app.route('/singles/page/<int:page>', methods=['GET','POST'])
-@login_required
 def all_singles(page=1):
     #from forms import FilterSinglesForm
 #    all_singles = SingleScrim.query.all()
