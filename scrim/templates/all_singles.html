@@ -26,24 +26,48 @@
 		  <tbody>
 
 
-    {% for single in all_singles %}
+    {% for scrim in single_scrims_list.items %}
 		  <tr>
-				  <td> <img src="{{ single.user.avatar_url }}"></td>
-				  <td><a href="{{url_for('user_page', steam_id=single.user.steam_id)}}">{{single.user.nickname}}</a></td>
-				  <td>{{ single.skill_level }}</td>
-				  <td>{{ single.type }}</td>
-				  <td>{{ get_time_zone_label(single.time_zone)  }}</td>
-				  <td>{{ single.maps }}</td>
-				  <td>{{ single.comment }}</td>
-				  <td><a class="btn btn-info btn-xs" href="steam://friends/add/{{ single.user.steam_id }}"><i class="fa fa-plus"></i> Add on Steam</a></td>
+				  <td> <img src="{{ scrim.user.avatar_url }}"></td>
+				  <td><a href="{{url_for('user_page', steam_id=scrim.user.steam_id)}}">{{scrim.user.nickname}}</a></td>
+				  <td>{{ scrim.skill_level }}</td>
+				  <td>{{ scrim.type }}</td>
+				  <td>{{ get_time_zone_label(scrim.time_zone)  }}</td>
+				  <td>{{ scrim.maps }}</td>
+				  <td>{{ scrim.comment }}</td>
+				  <td><a class="btn btn-info btn-xs" href="steam://friends/add/{{ scrim.user.steam_id }}"><i class="fa fa-plus"></i> Add on Steam</a></td>
 		  </tr>
 
     {% endfor %}
     
 	</tbody>
 	</table>
+	
+	<!-- pagination stuff -->
 	<ul class="pagination" style="margin-top:0;">
     <!-- previous page -->
+    {% if single_scrims_list.has_prev %}
+    <li> <a href="{{ url_for('all_singles', page=single_scrims_list.prev_num) }}">Previous</a></li>
+    {% endif %}
+
+    <!-- all page numbers -->
+    {% for page_num in single_scrims_list.iter_pages() %}
+      {% if page_num %}
+        {% if page_num != single_scrims_list.page %}
+        <li> <a href="{{ url_for('all_singles', page=page_num) }}">{{ page_num }}</a></li>
+        {% else %}
+        <li class="active"><a href="#">{{ page_num }}</a></li>
+      {% endif %}
+      {% else %}
+      <li class="disabled"><a href="#">…</a></li>
+      {% endif %}
+    {% endfor %}
+
+    <!-- next page -->
+    {% if single_scrims_list.has_next %}
+    <li><a href="{{ url_for('all_singles', page=single_scrims_list.next_num) }}">Next</a></li>
+    {% endif %}
+	</ul>
 
 		</div>
 

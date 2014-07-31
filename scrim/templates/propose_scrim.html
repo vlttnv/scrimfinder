@@ -85,9 +85,6 @@
 <script src="/static/js/moment27.min.js"></script>
 <script src="/static/js/moment-timezone-with-data.min.js"></script>
 <script>
-	var time_zone_select = $("#time_zone");
-	//time_zone_select.prop("disabled", true);
-
 	var team_select = $("#team");
 	team_select.change(function() {
 		var selectedIdx = document.getElementById("team").selectedIndex;
@@ -96,7 +93,6 @@
 		updateYourTime();
 	});
 
-	var form = $('#proposeScrimForm');
 	var teamTimezone = $('#time_zone');
 	var scrimDay = $('#day');
 	var scrimTime = $('#start_time');

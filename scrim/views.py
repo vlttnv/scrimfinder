@@ -256,7 +256,6 @@ def all_scrims(page=1):
             print e
     """
     from config import TEAMS_PER_PAGE
-
     try:
         teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
     except OperationalError:
@@ -269,10 +268,17 @@ def all_scrims(page=1):
 def all_singles(page=1):
     #from forms import FilterSinglesForm
 #    all_singles = SingleScrim.query.all()
-    all_singles = SingleScrim.query.join(User).filter(SingleScrim.leader_id==User.id).all()
+    # all_singles = SingleScrim.query.join(User).filter(SingleScrim.leader_id==User.id).all()
 
+    single_scrims = SingleScrim.query
 
-    return render_template('all_singles.html', all_singles=all_singles)
+    from config import SCRIMS_PER_PAGE
+    try:
+        single_scrims_list = single_scrims.paginate(page, per_page=SCRIMS_PER_PAGE)
+    except OperationalError:
+        single_scrims_list = None
+
+    return render_template('all_singles.html', single_scrims_list=single_scrims_list)
 
 
 @lm.user_loader
