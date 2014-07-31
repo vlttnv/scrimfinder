@@ -36,7 +36,9 @@ Type: {{ scrim.type }}
 <!-- State -->
 {% if scrim.state == "Finished"%}
     <!-- Result -->
-    {% if scrim.team1_id == team_id %}
+    {% if scrim.result == "Tied" %}
+        <strong>Result:</strong> <span style="font-weight:bold;color:orange">Tied</span>
+    {% elif scrim.team1_id == team_id %}
       {% if scrim.result == "Won" %}
           <strong>Result:</strong> <span style="font-weight:bold;color:green">Won</span>
       {% elif scrim.result == "Lost" %}
