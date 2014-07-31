@@ -223,7 +223,8 @@
     </li>
 {% endfor %}
 </ul>
-
+<ul class="list-group">
+<li class="list-group-item">
 <ul class="pagination" style="margin-top:0;">
     <!-- previous page -->
     {% if scrims_list.has_prev %}
@@ -247,6 +248,8 @@
     {% if scrims_list.has_next %}
     <li><a href="{{ url_for('team_page', team_id=team.id, scrim_page=scrims_list.next_num) }}">Next</a></li>
     {% endif %}
+</ul>
+</li>
 </ul>
 
 <script type="text/javascript">
