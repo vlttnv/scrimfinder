@@ -38,11 +38,12 @@ def index():
     """
     five_teams = Team.query.order_by(Team.id.desc()).limit(5).all()
     five_users = User.query.order_by(User.id.desc()).limit(5).all()
+    five_scrims = SingleScrim.query.join(User).filter(User.id==SingleScrim.leader_id).order_by(SingleScrim.id.desc()).limit(5).all()
 
     count_teams = Team.query.count()
     count_users = User.query.count()
 
-    return render_template('index.html', teams=five_teams, users=five_users,count_teams=count_teams,count_users=count_users)
+    return render_template('index.html', teams=five_teams, users=five_users,count_teams=count_teams,count_users=count_users,five_scrims=five_scrims)
     #return render_template('index2.html')
 
 @scrim_app.route('/login')
@@ -122,7 +123,9 @@ def user_page(steam_id):
         team = Team.query.filter_by(id=mem.team_id).one()
         team_roles.append((team, mem.role))
 
-    return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form,tz=TIME_ZONES_DICT)
+    single_scrims = SingleScrim.query.filter_by(leader_id=user.id).all()
+
+    return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form,tz=TIME_ZONES_DICT,single_scrims=single_scrims)
 
 @scrim_app.route('/users', methods=['GET','POST'])
 @scrim_app.route('/users/page/<int:page>', methods=['GET','POST'])
@@ -295,7 +298,7 @@ def all_singles(page=1):
 
     from config import SCRIMS_PER_PAGE
     try:
-        single_scrims_list = single_scrims.paginate(page, per_page=SCRIMS_PER_PAGE)
+        single_scrims_list = single_scrims.order_by(SingleScrim.id.desc()).paginate(page, per_page=SCRIMS_PER_PAGE)
     except OperationalError:
         single_scrims_list = None
 
@@ -1038,3 +1041,21 @@ def scrim_history(team_id, page=1):
 def page_not_found(e):
     return render_template('404.html'), 404
     
+@scrim_app.route('/delete_single/<single_id>')
+def delete_single(single_id):
+    try:
+        single_scrim = SingleScrim.query.filter_by(id=single_id).one()
+    except NoResultFound as e:
+        flash("Scrim not found", "danger")
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+
+    if g.user.id == single_scrim.leader_id:
+        db.session.delete(single_scrim)
+        db.session.commit()
+        flash("Scrim deleted", "success")
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+    else:
+        flash("You are not allowed to do this", "danger")
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+
+
