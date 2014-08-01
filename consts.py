@@ -57,6 +57,10 @@ TIME_ZONES_DICT = [
         'time_zone': "CET"
     },
     {
+        'label': "CEST",
+        'time_zone': "CEST"
+    },
+    {
         'label': "PDT (UTC-8)",
         'time_zone': "America/Los_Angeles"
     },
