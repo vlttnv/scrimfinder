@@ -20,7 +20,10 @@
     SteamID: {{user.steam_id}}
   </li>
   <li class="list-group-item">
-    Main Class: {{user.main_class}}
+    Main Class:
+{% if user.main_class is not none %}
+					  <img width="20px", height="20px" src="{{url_for('static', filename=user.main_class+'.png')}}"></td>
+			  		{% endif %}	
   </li>
 	<li class="list-group-item">
     Merc/Ringer:

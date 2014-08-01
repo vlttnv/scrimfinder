@@ -104,7 +104,11 @@
                                         <tr>
                                                 <td> <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a></td>
                                                 <td> {{role}} </td>
-												<td>{{user.main_class}}</td>
+												<td>
+											{% if user.main_class is not none %}
+					  <img width="20px", height="20px" src="{{url_for('static', filename=user.main_class+'.png')}}"></td>
+			  		{% endif %}	
+												</td>
                                                 {% if (g.user, "Captain") in members_roles %}
                                                 <td><a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
                                                  / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a></td>
