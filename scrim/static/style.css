@@ -75,3 +75,6 @@ body {
 .jumbotron p {
 		color: #ffffff;
 }
+table {
+			    word-wrap: break-word;
+		}
