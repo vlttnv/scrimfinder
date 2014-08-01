@@ -150,7 +150,7 @@
     <span class="badge team_time_zone">{{ scrim.date }}</span>
 
     <strong>Versus:</strong>
-    {% if scrim.team1_id == team_id %}
+    {% if scrim.team1_id == team.id %}
       <a href="{{ url_for('team_page', team_id=scrim.team2_id) }}">{{ scrim.team2.name }}</a>
       <em>Map: {{ scrim.map2 }}</em>
     {% else %}
@@ -159,7 +159,7 @@
     {% endif %}<br>
 
 
-    {% if scrim.team1_id == team_id %}
+    {% if scrim.team1_id == team.id %}
       <em>Your Map: {{ scrim.map1 }}</em>
     {% else %}
       <em>Your Map: {{ scrim.map2 }}</em>
@@ -210,10 +210,10 @@
         <span class="label label-danger">Rejected</span>
     
     <!-- Waiting for response -->
-    {% elif scrim.state == "Proposed" and scrim.team1_id == team_id%}
+    {% elif scrim.state == "Proposed" and scrim.team1_id == team.id%}
         <span class="label label-info">Waiting for {{ scrim.team2.name }} to respond</span>
     
-    {% elif scrim.state == "Proposed" and scrim.team2_id == team_id%}
+    {% elif scrim.state == "Proposed" and scrim.team2_id == team.id%}
     <!-- Accept/Reject scrim proposal -->
     {% if (g.user, "Captain") in members_roles %}
         <span class="label label-info">{{ scrim.state }}</span>
