@@ -529,7 +529,7 @@
         console.log(scrim_dates);
         scrim_dates.each(function() {
             utc_time = $(this)[0].innerText;
-            team_time = moment.utc(utc_time).tz("{{ team.time_zone }}").format("LLLL");
+            team_time = moment.utc(utc_time).zone("{{ team.time_zone }}").format("LLLL");
             $(this)[0].innerText = team_time;
             console.log("utc: " + utc_time);
             console.log("team timezone time: " + team_time + " using {{team.time_zone}}");
