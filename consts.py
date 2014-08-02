@@ -61,49 +61,49 @@ TIME_ZONES_DICT = [
         'time_zone': "CEST"
     },
     {
-        'label': "PDT (UTC-8)",
-        'time_zone': "America/Los_Angeles"
+        'label': "PDT (UTC-7)",
+        'time_zone': "-07:00"
     },
     {
-        'label': "MDT (UTC-7)",
-        'time_zone': "America/Denver"
+        'label': "MDT (UTC-6)",
+        'time_zone': "-06:00"
     },
     {
-        'label': "CDT (UTC-6)",
-        'time_zone': "America/Chicago"
+        'label': "CDT (UTC-5)",
+        'time_zone': "-05:00"
     },
     {
-        'label': "EDT (UTC-5)",
-        'time_zone': "America/New_York"
+        'label': "EDT (UTC-4)",
+        'time_zone': "-04:00"
     },
     {
-        'label': "UTC+0",
-        'time_zone': "Europe/London"
+        'label': "BST (UTC+1)",
+        'time_zone': "+01:00"
     },
     {
-        'label': "UTC+1",
-        'time_zone': "Europe/Amsterdam"
+        'label': "CEST (UTC+2)",
+        'time_zone': "+02:00"
     },
     {
-        'label': "UTC+2",
-        'time_zone': "Europe/Sofia"
+        'label': "EEST (UTC+3)",
+        'time_zone': "+03:00"
     },
     {
-        'label': "UTC+4",
-        'time_zone': "Europe/Moscow"
+        'label': "MSK (UTC+4)",
+        'time_zone': "+04:00"
     },
     {
 
-        'label': "UTC+8",
-        'time_zone': "Asia/Singapore"
+        'label': "SGT (UTC+8)",
+        'time_zone': "+08:00"
     },
     {
-        'label': "UTC+9",
-        'time_zone': "Asia/Seoul"
+        'label': "KST (UTC+9)",
+        'time_zone': "+09:00"
     }, 
     {
-        'label': "UTC+10",
-        'time_zone': "Australia/Sydney"
+        'label': "AEST (UTC+10)",
+        'time_zone': "+10:00"
     }
 ]
 
@@ -118,20 +118,20 @@ TIME_ZONES_DICT_SHORT = [
         'time_zone': "CET"
     },
     {
-        'label': "Los Angeles (PDT/UTC-8)",
-        'time_zone': "America/Los_Angeles"
+        'label': "CEST",
+        'time_zone': "CEST"
     },
     {
-        'label': "Seoul (UTC+9)",
-        'time_zone': "Asia/Seoul"
+        'label': "BST (UTC+1)",
+        'time_zone': "+01:00"
     },
     {
-        'label': "Sydney (UTC+10)",
-        'time_zone': "Australia/Sydney"
+        'label': "SGT (UTC+8)",
+        'time_zone': "+8:00"
     },
     {
-        'label': "Amsterdam (UTC+1)",
-        'time_zone': "Europe/Amsterdam"
+        'label': "AEST (UTC+10)",
+        'time_zone': "+10:00"
     }
 ]
 

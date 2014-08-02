@@ -108,6 +108,7 @@ class FilterTeamForm(TeamSearchForm):
         super(FilterTeamForm, self).reset_team_search()
 
 class FilterScrimForm(TeamSearchForm):
+    team_preference = SelectField('team_preference', choices=[])
 
     def reset_scrim_filter(self):
         super(FilterScrimForm, self).reset_team_search()

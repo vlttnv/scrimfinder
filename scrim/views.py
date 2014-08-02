@@ -214,13 +214,23 @@ def all_scrims(page=1):
     parameters are from the user's first team.
     """
 
-    from forms import FilterScrimForm
-    form = FilterScrimForm()
-
     user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
     if len(user_memberships) == 0:
         flash('You are not in a team. Cannot search for scrims.', "warning")
         return render_template('all_scrims.html', teams_list=None, form=form)
+
+    # Set form choices
+    your_team_preferences = [("None", "None")]
+    your_team_list = []
+
+    for mem in user_memberships:
+        your_team_preferences.append((str(mem.team.id), str(mem.team.name)))
+        your_team_list.append(mem.team)
+
+    from wtforms import SelectField
+    from forms import FilterScrimForm
+    FilterScrimForm.team_preference = SelectField('team', choices=your_team_preferences)
+    form = FilterScrimForm()
 
     query = Team.query
     for mem in user_memberships:
@@ -268,7 +278,7 @@ def all_scrims(page=1):
     except OperationalError:
         teams_list = None
 
-    return render_template('all_scrims.html', teams_list=teams_list, form=form)
+    return render_template('all_scrims.html', teams_list=teams_list, form=form, your_team_list=your_team_list)
 
 @scrim_app.route('/singles/', methods=['GET','POST'])
 @scrim_app.route('/singles/page/<int:page>', methods=['GET','POST'])

@@ -87,7 +87,7 @@
 <script>
 	var team_select = $("#team");
 	team_select.change(function() {
-		var selectedIdx = document.getElementById("team").selectedIndex;
+		var selectedIdx = team_select[0].selectedIndex;
 		var corresponding_time_zone = $("#time_zone option").eq(selectedIdx);
 		corresponding_time_zone.prop("selected", true);
 		updateYourTime();
@@ -115,12 +115,12 @@
 
 			if (thisWeek.unix() > moment.utc().unix()) {
 				utc = thisWeek.format('LLLL');
-				whatever = thisWeek.tz(timezone).format('LLLL');
+				whatever = thisWeek.zone(timezone).format('LLLL');
 				startTimeOptions[i].text = whatever;
 				console.log('UTC to ' + timezone + ' : ' +  utc + ' -> ' + whatever);
 			} else {
 				utc = nextWeek.format('LLLL');
-				whatever = nextWeek.tz(timezone).format('LLLL');
+				whatever = nextWeek.zone(timezone).format('LLLL');
 				startTimeOptions[i].text = whatever;
 				console.log('UTC to ' + timezone + ' : ' +  utc + ' -> ' + whatever);
 			}
@@ -145,12 +145,12 @@
 			utcTime.val(thisWeek.unix());
 			console.log('UTC unix: ' + thisWeek.unix());
 			console.log('UTC ' + thisWeek.format('LLLL'));
-			console.log(timezone + thisWeek.tz(timezone).format('LLLL'));
+			console.log(timezone + thisWeek.zone(timezone).format('LLLL'));
 		} else {
 			utcTime.val(nextWeek.unix());
 			console.log('UTC unix: ' + nextWeek.unix());
 			console.log('UTC ' + nextWeek.format('LLLL'));
-			console.log(timezone + ' ' + nextWeek.tz(timezone).format('LLLL'));
+			console.log(timezone + ' ' + nextWeek.zone(timezone).format('LLLL'));
 		}
 		console.log('---------------------------------------');
 	};	
