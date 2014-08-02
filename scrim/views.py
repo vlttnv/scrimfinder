@@ -253,26 +253,7 @@ def all_scrims(page=1):
         scrim_days = form.read_scrim_days()
         matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
         query = query.filter(Team.week_days.in_(matched_scrim_days))
-    """
-    else:
-        # HACK
-        try:
-            player_1st_team_id = user_memberships[0].team_id
-            player_1st_team = Team.query.filter_by(id=player_1st_team_id).one()
-            scrim_days = player_1st_team.week_days
 
-            form.team_skill_level.data = player_1st_team.skill_level
-            form.team_time_zone.data = player_1st_team.time_zone
-            form.fill_scrim_days(scrim_days)
-
-            query = query.filter_by(skill_level=player_1st_team.skill_level)            
-            query = query.filter_by(time_zone=player_1st_team.time_zone)
-
-            matched_scrim_days = scrim_filter.scrim_days_combinations(scrim_days)
-            query = query.filter(Team.week_days.in_(matched_scrim_days))
-        except NoResultFound as e:
-            print e
-    """
     from config import TEAMS_PER_PAGE
     try:
         teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
@@ -492,7 +473,7 @@ def quit_team(team_id):
                     there's no one left in the team, the team is deleted", "info")
         else:
             flash("You quit from team " + user_team_name, "success")
-        return redirect(url_for('index'))
+        return redirect(url_for('user_page'), steam_id=g.user.steam_id)
 
 @scrim_app.route('/team/times/<team_id>')
 def team_times_json(team_id):
