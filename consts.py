@@ -50,15 +50,15 @@ FILTER_SKILLS.extend(CHOICES_SKILLS)
 TIME_ZONES_DICT = [
     {
         'label': "UTC",
-        'time_zone': "Etc/UTC"
+        'time_zone': "+00:00"
     },
     {
-        'label': "CET",
-        'time_zone': "CET"
+        'label': "CET (UTC+1)",
+        'time_zone': "+01:00"
     },
     {
-        'label': "CEST",
-        'time_zone': "CEST"
+        'label': "CEST (UTC+2)",
+        'time_zone': "+02:00"
     },
     {
         'label': "PDT (UTC-7)",
@@ -79,10 +79,6 @@ TIME_ZONES_DICT = [
     {
         'label': "BST (UTC+1)",
         'time_zone': "+01:00"
-    },
-    {
-        'label': "CEST (UTC+2)",
-        'time_zone': "+02:00"
     },
     {
         'label': "EEST (UTC+3)",
@@ -111,23 +107,23 @@ TIME_ZONES_DICT = [
 TIME_ZONES_DICT_SHORT = [
     {
         'label': "UTC",
-        'time_zone': "Etc/UTC"
+        'time_zone': "+00:00"
     },
     {
-        'label': "CET",
-        'time_zone': "CET"
-    },
-    {
-        'label': "CEST",
-        'time_zone': "CEST"
-    },
-    {
-        'label': "BST (UTC+1)",
+        'label': "CET (UTC+1)",
         'time_zone': "+01:00"
     },
     {
+        'label': "CEST (UTC+2)",
+        'time_zone': "+02:00"
+    },
+    {
+        'label': "PDT (UTC-7)",
+        'time_zone': "-07:00"
+    },
+    {
         'label': "SGT (UTC+8)",
-        'time_zone': "+8:00"
+        'time_zone': "+08:00"
     },
     {
         'label': "AEST (UTC+10)",
