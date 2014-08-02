@@ -213,7 +213,9 @@ def all_scrims(page=1):
     Search results do not include your own teams. HACK: default search
     parameters are from the user's first team.
     """
-
+    from wtforms import SelectField
+    from forms import FilterScrimForm
+    form = FilterScrimForm()
     user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
     if len(user_memberships) == 0:
         flash('You are not in a team. Cannot search for scrims.', "warning")
@@ -227,8 +229,7 @@ def all_scrims(page=1):
         your_team_preferences.append((str(mem.team.id), str(mem.team.name)))
         your_team_list.append(mem.team)
 
-    from wtforms import SelectField
-    from forms import FilterScrimForm
+    
     FilterScrimForm.team_preference = SelectField('team', choices=your_team_preferences)
     form = FilterScrimForm()
 
