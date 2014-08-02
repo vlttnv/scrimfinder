@@ -481,7 +481,7 @@ def quit_team(team_id):
                     there's no one left in the team, the team is deleted", "info")
         else:
             flash("You quit from team " + user_team_name, "success")
-        return redirect(url_for('user_page', steam_id=g.user.steam_id))
+        return redirect(url_for('index'))
 
 @scrim_app.route('/team/times/<team_id>')
 def team_times_json(team_id):
@@ -528,12 +528,8 @@ def team_page(team_id, scrim_page=1):
         user = User.query.filter_by(id=mem.user_id).one()
         members_roles.append((user, mem.role))
 
-    #
-    #   This can be optimized by first filtering then joining
-    #
-    pendings = User.query.join(Request).filter(User.id==Request.user_id) \
-                .filter(Request.team_id==team_id).all()
-    
+    pendings = Request.query.filter_by(team_id=team_id).join(User).filter(User.id==Request.user_id).all()
+
     # Is the user in the team
     in_team = False
     if g.user in (x[0] for x in members_roles):
@@ -732,8 +728,6 @@ def team_reject_user(team_id, user_id):
     db.session.delete(user)
     db.session.commit()
 
-    
-    
     flash("Rejected", "success")
     return redirect(url_for('team_page', team_id=team_id))
 

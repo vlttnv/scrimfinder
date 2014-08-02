@@ -102,31 +102,64 @@
                                         <tbody>
                                         {% for user, role in members_roles %}
                                         <tr>
-                                                <td> <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a></td>
+                                                <td>
+                                                    <a href="{{ url_for('user_page', steam_id=user.steam_id) }}"> {{user.nickname}} </a>
+                                                </td>
                                                 <td> {{role}} </td>
 												<td>
 											{% if user.main_class is not none %}
 					  <img width="20px", height="20px" src="{{url_for('static', filename=user.main_class+'.png')}}"></td>
 			  		{% endif %}	
 												</td>
-                                                {% if (g.user, "Captain") in members_roles %}
-                                                <td><a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
-                                                 / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a></td>
-
-{% endif %}
+                                                {% if (g.user, "Captain") in members_roles and role != "Captain"%}
+                                                <td>
+                                                    <a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
+                                                     / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a>
+                                                </td>
+                                                {% elif g.user.id == user.id %}
+                                                <td>
+                                                    <form action="{{ url_for('quit_team', team_id=team.id) }}" method="post" name="quit_team">
+                                                        <input type="submit" class="btn-danger" value="Quit">
+                                                    </form>
+                                                </td>
+                                                {% endif %}
 </tr>
 {% endfor %}
+
 {% for pending in pendings %}
+<!-- Captain can accept or reject join requests -->
 {% if (g.user, "Captain") in members_roles %}
 <tr class="warning">
-        <td>{{pending.nickname}}</td>
-        <td></td>
-        <td></td>
-        <td>  
-				
-				<a  href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-warning">Accept</span></a> <a  href="{{ url_for('team_reject_user', team_id=team.id, user_id=pending.id  )}}"> <span class="label label-danger">Reject</span></a>
-  </td>
-</tr> 
+        <td><a href="{{ url_for('user_page', steam_id=pending.user.steam_id) }}"> {{pending.user.nickname}} </a></td>
+        <td>
+            Member
+        </td>
+        <td>
+            {% if pending.user.main_class is not none %}
+                <img width="20px", height="20px" src="{{url_for('static', filename=pending.user.main_class+'.png')}}"></td>
+            {% endif %} 
+        </td>
+        <td>	
+            <a href="{{ url_for('team_accept_user', team_id=team.id, user_id=pending.user.id  )}}"> <span class="label label-warning">Accept</span></a>
+            <a  href="{{ url_for('team_reject_user', team_id=team.id, user_id=pending.user.id  )}}"> <span class="label label-danger">Reject</span></a>
+        </td>
+</tr>
+<!-- Users requesting to join the team can see their name -->
+{% elif pending.user_id == g.user.id %}
+<tr class="warning">
+        <td><a href="{{ url_for('user_page', steam_id=pending.user.steam_id) }}"> {{pending.user.nickname}} </a></td>
+        <td>
+            Member
+        </td>
+        <td>
+            {% if pending.user.main_class is not none %}
+                <img width="20px", height="20px" src="{{url_for('static', filename=pending.user.main_class+'.png')}}"></td>
+            {% endif %}
+        </td>
+        <td>    
+            <span class="label label-info">Waiting for response</span>
+        </td>
+</tr>
 {% endif %}
 {% endfor %}
 
@@ -209,20 +242,31 @@
     {% elif scrim.state == "Rejected" %}
         <span class="label label-danger">Rejected</span>
     
-    <!-- Waiting for response -->
+    <!-- Waiting for the other team's response -->
     {% elif scrim.state == "Proposed" and scrim.team1_id == team.id%}
-        <span class="label label-info">Waiting for {{ scrim.team2.name }} to respond</span>
+        <!-- Team members  -->
+        {% if (g.user, "Captain") in members_roles or (g.user, "Member") in members_roles %}
+            <span class="label label-info">Waiting for response</span>
+        <!-- Others -->
+        {% else %}
+            <span class="label label-info">Proposed</span>
+        {% endif %}
     
     {% elif scrim.state == "Proposed" and scrim.team2_id == team.id%}
-    <!-- Accept/Reject scrim proposal -->
-    {% if (g.user, "Captain") in members_roles %}
-        <span class="label label-info">{{ scrim.state }}</span>
-        <input type="button" id="acceptScrimButton{{ scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim.id }})"/>
-        <span id="acceptScrimFormArea{{ scrim.id }}"></span>
-        <input type="button" id="rejectScrimButton{{ scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim.id }})"/>
-        <span id="rejectScrimError{{ scrim.id }}"></span>
-    {% endif %}
-    
+        <!-- Captain can accept/reject scrim proposal -->
+        {% if (g.user, "Captain") in members_roles %}
+            <span class="label label-info">{{ scrim.state }}</span>
+            <input type="button" id="acceptScrimButton{{ scrim.id }}" value="Accept" onclick="createAcceptScrimForm(post_url='{{ url_for('accept_scrim') }}', scrim_id={{ scrim.id }})"/>
+            <span id="acceptScrimFormArea{{ scrim.id }}"></span>
+            <input type="button" id="rejectScrimButton{{ scrim.id }}" value="Reject" onclick="rejectScrim(post_url='{{ url_for('reject_scrim') }}', scrim_id={{ scrim.id }})"/>
+            <span id="rejectScrimError{{ scrim.id }}"></span>
+        <!-- Members viewing the page -->
+        {% elif (g.user, "Member") in members_roles %}
+            <span class="label label-info">Waiting for the captain to respond</span>
+        <!-- Others -->
+        {% else %}
+            <span class="label label-info">To be accepted to rejected</span>
+        {% endif %}
     {% endif %}
     </li>
 {% endfor %}
