@@ -79,12 +79,12 @@
 
 						</div>
 				</div>
-				<!-- <div class="form-group">
+				<div class="form-group">
 						<label for="select" class="col-lg-2 control-label">Team preferences</label>
 						<div class="col-lg-10">
 								{{form.team_preference(class_="form-control", default="None")}}
 						</div>
-				</div> -->
+				</div>
 <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
 
@@ -170,15 +170,73 @@
 	var teamPreferenceSelect = $("#team_preference");
   	teamPreferenceSelect.change(function() {
   		var teamId = teamPreferenceSelect.val();
-  		updateFormValues(teamId);
+  		if (teamId == "None") {
+  			clearFormValues();
+  		}
+  		else {
+  			updateFormValues(teamId);
+  		}
 	});
 
+  	function clearFormValues() {
+  		$("#team_skill_level").val("ALL");
+  		$("#team_time_zone").val("ALL");
+  		$("#team_type").val("ALL");
+  		$("#mon").prop("checked", true);
+  		$("#tue").prop("checked", true);
+  		$("#wed").prop("checked", true);
+  		$("#thu").prop("checked", true);
+  		$("#fri").prop("checked", true);
+  		$("#sat").prop("checked", true);
+  		$("#sun").prop("checked", true);
+  	}
+
 	function updateFormValues(teamId) {
-
-
 		{% for your_team in your_team_list %}
-			var x = "{{your_team.id}}";
-			console.log(x);
+			var your_team_id = "{{ your_team.id }}";
+			if (your_team_id == teamId) {
+				console.log("{{ your_team.skill_level }}");
+				$("#team_skill_level").val("{{ your_team.skill_level }}");
+				$("#team_time_zone").val("{{ your_team.time_zone }}");
+				$("#team_type").val("{{ your_team.type }}");
+
+	            var week_days = "{{ your_team.week_days }}";
+	            if (week_days.charAt(0) == "1") {
+  					$("#mon").prop("checked", true);
+	            } else {
+	            	$("#mon").prop("checked", false);
+	            }
+	            if (week_days.charAt(1) == "1") {
+  					$("#tue").prop("checked", true);
+	            } else {
+	            	$("#tue").prop("checked", false);
+	            }
+	            if (week_days.charAt(2) == "1") {
+  					$("#wed").prop("checked", true);
+	            } else {
+	            	$("#wed").prop("checked", false);
+	            }
+	            if (week_days.charAt(3) == "1") {
+  					$("#thu").prop("checked", true);
+	            } else {
+	            	$("#thu").prop("checked", false);
+	            }
+	            if (week_days.charAt(4) == "1") {
+  					$("#fri").prop("checked", true);
+	            } else {
+	            	$("#fri").prop("checked", false);
+	            }
+	            if (week_days.charAt(5) == "1") {
+  					$("#sat").prop("checked", true);
+	            } else {
+	            	$("#sat").prop("checked", false);
+	            }
+	            if (week_days.charAt(6) == "1") {
+  					$("#sun").prop("checked", true);
+	            } else {
+	            	$("#sun").prop("checked", false);
+	            }
+			}
 		{% endfor %}
 	}
 </script>
