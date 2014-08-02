@@ -75,11 +75,7 @@ TIME_ZONES_DICT = [
     {
         'label': "EDT (UTC-4)",
         'time_zone': "-04:00"
-    },
-    {
-        'label': "BST (UTC+1)",
-        'time_zone': "+01:00"
-    },
+    }, 
     {
         'label': "EEST (UTC+3)",
         'time_zone': "+03:00"
