@@ -294,7 +294,7 @@ def all_singles(page=1):
 
     if form.validate_on_submit():
         if form.team_leader.data != "":
-            single_scrims = single_scrims.join(User).filter(User.nickname==form.team_leader.data)
+            single_scrims = single_scrims.join(User).filter(User.nickname.like('%'+form.team_leader.data+'%'))
         if form.team_skill_level.data != "ALL":
             single_scrims = single_scrims.filter_by(skill_level=form.team_skill_level.data)
         if form.team_time_zone.data != "ALL":
