@@ -149,3 +149,9 @@ class SingleScrim(db.Model):
     date            = db.Column(db.DateTime)
     comment         = db.Column(db.Text)
     maps            = db.Column(db.String(400))
+
+class Reputation(db.Model):
+    id              = db.Column(db.Integer, primary_key=True)
+    user_id         = db.Column(db.Integer)
+    team_id         = db.Column(db.Integer)
+    type            = db.Column(db.String(1))
