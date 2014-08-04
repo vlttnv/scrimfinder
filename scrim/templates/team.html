@@ -23,7 +23,9 @@
                         <div class="col-md-4">
                                 <ul class="list-group">
                                         <li class="list-group-item">
-                                        <span class="badge">soon</span>
+                                        <span class="badge"><a id="subtractTeamRep" href="#">-</a></span>
+                                        <span class="badge"><a id="addTeamRep" href="#">+</a></span>
+                                        <span class="badge" id="teamRep">{{ team.reputation }}</span>
                                         Reputation
 										                                        </li>
                                         
@@ -535,5 +537,27 @@
             console.log("team timezone time: " + team_time + " using {{team.time_zone}}");
         });
     }
+
+    $("#addTeamRep").click(function() {
+        $.post("{{url_for('add_team_rep', team_id=team.id)}}", function(resp){
+            if (resp == "OK")
+            {
+                $("#teamRep").text(parseInt($("#teamRep").text())+1);
+            } else {
+                console.log(resp);
+            }
+        });
+    });
+
+    $("#subtractTeamRep").click(function() {
+        $.post("{{url_for('subtract_team_rep', team_id=team.id)}}", function(resp){
+            if (resp == "OK")
+            {
+                $("#teamRep").text(parseInt($("#teamRep").text())-1);
+            } else {
+                console.log(resp);
+            }
+        });
+    });
 </script>
 {% endblock %}

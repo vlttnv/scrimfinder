@@ -984,45 +984,6 @@ def scrim_history(team_id, page=1):
 
     return render_template('scrim_history.html', team_id=team_id, scrims_list=scrims_list)
 
-# Bots stuff
-# @scrim_app.route('/bots/boom')
-# def bots_boom():
-#     """
-#     Make sure stuff works. Let's say no error = It works!
-
-#     See bots.py
-#     """
-
-#     from scrim import bots
-
-#     bots.create_bot_users()
-#     bots.create_bot_teams()
-#     bots.make_bot_join_team()
-
-#     return 'Trust me. It worked.', 200
-
-# @scrim_app.route('/bots/scrims')
-# def bots_scrims():
-#     """
-#     """
-
-#     from scrim import bots
-
-#     bots.create_scrims()
-
-#     return 'Does it work?', 200
-
-# @scrim_app.route('/bots/accepted_scrim')
-# def bots_accepted_scrim():
-#     """
-#     """
-
-#     from scrim import bots
-
-#     team_id = bots.create_accepted_scrim()
-
-#     return redirect(url_for('team_page', team_id=team_id))
-
 @scrim_app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -1044,4 +1005,24 @@ def delete_single(single_id):
         flash("You are not allowed to do this", "danger")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
+# Reputation
 
+@scrim_app.route('/add_rep/team/<int:team_id>', methods=['POST'])
+def add_team_rep(team_id):
+    team = Team.query.filter_by(id=team_id).one()
+    current_rep = team.reputation
+    if current_rep is None:
+        current_rep = 0
+    team.reputation = current_rep+1
+    db.session.commit()
+    return "OK"
+
+@scrim_app.route('/subtract_rep/team/<int:team_id>', methods=['POST'])
+def subtract_team_rep(team_id):
+    team = Team.query.filter_by(id=team_id).one()
+    current_rep = team.reputation
+    if current_rep is None:
+        current_rep = 0
+    team.reputation = current_rep-1
+    db.session.commit()
+    return "OK"
