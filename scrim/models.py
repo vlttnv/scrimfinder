@@ -20,6 +20,7 @@ class User(db.Model):
     is_merc             = db.Column(db.Integer)
     main_class          = db.Column(db.String(80))
     skill_level         = db.Column(db.String(80))
+    last_updated        = db.Column(db.String(80))
     # Stores a list of team ids to which the player
     # has given rep to prevent abuse
     # same with played_with
@@ -38,6 +39,9 @@ class User(db.Model):
             backref='user',
             lazy='dynamic')
     reputation          = db.relationship('Reputation',
+            backref='user',
+            lazy='dynamic')
+    user_reputation          = db.relationship('UserReputation',
             backref='user',
             lazy='dynamic')
 
@@ -159,4 +163,10 @@ class Reputation(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
     user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
     team_id         = db.Column(db.Integer, db.ForeignKey('team.id'))
+    type            = db.Column(db.String(1))
+
+class UserReputation(db.Model):
+    id              = db.Column(db.Integer, primary_key=True)
+    user1_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user2_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
     type            = db.Column(db.String(1))
