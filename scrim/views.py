@@ -1007,7 +1007,7 @@ def delete_single(single_id):
 
 # Reputation
 
-@scrim_app.route('rep/team/<int:team_id>', methods=['POST'])
+@scrim_app.route('/rep/team/<int:team_id>', methods=['POST'])
 def get_team_rep(team_id):
     pos_reps = Reputation.query.filter_by(team_id=team_id, type="+").all().count()
     neg_reps = Reputation.query.filter_by(team_id=team_id, type="-").all().count()
@@ -1035,7 +1035,7 @@ def add_team_rep(team_id):
         err = "You have already given a positive reputation to this team"
         flash(err)
         return err
-    elif team_rep.type = "-"
+    elif team_rep.type == "-":
         team_rep.type = "+"
         db.session.commit()
         err = "Changing your given reputation to a positive"
@@ -1066,7 +1066,7 @@ def subtract_team_rep(team_id):
         err = "You have already given a negative reputation to this team"
         flash(err)
         return err
-    elif team_rep.type = "+"
+    elif team_rep.type == "+":
         team_rep.type = "-"
         db.session.commit()
         err = "Changing your given reputation to a negative"
