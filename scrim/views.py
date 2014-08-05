@@ -1060,11 +1060,18 @@ def get_team_rep(team_id):
     return str(pos_reps - neg_reps)
 
 @scrim_app.route('/add_rep/team/<int:team_id>', methods=['POST'])
-def add_team_rep(team_id):
+def update_team_rep(team_id):
     if g.user is None:
         log_in_msg = "You are not logged in"
         # flash(log_in_msg, "danger")
         return log_in_msg
+
+    rep_type = request.form["type"]
+
+    if rep_type is None:
+        return "No reputation type found"
+    if rep_type != "+" and rep_type != "-":
+        return "Reputation type not understood"
 
     team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
 
@@ -1073,48 +1080,26 @@ def add_team_rep(team_id):
         rep = Reputation()
         rep.user_id = g.user.id
         rep.team_id = team_id
-        rep.type = "+"
+        rep.type = rep_type
         db.session.add(rep)
         db.session.commit()
         # flash("A positive reputation is given", "success")
         return "OK"
-    elif team_rep.type == "+":
+    elif team_rep.type == "+" and rep_type == "+":
         err = "You have already given a positive reputation to this team"
         # flash(err, "danger")
         return err
-    elif team_rep.type == "-":
+    elif team_rep.type == "-" and rep_type == "+":
         team_rep.type = "+"
         db.session.commit()
         err = "Changing your given reputation to a positive"
         # flash(err, "danger")
         return err
-    else:
-        return ""
-
-@scrim_app.route('/subtract_rep/team/<int:team_id>', methods=['POST'])
-def subtract_team_rep(team_id):
-    if g.user is None:
-        log_in_msg = "You are not logged in"
-        # flash(log_in_msg, "danger")
-        return log_in_msg
-
-    team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
-
-    if team_rep is None:
-        # create a new one
-        rep = Reputation()
-        rep.user_id = g.user.id
-        rep.team_id = team_id
-        rep.type = "-"
-        db.session.add(rep)
-        db.session.commit()
-        # flash("A negative reputation is given", "success")
-        return "OK"
-    elif team_rep.type == "-":
+    elif team_rep.type == "-" and rep_type == "-":
         err = "You have already given a negative reputation to this team"
         # flash(err, "danger")
         return err
-    elif team_rep.type == "+":
+    elif team_rep.type == "+" and rep_type == "-":
         team_rep.type = "-"
         db.session.commit()
         err = "Changing your given reputation to a negative"

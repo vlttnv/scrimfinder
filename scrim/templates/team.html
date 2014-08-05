@@ -553,7 +553,7 @@
     }
 
     $("#addTeamRep").click(function() {
-        $.post("{{url_for('add_team_rep', team_id=team.id)}}", function(resp){
+        $.post("{{url_for('update_team_rep', team_id=team.id)}}", { type: "+" }, function(resp){
             if (resp == "OK")
             {
                 $("#teamRep").text(parseInt($("#teamRep").text())+1);
@@ -565,7 +565,7 @@
     });
 
     $("#subtractTeamRep").click(function() {
-        $.post("{{url_for('subtract_team_rep', team_id=team.id)}}", function(resp){
+        $.post("{{url_for('update_team_rep', team_id=team.id)}}", { type: "-" }, function(resp){
             if (resp == "OK")
             {
                 $("#teamRep").text(parseInt($("#teamRep").text())-1);
