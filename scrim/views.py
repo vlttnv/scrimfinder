@@ -1007,17 +1007,18 @@ def delete_single(single_id):
 
 # Reputation
 
-@scrim_app.route('/rep/team/<int:team_id>', methods=['POST'])
+@scrim_app.route('/rep/team/<int:team_id>', methods=['GET'])
 def get_team_rep(team_id):
-    pos_reps = Reputation.query.filter_by(team_id=team_id, type="+").all().count()
-    neg_reps = Reputation.query.filter_by(team_id=team_id, type="-").all().count()
-    return pos_reps + neg_reps
+    pos_reps = Reputation.query.filter_by(team_id=team_id, type="+").count()
+    neg_reps = Reputation.query.filter_by(team_id=team_id, type="-").count()
+    return str(pos_reps - neg_reps)
 
 @scrim_app.route('/add_rep/team/<int:team_id>', methods=['POST'])
-@login_required
 def add_team_rep(team_id):
     if g.user is None:
-        return "You are not logged in"
+        log_in_msg = "You are not logged in"
+        # flash(log_in_msg, "danger")
+        return log_in_msg
 
     team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
 
@@ -1029,26 +1030,27 @@ def add_team_rep(team_id):
         rep.type = "+"
         db.session.add(rep)
         db.session.commit()
-        flash("A positive reputation is given")
+        # flash("A positive reputation is given", "success")
         return "OK"
     elif team_rep.type == "+":
         err = "You have already given a positive reputation to this team"
-        flash(err)
+        # flash(err, "danger")
         return err
     elif team_rep.type == "-":
         team_rep.type = "+"
         db.session.commit()
         err = "Changing your given reputation to a positive"
-        flash(err)
+        # flash(err, "danger")
         return err
     else:
-        pass
+        return ""
 
 @scrim_app.route('/subtract_rep/team/<int:team_id>', methods=['POST'])
-@login_required
 def subtract_team_rep(team_id):
     if g.user is None:
-        return "You are not logged in"
+        log_in_msg = "You are not logged in"
+        # flash(log_in_msg, "danger")
+        return log_in_msg
 
     team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
 
@@ -1060,17 +1062,17 @@ def subtract_team_rep(team_id):
         rep.type = "-"
         db.session.add(rep)
         db.session.commit()
-        flash("A negative reputation is given")
+        # flash("A negative reputation is given", "success")
         return "OK"
     elif team_rep.type == "-":
         err = "You have already given a negative reputation to this team"
-        flash(err)
+        # flash(err, "danger")
         return err
     elif team_rep.type == "+":
         team_rep.type = "-"
         db.session.commit()
         err = "Changing your given reputation to a negative"
-        flash(err)
+        # flash(err, "danger")
         return err
     else:
-        pass
+        return ""
