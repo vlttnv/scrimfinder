@@ -1,5 +1,5 @@
 from scrim import scrim_app, oid, db, models, lm
-from models import User, Team, Request, Membership, Comment, Scrim, SingleScrim
+from models import *
 from utils import steam_api, logs_tf_api
 from consts import *
 from flask import request, redirect, session, g, json, render_template, flash, url_for
@@ -1007,22 +1007,70 @@ def delete_single(single_id):
 
 # Reputation
 
+@scrim_app.route('rep/team/<int:team_id>', methods=['POST'])
+def get_team_rep(team_id):
+    pos_reps = Reputation.query.filter_by(team_id=team_id, type="+").all().count()
+    neg_reps = Reputation.query.filter_by(team_id=team_id, type="-").all().count()
+    return pos_reps + neg_reps
+
 @scrim_app.route('/add_rep/team/<int:team_id>', methods=['POST'])
+@login_required
 def add_team_rep(team_id):
-    team = Team.query.filter_by(id=team_id).one()
-    current_rep = team.reputation
-    if current_rep is None:
-        current_rep = 0
-    team.reputation = current_rep+1
-    db.session.commit()
-    return "OK"
+    if g.user is None:
+        return "You are not logged in"
+
+    team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
+
+    if team_rep is None:
+        # create a new one
+        rep = Reputation()
+        rep.user_id = g.user.id
+        rep.team_id = team_id
+        rep.type = "+"
+        db.session.add(rep)
+        db.session.commit()
+        flash("A positive reputation is given")
+        return "OK"
+    elif team_rep.type == "+":
+        err = "You have already given a positive reputation to this team"
+        flash(err)
+        return err
+    elif team_rep.type = "-"
+        team_rep.type = "+"
+        db.session.commit()
+        err = "Changing your given reputation to a positive"
+        flash(err)
+        return err
+    else:
+        pass
 
 @scrim_app.route('/subtract_rep/team/<int:team_id>', methods=['POST'])
+@login_required
 def subtract_team_rep(team_id):
-    team = Team.query.filter_by(id=team_id).one()
-    current_rep = team.reputation
-    if current_rep is None:
-        current_rep = 0
-    team.reputation = current_rep-1
-    db.session.commit()
-    return "OK"
+    if g.user is None:
+        return "You are not logged in"
+
+    team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
+
+    if team_rep is None:
+        # create a new one
+        rep = Reputation()
+        rep.user_id = g.user.id
+        rep.team_id = team_id
+        rep.type = "-"
+        db.session.add(rep)
+        db.session.commit()
+        flash("A negative reputation is given")
+        return "OK"
+    elif team_rep.type == "-":
+        err = "You have already given a negative reputation to this team"
+        flash(err)
+        return err
+    elif team_rep.type = "+"
+        team_rep.type = "-"
+        db.session.commit()
+        err = "Changing your given reputation to a negative"
+        flash(err)
+        return err
+    else:
+        pass

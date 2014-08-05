@@ -37,6 +37,9 @@ class User(db.Model):
     single_scrim        = db.relationship('SingleScrim',
             backref='user',
             lazy='dynamic')
+    reputation          = db.relationship('Reputation',
+            backref='user',
+            lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -83,7 +86,9 @@ class Team(db.Model):
     skill_level     = db.Column(db.String(80))
     time_zone       = db.Column(db.String(80))
     time_from       = db.Column(db.String(80))
-    reputation      = db.Column(db.Integer)
+    reputation      = db.relationship('Reputation',
+            backref='team',
+            lazy='dynamic')
     week_days       = db.Column(db.String(7), default="0000000")
     avatar_url      = db.Column(db.String(80))
     num_wins        = db.Column(db.Integer)
@@ -152,6 +157,6 @@ class SingleScrim(db.Model):
 
 class Reputation(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
-    user_id         = db.Column(db.Integer)
-    team_id         = db.Column(db.Integer)
+    user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
+    team_id         = db.Column(db.Integer, db.ForeignKey('team.id'))
     type            = db.Column(db.String(1))
