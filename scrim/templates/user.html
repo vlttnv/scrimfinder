@@ -2,9 +2,9 @@
 {% block body %}
 <div class="page-header">
 		<h1>{{user.nickname}}</h1>
-		{% if g.user != None and g.user.steam_id in request.path  %}
-		<h4><a href="{{url_for('edit_profile')}}"><i class="fa fa-pencil"></i> Edit</a>&nbsp;&nbsp;<a href="{{url_for('user_page_update', steam_id=user.steam_id)}}"><i class="fa fa-refresh"></i> Update</a></h4>
-		{% endif %}
+		
+		<h4>{% if g.user != None and g.user.steam_id in request.path  %} <a href="{{url_for('edit_profile')}}"><i class="fa fa-pencil"></i> Edit</a>{% endif %} &nbsp;&nbsp;<a href="{{url_for('user_page_update', steam_id=user.steam_id)}}"><i class="fa fa-refresh"></i> Update</a></h4>
+		
 </div>
 
 <div class="row">

@@ -75,6 +75,17 @@ def after_login(resp):
         last_online = g.user.last_online
         # choose to update steam user info (LIMITED API calls)
         g.user.last_online = dt.utcnow()
+        user_info = steam_api.get_user_info(g.user.steam_id)
+
+        import time
+
+        if int(time.time()) - int(g.user.last_updated) > 86400:
+            g.user.nickname = user_info['personaname']
+            g.user.avatar_url = user_info['avatar']
+            g.user.avatar_url_full = user_info['avatarfull']
+            g.user.last_updated = int(time.time())
+            db.session.add(g.user)
+            db.session.commit()
     except NoResultFound:
         g.user = User()
         steam_data             = steam_api.get_user_info(steam_id)
@@ -131,9 +142,7 @@ def user_page(steam_id):
 @login_required
 def user_page_update(steam_id):
     import time
-    if not g.user.steam_id == steam_id:
-        flash('You should not be here', 'warning')
-        return redirect(url_for('user_page', steam_id=steam_id))
+    
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
@@ -155,23 +164,6 @@ def user_page_update(steam_id):
 
     flash('User udpated', 'success')
     return redirect(url_for('user_page', steam_id=steam_id))
-
-@scrim_app.route('/update_users')
-@login_required
-def update_users():
-    all_users = User.query.all()
-    import time
-
-    for user in all_users:
-        user_info = steam_api.get_user_info(user.steam_id)
-        user.nickname = user_info['personaname']
-        user.avatar_url = user_info['avatar']
-        user.avatar_url_full = user_info['avatarfull']
-        user.last_updated = int(time.time())
-        db.session.add(user)
-
-    db.session.commit()
-    return redirect(url_for('index'))
 
 @scrim_app.route('/users', methods=['GET','POST'])
 @scrim_app.route('/users/page/<int:page>', methods=['GET','POST'])
