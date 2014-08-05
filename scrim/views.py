@@ -127,6 +127,23 @@ def user_page(steam_id):
 
     return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form,tz=TIME_ZONES_DICT,single_scrims=single_scrims)
 
+@scrim_app.route('/user/<steam_id>/update')
+def user_page_update(steam_id):
+    try:
+        user = User.query.filter_by(steam_id=steam_id).one()
+    except NoResultFound:
+        flash('No such user', 'danger')
+        return redirect(url_for('index'))
+    user_info = steam_api.get_user_info(steam_id)
+    print user_info['personaname']
+    user.nickname = user_info['personaname']
+    user.avatar_url = user_info['avatar']
+    user.avatar_url_full = user_info['avatarfull']
+    db.session.add(user)
+    db.session.commit()
+    
+    return redirect(url_for('user_page', steam_id=steam_id))
+
 @scrim_app.route('/users', methods=['GET','POST'])
 @scrim_app.route('/users/page/<int:page>', methods=['GET','POST'])
 def all_users(page=1):
