@@ -511,7 +511,7 @@ def quit_team(team_id):
                     there's no one left in the team, the team is deleted", "info")
         else:
             flash("You quit from team " + user_team_name, "success")
-        return redirect(url_for('user_page'), steam_id=g.user.steam_id)
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
 @scrim_app.route('/team/times/<team_id>')
 def team_times_json(team_id):
