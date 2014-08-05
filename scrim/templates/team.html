@@ -23,9 +23,11 @@
                         <div class="col-md-4">
                                 <ul class="list-group">
                                         <li class="list-group-item">
+                                        {% if g.user is not none %}
                                         <span class="badge"><a id="subtractTeamRep" href="#">-</a></span>
                                         <span class="badge"><a id="addTeamRep" href="#">+</a></span>
-                                        <span class="badge" id="teamRep">{{ team.reputation }}</span>
+                                        {% endif %}
+                                        <span class="badge" id="teamRep"></span>
                                         Reputation
 										                                        </li>
                                         
@@ -538,12 +540,23 @@
         });
     }
 
+    updateTeamRep();
+
+    // Get team reputation
+    function updateTeamRep() {
+        $.get("{{url_for('get_team_rep', team_id=team.id)}}", function( data ) {
+            $("#teamRep").text(data);
+            console.log(data);
+        });
+    }
+
     $("#addTeamRep").click(function() {
         $.post("{{url_for('add_team_rep', team_id=team.id)}}", function(resp){
             if (resp == "OK")
             {
                 $("#teamRep").text(parseInt($("#teamRep").text())+1);
             } else {
+                updateTeamRep();
                 console.log(resp);
             }
         });
@@ -555,6 +568,7 @@
             {
                 $("#teamRep").text(parseInt($("#teamRep").text())-1);
             } else {
+                updateTeamRep();
                 console.log(resp);
             }
         });
