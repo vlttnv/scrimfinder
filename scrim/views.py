@@ -128,21 +128,50 @@ def user_page(steam_id):
     return render_template('user.html', user=user, team_roles=team_roles,create_team_form=create_team_form,tz=TIME_ZONES_DICT,single_scrims=single_scrims)
 
 @scrim_app.route('/user/<steam_id>/update')
+@login_required
 def user_page_update(steam_id):
+    import time
+    if not g.user.steam_id == steam_id:
+        flash('You should not be here', 'warning')
+        return redirect(url_for('user_page', steam_id=steam_id))
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
         flash('No such user', 'danger')
         return redirect(url_for('index'))
     user_info = steam_api.get_user_info(steam_id)
-    print user_info['personaname']
+
+    if int(time.time()) - int(user.last_updated) < 86400:
+        flash('This user was recently udpated', 'warning')
+        return redirect(url_for('user_page', steam_id=steam_id))
+
+
     user.nickname = user_info['personaname']
     user.avatar_url = user_info['avatar']
     user.avatar_url_full = user_info['avatarfull']
+    user.last_updated = int(time.time())
     db.session.add(user)
     db.session.commit()
-    
+
+    flash('User udpated', 'success')
     return redirect(url_for('user_page', steam_id=steam_id))
+
+@scrim_app.route('/update_users')
+@login_required
+def update_users():
+    all_users = User.query.all()
+    import time
+
+    for user in all_users:
+        user_info = steam_api.get_user_info(user.steam_id)
+        user.nickname = user_info['personaname']
+        user.avatar_url = user_info['avatar']
+        user.avatar_url_full = user_info['avatarfull']
+        user.last_updated = int(time.time())
+        db.session.add(user)
+
+    db.session.commit()
+    return redirect(url_for('index'))
 
 @scrim_app.route('/users', methods=['GET','POST'])
 @scrim_app.route('/users/page/<int:page>', methods=['GET','POST'])
@@ -273,7 +302,7 @@ def all_scrims(page=1):
 
     from config import TEAMS_PER_PAGE
     try:
-        teams_list = query.paginate(page, per_page=TEAMS_PER_PAGE)
+        teams_list = query.order_by(Team.id.desc()).paginate(page, per_page=TEAMS_PER_PAGE)
     except OperationalError:
         teams_list = None
 

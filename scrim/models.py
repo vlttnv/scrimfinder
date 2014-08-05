@@ -41,9 +41,9 @@ class User(db.Model):
     reputation          = db.relationship('Reputation',
             backref='user',
             lazy='dynamic')
-    user_reputation          = db.relationship('UserReputation',
-            backref='user',
-            lazy='dynamic')
+    #user_reputation          = db.relationship('UserReputation',
+    #        backref='user',
+    #        lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -167,6 +167,8 @@ class Reputation(db.Model):
 
 class UserReputation(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
-    user1_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user2_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user1_id        = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user1           = db.relationship('User', foreign_keys=user1_id)
+    user2_id        = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user2           = db.relationship('User', foreign_keys=user2_id)
     type            = db.Column(db.String(1))
