@@ -544,9 +544,8 @@
 
     updateTeamRep();
 
-    // Get team reputation
     function updateTeamRep() {
-        $.get("{{url_for('get_team_rep', team_id=team.id)}}", function( data ) {
+        $.get("{{url_for('get_team_rep', team_id=team.id)}}", function(data) {
             $("#teamRep").text(data);
             console.log(data);
         });

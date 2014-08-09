@@ -1043,7 +1043,7 @@ def delete_single(single_id):
         flash("You are not allowed to do this", "danger")
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
 
-# Reputation
+# Team Reputation
 
 @scrim_app.route('/rep/team/<int:team_id>', methods=['GET'])
 def get_team_rep(team_id):
@@ -1051,11 +1051,10 @@ def get_team_rep(team_id):
     neg_reps = Reputation.query.filter_by(team_id=team_id, type="-").count()
     return str(pos_reps - neg_reps)
 
-@scrim_app.route('/add_rep/team/<int:team_id>', methods=['POST'])
+@scrim_app.route('/update_rep/team/<int:team_id>', methods=['POST'])
 def update_team_rep(team_id):
     if g.user is None:
         log_in_msg = "You are not logged in"
-        # flash(log_in_msg, "danger")
         return log_in_msg
 
     rep_type = request.form["type"]
@@ -1068,34 +1067,80 @@ def update_team_rep(team_id):
     team_rep = Reputation.query.filter_by(user_id=g.user.id, team_id=team_id).first()
 
     if team_rep is None:
-        # create a new one
         rep = Reputation()
         rep.user_id = g.user.id
         rep.team_id = team_id
         rep.type = rep_type
         db.session.add(rep)
         db.session.commit()
-        # flash("A positive reputation is given", "success")
         return "OK"
     elif team_rep.type == "+" and rep_type == "+":
         err = "You have already given a positive reputation to this team"
-        # flash(err, "danger")
         return err
     elif team_rep.type == "-" and rep_type == "+":
         team_rep.type = "+"
         db.session.commit()
         err = "Changing your given reputation to a positive"
-        # flash(err, "danger")
         return err
     elif team_rep.type == "-" and rep_type == "-":
         err = "You have already given a negative reputation to this team"
-        # flash(err, "danger")
         return err
     elif team_rep.type == "+" and rep_type == "-":
         team_rep.type = "-"
         db.session.commit()
         err = "Changing your given reputation to a negative"
-        # flash(err, "danger")
+        return err
+    else:
+        return ""
+
+# User Reputation
+# user1 = given from
+# user2 = given to
+
+@scrim_app.route('/rep/user/<int:user_id>', methods=['GET'])
+def get_user_rep(user_id):
+    pos_reps = UserReputation.query.filter_by(user2_id=user_id, type="+").count()
+    neg_reps = UserReputation.query.filter_by(user2_id=user_id, type="-").count()
+    return str(pos_reps - neg_reps)
+
+@scrim_app.route('/update_rep/user/<int:user_id>', methods=['POST'])
+def update_user_rep(user_id):
+    if g.user is None:
+        log_in_msg = "You are not logged in"
+        return log_in_msg
+
+    rep_type = request.form["type"]
+
+    if rep_type is None:
+        return "No reputation type found"
+    if rep_type != "+" and rep_type != "-":
+        return "Reputation type not understood"
+
+    user_rep = UserReputation.query.filter_by(user1_id=g.user.id, user2_id=user_id).first()
+
+    if user_rep is None:
+        rep = UserReputation()
+        rep.user1_id = g.user.id
+        rep.user2_id = user_id
+        rep.type = rep_type
+        db.session.add(rep)
+        db.session.commit()
+        return "OK"
+    elif user_rep.type == "+" and rep_type == "+":
+        err = "You have already given a positive reputation to this user"
+        return err
+    elif user_rep.type == "-" and rep_type == "+":
+        user_rep.type = "+"
+        db.session.commit()
+        err = "Changing your given reputation to a positive"
+        return err
+    elif user_rep.type == "-" and rep_type == "-":
+        err = "You have already given a negative reputation to this user"
+        return err
+    elif user_rep.type == "+" and rep_type == "-":
+        user_rep.type = "-"
+        db.session.commit()
+        err = "Changing your given reputation to a negative"
         return err
     else:
         return ""
