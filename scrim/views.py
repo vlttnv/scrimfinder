@@ -2,7 +2,7 @@ from scrim import scrim_app, oid, db, models, lm
 from models import *
 from utils import steam_api, logs_tf_api
 from consts import *
-from flask import request, redirect, session, g, json, render_template, flash, url_for
+from flask import request, redirect, session, g, json, render_template, flash, url_for, Markup
 from flask.ext.login import login_user, logout_user, current_user, login_required
 import requests
 import re
@@ -97,6 +97,11 @@ def after_login(resp):
         g.user.join_date       = dt.utcnow()
         g.user.last_online     = dt.utcnow()
         db.session.add(g.user)
+        db.session.commit()
+        login_user(g.user)
+        msg = Markup('<h3>Welcome to your profile! Go ahead and click the edit button to specify your skill level and main class.</h3>')
+        flash(msg, 'success')
+        return redirect(url_for('user_page', steam_id=g.user.steam_id))
     db.session.commit()
     
     login_user(g.user)
@@ -256,7 +261,8 @@ def all_scrims(page=1):
     form = FilterScrimForm()
     user_memberships = Membership.query.filter_by(user_id=g.user.id).all()
     if len(user_memberships) == 0:
-        flash('You are not in a team. Cannot search for scrims.', "warning")
+        msg = Markup('You are not in a team. Cannot search for scrims. You can <a href="'+ url_for('create_team') +'">Create a team</a> or <a href="'+url_for('all_teams')+'">Join</a> one.')
+        flash(msg, "warning")
         return render_template('all_scrims.html', teams_list=None, form=form)
 
     # Set form choices
