@@ -30,9 +30,10 @@
 <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
 
-<input type="submit" class="btn btn-primary" value="Search">
+			  <a href="" onclick="document.filter_users.submit();return false;" class="btn btn-primary"><i class="fa fa-search"></i> Search</a>
+			  <!--<input type="submit" class="btn btn-primary" value="Search">-->
 {{ form.clear() }} <!-- necessary! -->
-<input type="button" onclick="clearSearch();" class="btn btn-primary" value="Clear">
+<a href="#" onclick="clearSearch();" class="btn btn-primary"><i class="fa fa-times"></i> Clear</a>
       </div>
     </div>
     </fieldset>
@@ -65,7 +66,7 @@
 			  <td><span class="convert_utc_time">{{user.join_date}}</span></td>
 			  <td>
 					  {% if user.main_class is not none %}
-					  <img width="20px", height="20px" src="{{url_for('static', filename=user.main_class+'.png')}}"></td>
+					  <img width="20px" height="20px" src="{{url_for('static', filename=user.main_class+'.png')}}"></td>
 			  		{% endif %}
 			  <td>
 					  {% if user.is_merc == 1 %}
