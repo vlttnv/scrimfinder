@@ -20,6 +20,13 @@
     SteamID: {{user.steam_id}}
   </li>
   <li class="list-group-item">
+									Rep: <span id="userRep"></span>
+									{% if g.user is not none %}
+										<span class="badge" style="background-color: #43ac6a;"><a id="addUserRep" href="#" style="color: #fff"><i class="fa fa-plus"></i></a></span>
+										<span class="badge" style="background-color: #f04124;"><a id="subtractUserRep" href="#" style="color: #fff;"><i class="fa fa-minus"></i></a></span>
+                                    {% endif %}
+  </li>
+  <li class="list-group-item">
     Main Class:
 {% if user.main_class is not none %}
 					  <img width="20px", height="20px" src="{{url_for('static', filename=user.main_class+'.png')}}"></td>
@@ -80,13 +87,7 @@
 										<p>Role: <span {% if role == "Captain" %}class="label label-success"{% else %} class="label label-warning" {% endif %}>{{ role }}</span> </p>
 								<p>Skill level: {{ team.skill_level }}</p>
 								
-								<p>
-									Rep: <span id="userRep"></span>
-									{% if g.user is not none %}
-										<span class="badge" style="background-color: #43ac6a;"><a id="addUserRep" href="#" style="color: #fff"><i class="fa fa-plus"></i></a></span>
-										<span class="badge" style="background-color: #f04124;"><a id="subtractUserRep" href="#" style="color: #fff;"><i class="fa fa-minus"></i></a></span>
-                                    {% endif %}
-								</p>
+								
 
 
 						</div>
