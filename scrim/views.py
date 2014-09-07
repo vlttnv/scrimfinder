@@ -96,6 +96,7 @@ def after_login(resp):
         g.user.avatar_url_full = steam_data['avatarfull']
         g.user.join_date       = dt.utcnow()
         g.user.last_online     = dt.utcnow()
+        g.user.last_updated    = dt.utcnow()
         db.session.add(g.user)
         db.session.commit()
         login_user(g.user)
