@@ -47,7 +47,7 @@
 				  <li {% if request.path == "/users" %}class="active"{% endif %}><a href="{{ url_for('all_users') }}"><i class="fa fa-users"></i> Users/Mercs</a></li>
 				  <li {% if request.path == "/teams" %}class="active"{% endif %}><a href="{{ url_for('all_teams') }}"><i class="fa fa-sort-alpha-asc"></i> Teams</a></li>
 				<li {% if "/singles" in request.path %}class="active"{% endif %}><a href="{{ url_for('all_singles') }}"><i class="fa fa-bolt"></i> Single Scrims</a></li>
-				  <li {% if "/scrims" in request.path %}class="active"{% endif %}><a href="{{ url_for('all_scrims') }}"><i class="fa fa-bullhorn"></i> Scrims</a></li>
+				<!--<li {% if "/scrims" in request.path %}class="active"{% endif %}><a href="{{ url_for('all_scrims') }}"><i class="fa fa-bullhorn"></i> Scrims</a></li>-->
 		  </ul>
 <!--<form class="navbar-form navbar-left">
       <input type="text" class="form-control col-lg-8" placeholder="Search Teams">
