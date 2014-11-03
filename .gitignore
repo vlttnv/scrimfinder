@@ -1,3 +1,6 @@
+# custom
+scrimfinder_nginx.conf
+scrimfinder_uwsgi.ini
 # db
 app.db
 
