@@ -39,7 +39,7 @@ def index():
     five_teams = Team.query.order_by(Team.id.desc()).limit(5).all()
     five_users = User.query.order_by(User.id.desc()).limit(5).all()
     five_scrims = SingleScrim.query.join(User).filter(User.id==SingleScrim.leader_id).order_by(SingleScrim.id.desc()).limit(5).all()
-    top_five = db.engine.execute("SELECT *, count(team.id) FROM scrim.reputation join team on reputation.team_id = team.id group by team_id  order by count(team.id) desc limit 10;")
+    top_five = db.engine.execute("SELECT *, count(team.id) FROM scrim.reputation  join team on reputation.team_id = team.id and reputation.type='+' group by team_id  order by count(team.id) desc limit 10;")
     top_active = db.engine.execute("SELECT *, count(team.id) FROM scrim.scrim join team on scrim.team1_id = team.id group by scrim.team1_id order by count(team.id) desc limit 5;")
     count_teams = Team.query.count()
     count_users = User.query.count()
