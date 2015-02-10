@@ -101,6 +101,16 @@
 
 					  </div>
 					  <div class="col-md-4">
+<h3>Most Active</h3>
+
+<ul class="list-group">
+		{% for act in top_active %}
+		<li class="list-group-item">
+		<a href="{{url_for('team_page', team_id=act.team1_id)}}">{{act.name}}</a>
+		</li>
+		{% endfor %}
+ 
+</ul>
 							  <h3>Latest Teams</h3>
 
 <ul class="list-group">
