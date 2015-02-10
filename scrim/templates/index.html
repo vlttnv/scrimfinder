@@ -61,8 +61,17 @@
 
 					  <div class="col-md-8">
 
-									  		<h3>Features and Updates</h3>
-<div class="panel panel-info">
+									  		<h3>Highest Rated Teams</h3>
+
+<div class="list-group">
+		{% for one_five in top_five %}
+		<a href="{{url_for('team_page', team_id=one_five[1])}}" class="list-group-item">
+				<h4 class="list-group-item-heading">{{ one_five[5] }}<span class="label label-success pull-right">{{ one_five[15] }} rep</span>  </h4>
+				<p class="list-group-item-text">{{one_five[6]}}, {{one_five[14]}}</p>
+		</a>
+		{% endfor %}
+</div>
+<!--<div class="panel panel-info">
   <div class="panel-heading">
     <h3 class="panel-title">Updates</h3>
   </div>
@@ -88,7 +97,7 @@
 		  <span class="label label-default">July 26 6:55am</span> - updated time zones based on feedback. Time zones are now represented using UTC offsets. You can edit your team's time zone by clicking the "Edit" button on the team's page.
 		  </p>
   </div>
-</div>
+</div>-->
 
 					  </div>
 					  <div class="col-md-4">
