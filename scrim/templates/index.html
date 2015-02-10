@@ -106,7 +106,8 @@
 <ul class="list-group">
 		{% for act in top_active %}
 		<li class="list-group-item">
-		<a href="{{url_for('team_page', team_id=act.team1_id)}}">{{act.name}}</a>
+		<a href="{{url_for('team_page', team_id=act[5])}}">{{act.name}}</a>
+		<span class="label label-info pull-right"><strong>{{act[25]}} proposed scrims</strong></span>
 		</li>
 		{% endfor %}
  

@@ -40,11 +40,12 @@ def index():
     five_users = User.query.order_by(User.id.desc()).limit(5).all()
     five_scrims = SingleScrim.query.join(User).filter(User.id==SingleScrim.leader_id).order_by(SingleScrim.id.desc()).limit(5).all()
     top_five = db.engine.execute("SELECT *, count(team.id) FROM scrim.reputation join team on reputation.team_id = team.id group by team_id  order by count(team.id) desc limit 10;")
+    top_active = db.engine.execute("SELECT *, count(team.id) FROM scrim.scrim join team on scrim.team1_id = team.id group by scrim.team1_id order by count(team.id) desc limit 5;")
     count_teams = Team.query.count()
     count_users = User.query.count()
 
 
-    return render_template('index.html', teams=five_teams, users=five_users,count_teams=count_teams,count_users=count_users,five_scrims=five_scrims, top_five=top_five)
+    return render_template('index.html', teams=five_teams, users=five_users,count_teams=count_teams,count_users=count_users,five_scrims=five_scrims, top_five=top_five, top_active=top_active)
     #return render_template('index2.html')
 
 @scrim_app.route('/login')
