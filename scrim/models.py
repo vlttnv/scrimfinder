@@ -172,3 +172,17 @@ class UserReputation(db.Model):
     user2_id        = db.Column(db.Integer, db.ForeignKey('user.id'))
     user2           = db.relationship('User', foreign_keys=user2_id)
     type            = db.Column(db.String(1))
+	
+class Message(db.Model):
+		id							= db.Column(db.Integer, primary_key=True)
+		to							= db.Column(db.Integer, db.ForeignKey('user.id'))
+		frm							= db.Column(db.Integer, db.ForeignKey('user.id'))
+		message					= db.Column(db.Text)
+		timestamp				= db.Column(db.String(20))
+		subject					= db.Column(db.String(45))
+
+class Badge(db.Model):
+		id							= db.Column(db.Integer, primary_key=True)
+		user_id					= db.Column(db.Integer, db.ForeignKey('user.id'))
+		img							= db.Column(db.String(100))
+		label						= db.Column(db.String(45))

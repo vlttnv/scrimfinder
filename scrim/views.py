@@ -1153,3 +1153,29 @@ def update_user_rep(user_id):
         return err
     else:
         return ""
+
+@scrim_app.route('/send_message/<int:to>', methods=['GET','POST'])
+@login_required
+def send_message(to):
+    if request.method == 'POST':
+        try:
+            usr = User.query.filter_by(steam_id=to).one()
+        except NoResultFound:
+            flash('User does not exist', 'danger')
+            return redirect(url_for('index'))
+        message = Message()
+        message.frm = g.user.steam_id
+        message.to = to
+        message.message = request.form['message']
+        message.subject = request.form['subject']
+        db.session.add(message)
+        db.session.commit()
+        flash('Message sent.', "success")
+        return redirect(url_for('send_message', to=to))
+    else:
+        try:
+            usr = User.query.filter_by(steam_id=to).one()
+        except NoResultFound:
+            flash('User does not exist', 'danger')
+            return redirect(url_for('index'))
+        return render_template('message.html', to=to)
