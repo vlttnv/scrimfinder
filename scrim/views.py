@@ -106,7 +106,7 @@ def after_login(resp):
         flash(msg, 'success')
         return redirect(url_for('user_page', steam_id=g.user.steam_id))
     db.session.commit()
-    
+
     login_user(g.user)
 
     return redirect(oid.get_next_url())
@@ -124,7 +124,7 @@ def logout():
 @scrim_app.route('/user/<steam_id>')
 def user_page(steam_id):
     """
-    Return the user page, containing a list of tuples of Team and Membership, 
+    Return the user page, containing a list of tuples of Team and Membership,
     for instance, [(TeamA,"Captain"),(TeamB,"Coach")].
     """
     from forms import CreateTeamForm
@@ -150,7 +150,7 @@ def user_page(steam_id):
 @login_required
 def user_page_update(steam_id):
     import time
-    
+
     try:
         user = User.query.filter_by(steam_id=steam_id).one()
     except NoResultFound:
@@ -205,7 +205,7 @@ def all_users(page=1):
     except OperationalError:
         flash("No users in the database.", "danger")
         users_list = None
-    
+
     return render_template('all_users.html', users_list=users_list, form=form)
 
 @scrim_app.route('/teams', methods=['GET','POST'])
@@ -214,12 +214,12 @@ def all_teams(page=1):
     """
     Show all teams, 50 results per page.
     """
-    
+
     from forms import FilterTeamForm
 
     form = FilterTeamForm()
     query = Team.query
-    
+
     if form.clear.data == True:
         form.reset_team_filter()
 
@@ -246,7 +246,7 @@ def all_teams(page=1):
     except OperationalError:
         flash("No teams in the database.", "danger")
         teams_list = None
-    
+
     return render_template('all_teams.html', teams_list=teams_list, form=form)
 
 @scrim_app.route('/scrims/', methods=['GET','POST'])
@@ -276,14 +276,14 @@ def all_scrims(page=1):
         your_team_preferences.append((str(mem.team.id), str(mem.team.name)))
         your_team_list.append(mem.team)
 
-    
+
     FilterScrimForm.team_preference = SelectField('team', choices=your_team_preferences)
     form = FilterScrimForm()
 
     query = Team.query
     for mem in user_memberships:
         query = query.filter(Team.id != mem.team_id)
-   
+
     if form.clear.data == True:
         form.reset_scrim_filter()
 
@@ -396,7 +396,7 @@ def edit_team(team_id):
     for team in teams:
         if team.team_id == team_id and team.role == "Captain":
             have_edit_rights = True
-    
+
     if not have_edit_rights:
         flash("You do not have the rights to edit this team.", "danger")
         return redirect(url_for('team_page', team_id=team_id))
@@ -409,7 +409,7 @@ def edit_team(team_id):
 
     from forms import EditTeamForm
     form = EditTeamForm()
-    
+
     if form.validate_on_submit():
         team_edit.name = form.team_name.data
         team_edit.skill_level = form.team_skill_level.data
@@ -462,7 +462,7 @@ def create_team():
         membership = Membership()
         membership.team_id = team.id
         membership.user_id = g.user.id
-        membership.role = "Captain" 
+        membership.role = "Captain"
         db.session.add(membership)
         db.session.commit()
 
@@ -525,7 +525,7 @@ def quit_team(team_id):
 @scrim_app.route('/team/times/<team_id>')
 def team_times_json(team_id):
     all_scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
-    
+
     import time
     import datetime
     json_s = '{'
@@ -652,7 +652,7 @@ def promote(team_id, user_id):
 
     TODO: Need to add safety checks
     """
-    
+
     try:
         mem = Membership.query.filter(and_(Membership.team_id==team_id, Membership.user_id==user_id)).one()
         mem.role = "Captain"
@@ -672,7 +672,7 @@ def demote(team_id, user_id):
 
     TODO: Need to add safety checks
     """
-    
+
     try:
         mem = Membership.query.filter(and_(Membership.team_id==team_id, Membership.user_id==user_id)).one()
         mem.role = "Member"
@@ -698,7 +698,7 @@ def team_join(team_id):
     except NoResultFound, e:
         flash("User not found", "danger")
         return redirect(url_for('index'))
-    
+
     user_memberships = Membership.query.filter_by(user_id=user.id).all()
     already_in_team = False
     for mem in user_memberships:
@@ -747,9 +747,9 @@ def team_accept_user(team_id, user_id):
 
     db.session.add(new_membership)
     db.session.commit()
-    
+
     flash("Accepted", "success")
-    return redirect(url_for('team_page', team_id=team_id))         
+    return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/team/<team_id>/reject_user/<user_id>')
 @login_required
@@ -828,7 +828,7 @@ def propose_scrim(opponent_team_id):
     ProposeScrimForm.time_zone = SelectField('team', choices=your_team_timezone)
     ProposeScrimForm.day = SelectField('day', choices=opponent_day)
     ProposeScrimForm.start_time = SelectField('start_time', choices=opponent_start_time)
-    
+
     form = ProposeScrimForm()
 
     if form.validate_on_submit():
@@ -856,7 +856,7 @@ def propose_scrim(opponent_team_id):
         return redirect(url_for('team_page', team_id=opponent_team_id))
     elif request.method == 'POST':
         flash('Scrim proposal not validated', "danger")
-    
+
     return render_template('propose_scrim.html', form=form, team_id=opponent_team_id)
 
 @scrim_app.route('/scrim/accept/', methods=['POST'])
@@ -1016,7 +1016,7 @@ def scrim_history(team_id, page=1):
 
     scrims = Scrim.query.filter(or_(Scrim.team1_id == team_id, Scrim.team2_id == team_id))
     scrims = scrims.order_by(desc(Scrim.date))
-    
+
     # ACCEPTED -> FINISHED when time passes
     scrims_finished = scrims.filter(and_(Scrim.state == SCRIM_ACCEPTED, Scrim.date < dt.utcnow()))
     for scrim in scrims_finished:
@@ -1034,7 +1034,7 @@ def scrim_history(team_id, page=1):
 @scrim_app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
-    
+
 @scrim_app.route('/delete_single/<single_id>')
 def delete_single(single_id):
     try:
@@ -1159,12 +1159,12 @@ def update_user_rep(user_id):
 def send_message(to):
     if request.method == 'POST':
         try:
-            usr = User.query.filter_by(steam_id=to).one()
+            usr = User.query.filter_by(id=to).one()
         except NoResultFound:
             flash('User does not exist', 'danger')
             return redirect(url_for('index'))
         message = Message()
-        message.frm = g.user.steam_id
+        message.frm = g.user.id
         message.to = to
         message.message = request.form['message']
         message.subject = request.form['subject']
@@ -1174,8 +1174,15 @@ def send_message(to):
         return redirect(url_for('send_message', to=to))
     else:
         try:
-            usr = User.query.filter_by(steam_id=to).one()
+            usr = User.query.filter_by(id=to).one()
         except NoResultFound:
             flash('User does not exist', 'danger')
             return redirect(url_for('index'))
         return render_template('message.html', to=to)
+
+@scrim_app.route('/messages/')
+@login_required
+def messages():
+    msgs = Message.query.filter_by(to=g.user.id).join(User).filter(User.id==Message.frm).all()
+
+    return render_template('messages.html', msgs=msgs)

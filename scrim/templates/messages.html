@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-12">
+    <h2>Messages</h2>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th></th>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Seen</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for m in msgs %}
+      <tr>
+        <td class="col-md-1">
+          <img class="img-responsive" style="margin: 0 auto;" src="{{ m.user.avatar_url }}">
+        </td>
+        <td>
+          <a href="{{url_for('user_page', steam_id=m.user.steam_id)}}">{{ m.user.nickname }}</a>
+        </td>
+        <td>
+          {{ m.subject }}
+        </td>
+        <td>
+          {{ m.is_read }}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
