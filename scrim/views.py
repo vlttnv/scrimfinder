@@ -722,6 +722,23 @@ def team_join(team_id):
         db.session.commit()
         flash("Request made", "success")
 
+        # Notify team captains
+        mem = Membership.query.filter_by(team_id=team_id).all()
+
+        for m in mem:
+            if m.role == "Captain":
+                notif = Notification()
+                notif.type = 0
+                notif.to = m.id
+                notif.text = g.user.nickname + " has requested to join your team"
+                notif.timestamp = 0
+
+                user = User.query.filter_by(id=m.id).one()
+                user.notifications += 1
+                db.session.add(notif)
+                db.session.add(user)
+        db.session.commit()
+
     return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/team/<team_id>/accept_user/<user_id>')
@@ -1184,5 +1201,6 @@ def send_message(to):
 @login_required
 def messages():
     msgs = Message.query.filter_by(to=g.user.id).join(User).filter(User.id==Message.frm).all()
+    notif = Notification.query.filter_by(to=g.user.id).all()
 
-    return render_template('messages.html', msgs=msgs)
+    return render_template('messages.html', msgs=msgs, notif=notif)

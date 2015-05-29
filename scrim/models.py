@@ -186,6 +186,21 @@ class Message(db.Model):
     subject	    = db.Column(db.String(45))
     is_read         = db.Column(db.Integer, default=0)
 
+class Notification(db.Model):
+    id              = db.Column(db.Integer, primary_key=True)
+    """
+    0 = team join req
+    1 = scrim proposal
+    2 = scrim accept
+    3 = scrim reject
+    4 = team join acc
+    5 = team join rej
+    """
+    type            = db.Column(db.Integer)
+    to              = db.Column(db.Integer)
+    text            = db.Column(db.Text)
+    timestamp       = db.Column(db.String(20))
+    is_read         = db.Column(db.Integer, default=0)
 
 class Badge(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
