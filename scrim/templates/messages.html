@@ -25,7 +25,6 @@
         {{ n.text }}
         </p>
         <p class="list-group-item-text">
-        <a href="{{url_for('user_page', steam_id=g.user.steam_id)}}" class="label label-primary"><i class="fa fa-eye"></i></a>
         <a href="{{url_for('seen', type=0, id=n.id)}}" class="label label-danger"><i class="fa fa-trash-o"></i>
         </a>
         </p>

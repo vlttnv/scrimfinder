@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-12">
+  <h2>Badges</h2>
+  <p class="lead">Awarded to users for various achievements, contributions and participations. Badges differ in rarity and availability and are given out manually. The list will keep growing with the upcoming <a href="{{url_for('static', filename='badges/1337.png')}}">u</a>pdates.</p>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>Badge</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+    <div class="list-group">
+      <tr>
+        <td class="col-md-1">
+            <img class="img-responsive" style="margin: 0 auto;" src="{{url_for('static', filename='badges/1.png')}} ">
+        </td>
+        <td class="col-md-2">
+          Lorem ipsum
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

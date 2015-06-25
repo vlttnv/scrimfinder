@@ -1265,6 +1265,9 @@ def update_user_rep(user_id):
 @scrim_app.route('/send_message/<int:to>', methods=['GET','POST'])
 @login_required
 def send_message(to):
+    if True:
+        flash("Not yet!", "danger")
+        return redirect(url_for('index'))
     if request.method == 'POST':
         try:
             usr = User.query.filter_by(id=to).one()
@@ -1313,3 +1316,7 @@ def seen(type, id):
     else:
         flash("Wrong notification type", "danger")
         return redirect(url_for('messages'))
+
+@scrim_app.route('/badges')
+def badges():
+    return render_template('badges.html')
