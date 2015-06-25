@@ -27,6 +27,7 @@ class User(db.Model):
     has_given_rep_to    = db.Column(db.Text)
     has_played_with     = db.Column(db.Text)
     notifications       = db.Column(db.Integer)
+    badges              = db.Column(db.String(80))
     frm_rel             = db.relationship('Message',
             backref='user',
             lazy='dynamic')
@@ -191,19 +192,11 @@ class Notification(db.Model):
     """
     0 = team join req
     1 = scrim proposal
-    2 = scrim accept
-    3 = scrim reject
-    4 = team join acc
-    5 = team join rej
+    2 = accept
+    3 = reject
     """
     type            = db.Column(db.Integer)
     to              = db.Column(db.Integer)
     text            = db.Column(db.Text)
     timestamp       = db.Column(db.String(20))
     is_read         = db.Column(db.Integer, default=0)
-
-class Badge(db.Model):
-    id              = db.Column(db.Integer, primary_key=True)
-    user_id	    = db.Column(db.Integer, db.ForeignKey('user.id'))
-    img             = db.Column(db.String(100))
-    label           = db.Column(db.String(45))

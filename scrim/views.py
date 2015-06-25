@@ -733,7 +733,7 @@ def team_join(team_id):
                 notif.text = g.user.nickname + " has requested to join your team"
                 notif.timestamp = 0
 
-                user = User.query.filter_by(id=m.id).one()
+                user = User.query.filter_by(id=m.user_id).one()
                 user.notifications += 1
                 db.session.add(notif)
                 db.session.add(user)
@@ -765,7 +765,24 @@ def team_accept_user(team_id, user_id):
     db.session.add(new_membership)
     db.session.commit()
 
-    flash("Accepted", "success")
+    which_team = Team.query.filter_by(id=team_id).one()
+
+    # Notify user
+    notif = Notification()
+    notif.type = 2
+    notif.to = user_id
+    notif.text = "Your membership request to team " +which_team.name+" has been accepted."
+    notif.timestamp = 0
+
+    user = User.query.filter_by(id=user_id).one()
+    user.notifications += 1
+    db.session.add(notif)
+    db.session.add(user)
+    db.session.commit()
+
+
+
+    flash("User addet to team " + which_team.name +".", "success")
     return redirect(url_for('team_page', team_id=team_id))
 
 @scrim_app.route('/team/<team_id>/reject_user/<user_id>')
@@ -783,6 +800,22 @@ def team_reject_user(team_id, user_id):
 
     db.session.delete(user)
     db.session.commit()
+
+    which_team = Team.query.filter_by(id=team_id).one()
+
+    # Notify user
+    notif = Notification()
+    notif.type = 3
+    notif.to = user_id
+    notif.text = "Your membership request to team " +which_team.name+" has been rejected."
+    notif.timestamp = 0
+
+    user = User.query.filter_by(id=user_id).one()
+    user.notifications += 1
+    db.session.add(notif)
+    db.session.add(user)
+    db.session.commit()
+
 
     flash("Rejected", "success")
     return redirect(url_for('team_page', team_id=team_id))
@@ -869,6 +902,27 @@ def propose_scrim(opponent_team_id):
         db.session.add(new_scrim)
         db.session.commit()
 
+
+
+        # Notify team captains
+        mem = Membership.query.filter_by(team_id=opponent_team_id).all()
+
+        for m in mem:
+            if m.role == "Captain":
+                notif = Notification()
+                notif.type = 1
+                notif.to = m.user_id
+                notif.text = g.user.nickname + " has proposed a scrim to one of your teams."
+                notif.timestamp = 0
+
+                user = User.query.filter_by(id=m.user_id).one()
+                user.notifications += 1
+                db.session.add(notif)
+                db.session.add(user)
+        db.session.commit()
+
+
+
         flash('Scrim proposed', "success")
         return redirect(url_for('team_page', team_id=opponent_team_id))
     elif request.method == 'POST':
@@ -919,6 +973,25 @@ def accept_scrim():
     scrim.state = SCRIM_ACCEPTED
     db.session.commit()
 
+
+    # Notify team captains
+    mem = Membership.query.filter_by(team_id=scrim.team1_id).all()
+
+    for m in mem:
+        if m.role == "Captain":
+            notif = Notification()
+            notif.type = 2
+            notif.to = m.user_id
+            notif.text = g.user.nickname + " has accpeted one of you scrim proposals."
+            notif.timestamp = 0
+
+            user = User.query.filter_by(id=m.user_id).one()
+            user.notifications += 1
+            db.session.add(notif)
+            db.session.add(user)
+    db.session.commit()
+
+
     flash('Scrim accepted', "success")
     return "OK"
 
@@ -952,6 +1025,24 @@ def reject_scrim():
     from consts import SCRIM_REJECTED
     scrim.state = SCRIM_REJECTED
     db.session.commit()
+
+    # Notify team captains
+    mem = Membership.query.filter_by(team_id=scrim.team1_id).all()
+
+    for m in mem:
+        if m.role == "Captain":
+            notif = Notification()
+            notif.type = 3
+            notif.to = m.user_id
+            notif.text = g.user.nickname + " has rejected one of you scrim proposals."
+            notif.timestamp = 0
+
+            user = User.query.filter_by(id=m.user_id).one()
+            user.notifications += 1
+            db.session.add(notif)
+            db.session.add(user)
+    db.session.commit()
+
 
     flash('Scrim rejected.', "danger")
     return "OK"
@@ -1204,3 +1295,21 @@ def messages():
     notif = Notification.query.filter_by(to=g.user.id).all()
 
     return render_template('messages.html', msgs=msgs, notif=notif)
+
+@scrim_app.route('/seen/<int:type>/<int:id>')
+@login_required
+def seen(type, id):
+    if type == 0:
+        try:
+            nt = Notification.query.filter_by(id=id).delete()
+            if g.user.notifications > 0:
+                g.user.notifications -= 1
+            db.session.commit()
+            flash("Notification was read.", "success")
+            return redirect(url_for('messages'))
+        except NoResultFound:
+            flash("Notification does not exist.", "info")
+            return redirect(url_for('messages'))
+    else:
+        flash("Wrong notification type", "danger")
+        return redirect(url_for('messages'))

@@ -57,7 +57,9 @@
 {% if current_user.is_authenticated() %}
 
 <li><a href="{{url_for('messages')}}"><i class="fa fa-bell-o"></i>
-  <span class="badge">{{g.user.notifications}}</span></a> </li>
+  <span class="badge" 
+    {% if g.user.notifications > 0 %}style="background-color: #E99002; color: #fff" {% endif %}
+    >{{g.user.notifications}}</span></a> </li>
 		<li><img src="{{g.user.avatar_url_full}}" width="45px" height="45px"></li>
 <li {% if '/user/' in request.path %}class='profile-button dropdown' {% else %} class='profile-button dropdown' {% endif %}>
 <a href="{{ url_for('user_page', steam_id=g.user.steam_id)  }}" class="profile-button dropdown-toggle" data-toggle="dropdown">{{g.user.nickname}} <b class="caret"></b></a>
