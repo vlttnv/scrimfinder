@@ -119,8 +119,10 @@
 												</td>
                                                 {% if (g.user, "Captain") in members_roles and role != "Captain"%}
                                                 <td>
-                                                    <a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}">Promote</a>
-                                                     / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}">Demote</a>
+                                                    <a href="{{url_for('promote', team_id=team.id, user_id=user.id)}}"><i class="fa fa-arrow-up"></i> Promote</a>
+                                                    / <a href="{{url_for('demote', team_id=team.id, user_id=user.id)}}"><i class="fa fa-arrow-down"></i> Demote</a>
+                                                     / <a href="{{url_for('kick', t=team.id, p=user.id)}}"><i class="fa fa-times"></i> Kick</a>
+                                                   
                                                 </td>
                                                 {% elif g.user.id == user.id %}
                                                 <td>
@@ -489,7 +491,7 @@
                 </div>
         </div>
         <div class="col-lg-4">
-                <div class="panel panel-primary">
+               <!-- <div class="panel panel-primary">
                         <div class="panel-heading">
                                 <h3 class="panel-title">Feedback</h3>
                         </div>
@@ -511,9 +513,7 @@
 {% if not dont_show %}
 <hr>
 <form role="form"  action="{{url_for('team_page', team_id=team.id)}}" method="post" name="comment">
-        {{form.hidden_tag()}}
 <div class="form-group">
-{{form.text()}} <br>
 <input type="submit" value="Comment">
 </div>
 </form>
@@ -522,7 +522,7 @@
 
                         </div>
                 </div>
-        </div>
+        </div>-->
 </div>
 
 

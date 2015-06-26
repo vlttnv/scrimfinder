@@ -44,7 +44,6 @@ def index():
     count_teams = Team.query.count()
     count_users = User.query.count()
 
-
     return render_template('index.html', teams=five_teams, users=five_users,count_teams=count_teams,count_users=count_users,five_scrims=five_scrims, top_five=top_five, top_active=top_active)
     #return render_template('index2.html')
 
@@ -548,11 +547,11 @@ def team_page(team_id, scrim_page=1):
     The pending members view will be restricted to the team leader
     """
 
-    from forms import CommentTeamForm
+    #from forms import CommentTeamForm
     from config import API_ADDRESS
     from consts import TIME_ZONES_DICT
 
-    form = CommentTeamForm()
+    #form = CommentTeamForm()
 
     try:
         team = Team.query.filter_by(id=team_id).one()
@@ -607,6 +606,7 @@ def team_page(team_id, scrim_page=1):
 
     aval = convert_bits_to_days(team.week_days)
 
+    """
     if form.validate_on_submit():
         com = Comment()
         com.team_id = team_id
@@ -629,20 +629,17 @@ def team_page(team_id, scrim_page=1):
             dont_show = True
         else:
             dont_show = False
-
-        return render_template('team.html',
-                team=team,
-                members_roles=members_roles,
-                pendings=pendings,
-                in_team=in_team,
-                aval=aval,
-                form=form,
-                com_list=comment_list,
-                dont_show=dont_show,
-                propose_scrim=propose_scrim,
-                scrims_list=scrims_list,
-                addr=API_ADDRESS,
-                tz=TIME_ZONES_DICT)
+    """
+    return render_template('team.html',
+            team=team,
+            members_roles=members_roles,
+            pendings=pendings,
+            in_team=in_team,
+            aval=aval,
+            propose_scrim=propose_scrim,
+            scrims_list=scrims_list,
+            addr=API_ADDRESS,
+            tz=TIME_ZONES_DICT)
 
 @scrim_app.route('/team/<team_id>/promote/<user_id>')
 @login_required
@@ -678,7 +675,7 @@ def demote(team_id, user_id):
         mem.role = "Member"
         db.session.add(mem)
         db.session.commit()
-        flash("User promoted", "success")
+        flash("User demoted", "success")
         return redirect(url_for('team_page', team_id=team_id))
     except NoResultFound, e:
         flash("Invalid user or team", "danger")
@@ -1307,6 +1304,7 @@ def seen(type, id):
             nt = Notification.query.filter_by(id=id).delete()
             if g.user.notifications > 0:
                 g.user.notifications -= 1
+                print g.user.notifications
             db.session.commit()
             flash("Notification was read.", "success")
             return redirect(url_for('messages'))
@@ -1320,3 +1318,22 @@ def seen(type, id):
 @scrim_app.route('/badges')
 def badges():
     return render_template('badges.html')
+
+@scrim_app.route('/kick/<int:p>/<int:t>')
+@login_required
+def kick(p, t):
+    try:
+        mem = Membership.query.filter(and_(Membership.team_id==t,Membership.user_id==g.user.id)).one()
+        if mem.role != "Captain":
+            flash("You cannot do this", "danger")
+            flash("You cannot do this", "danger")
+        else:
+            Membership.query.filter(and_(Membership.team_id==t, Membership.user_id==p)).delete()
+            db.session.commit()
+            flash('User was kicked', 'success')
+            return redirect(url_for('team_page', team_id=t))
+    except NoResultFound:
+        flash("You cannot do this", "danger")
+        return redirect(url_for('index'))
+
+
