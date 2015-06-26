@@ -1302,10 +1302,11 @@ def seen(type, id):
     if type == 0:
         try:
             nt = Notification.query.filter_by(id=id).delete()
-            if g.user.notifications > 0:
-                g.user.notifications -= 1
-                print g.user.notifications
-            db.session.commit()
+            u = User.query.filter_by(id=g.user.id).one()
+            if u.notifications > 0:
+                u.notifications = u.notifications - 1
+                db.session.add(u)
+                db.session.commit()
             flash("Notification was read.", "success")
             return redirect(url_for('messages'))
         except NoResultFound:
