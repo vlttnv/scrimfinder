@@ -726,7 +726,7 @@ def team_join(team_id):
             if m.role == "Captain":
                 notif = Notification()
                 notif.type = 0
-                notif.to = m.id
+                notif.to = m.user_id
                 notif.text = g.user.nickname + " has requested to join your team"
                 notif.timestamp = 0
 
