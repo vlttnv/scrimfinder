@@ -340,7 +340,9 @@ def all_singles(page=1):
     except OperationalError:
         single_scrims_list = None
 
-    return render_template('all_singles.html', single_scrims_list=single_scrims_list, form=form)
+    import time
+
+    return render_template('all_singles.html', single_scrims_list=single_scrims_list, form=form, nw=int(time.time()))
 
 @lm.user_loader
 def load_user(id):
@@ -474,6 +476,8 @@ def create_team():
 def new_single():
     from forms import AddSingleScrim
     form = AddSingleScrim()
+    from datetime import datetime as dt
+    import time as t
 
     if form.validate_on_submit():
         single =  SingleScrim()
@@ -483,7 +487,9 @@ def new_single():
         single.maps = form.maps.data
         single.leader_id = g.user.id
         single.skill_level = form.skill_level.data
-        print form.comment.data
+        single.date = dt.utcnow()
+        single.epoch = int(t.time())
+
         db.session.add(single)
         db.session.commit()
 
