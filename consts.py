@@ -9,12 +9,11 @@ UGC_ASIA_GOLD   = "UGC Asia Gold"
 UGC_ASIA_STEEL  = "UGC Asia Steel"
 
 ETF_PREMIERSHIP = "ETF2L Premiership"
-ETF_DIVISION_1  = "ETF2L Division 1"
-ETF_DIVISION_2  = "ETF2L Division 2"
-ETF_DIVISION_3  = "ETF2L Division 3"
-ETF_DIVISION_4  = "ETF2L Division 4"
-ETF_DIVISION_5  = "ETF2L Division 5"
-ETF_DIVISION_6  = "ETF2L Division 6"
+ETF_OPEN  = "ETF2L Open"
+ETF_MID  = "ETF2L Mid"
+ETF_HIGH  = "ETF2L High"
+
+AUSTRALIA_NEWZ  = "Australia/New Zealand"
 
 HIGHLANDER_OPEN = "Highlander Open"
 ESEA_OPEN = "ESEA Open"
@@ -37,18 +36,16 @@ CHOICES_SKILLS = [
     (UGC_ASIA_GOLD,UGC_ASIA_GOLD),
     (UGC_ASIA_STEEL,UGC_ASIA_STEEL),
     (ETF_PREMIERSHIP,ETF_PREMIERSHIP),
-    (ETF_DIVISION_1,ETF_DIVISION_1),
-    (ETF_DIVISION_2,ETF_DIVISION_2),
-    (ETF_DIVISION_3,ETF_DIVISION_3),
-    (ETF_DIVISION_4,ETF_DIVISION_4),
-    (ETF_DIVISION_5,ETF_DIVISION_5),
-    (ETF_DIVISION_6,ETF_DIVISION_6),
+    (ETF_OPEN,ETF_OPEN),
+    (ETF_MID,ETF_MID),
+    (ETF_HIGH,ETF_HIGH),
     (HIGHLANDER_OPEN, HIGHLANDER_OPEN),
     (ESEA_OPEN,ESEA_OPEN),
     (ESEA_INTER,ESEA_INTER),
-    (ESEA_INV,ESEA_INV)
+    (ESEA_INV,ESEA_INV),
+    (AUSTRALIA_NEWZ,AUSTRALIA_NEWZ)
 ]
-        
+
 FILTER_SKILLS = [(ALL, ALL)]
 FILTER_SKILLS.extend(CHOICES_SKILLS)
 TIME_ZONES_DICT = [
@@ -79,7 +76,7 @@ TIME_ZONES_DICT = [
     {
         'label': "EDT (UTC-4)",
         'time_zone': "-04:00"
-    }, 
+    },
     {
         'label': "EEST (UTC+3)",
         'time_zone': "+03:00"
@@ -96,7 +93,7 @@ TIME_ZONES_DICT = [
     {
         'label': "KST (UTC+9)",
         'time_zone': "+09:00"
-    }, 
+    },
     {
         'label': "AEST (UTC+10)",
         'time_zone': "+10:00"
