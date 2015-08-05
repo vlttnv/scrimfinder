@@ -13,9 +13,11 @@
 	  <div class="col-md-4 col-md-offset-3">
 			  <h1>what's new</h1>
 			  <p>
-                  <i class="fa fa-check"></i> notifications<br>
-                  <i class="fa fa-check"></i> <a href="{{url_for('badges')}}"> <span class="label label-warning"> badges</span> </a> <br>
-                  <i class="fa fa-check"></i> prep for upcoming update<br>
+              <button type="button" class="btn btn-primary btn-l" data-toggle="modal" data-target="#myModal">
+                  <i class="fa fa-eur"></i> Donations
+                </button>
+                <br>
+                  <i class="fa fa-check"></i> new single and flash scrims<br>
                   <small> <i class="fa fa-tasks"></i>
                       <a href="http://steamcommunity.com/groups/scrim-me#announcements/detail/132077357623617410">changelog</a></small> <br>
                   <i class="fa fa-user"></i> users:{{count_users}} <i class="fa fa-users"></i> teams:{{count_teams}}
@@ -150,5 +152,31 @@
 </ul>
 					  </div>
 			  </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Donate to scrim.me</h4>
+      </div>
+      <div class="modal-body">
+          Feeling generous? You like the website and want to help us with the server cost? Do you want this awesome badge: <img src="{{url_for('static', filename='badges/2.png')}}"> ? Then feel free to donate! Any amount is appreciated. <small><em> Please type your steam ID in the donation comment so that we can give you the badge.</em></small>
+          <div class="row">
+              <div class="col-md-3 col-md-offset-5">
+                  <form style="margin-top: 5px;" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                <input type="hidden" name="cmd" value="_s-xclick">
+                                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+                                ">
+                                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                              </form>
+          </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 {% endblock %}
 

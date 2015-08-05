@@ -489,6 +489,8 @@ def new_single():
         single.skill_level = form.skill_level.data
         single.date = dt.utcnow()
         single.epoch = int(t.time())
+        single.is_flash = int(form.is_flash.data)
+        bump = int(t.time())
 
         db.session.add(single)
         db.session.commit()

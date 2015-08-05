@@ -98,12 +98,13 @@
 </form>
 </div>
 <div class="col-md-6">
-    <p>Single scrimss are one-off scrims posted by team leaders. Singles scrims are usually intended to be played in the next few days or week and are a quick way to find a suitable team to practice with. Scrims with a <span class="label label-warning">Yellow</span> background were posted more than <span class="label label-default">5 days ago</span>. Scrims with a <span class="label label-danger">Red</span> background were posted more than <span class="label label-default">7 days ago</span>.<br> You can customize the filter on the left to your preferences, by choosing a skill level/division, time zone or a game type.</p>
-			<h4><a href="{{url_for('new_single')}}" class="btn btn-success">Add Single Scrim</a></h4>
+    <p><i class="fa fa-bolt"></i> Flash Scrims are valid for 2 hours after posting. After that they disappear from the search. <i class="fa fa-clock-o"></i> Single Scrims with a <span class="label label-warning">Yellow</span> background are <span class="label label-default">2 days old</span>. Scrims with a <span class="label label-danger">Red</span> background are  <span class="label label-default">3 days old</span>.<br> You can customize the filter on the left to your preferences, by choosing a skill level/division, time zone or a game type. <strong>If you want to delete/cancle a scrim, you can do so from your <a href="{{url_for('user_page', steam_id=g.user.steam_id)}}">profile page</a></strong>. </p>
+    <h4><a href="{{url_for('new_single')}}" class="btn btn-success"><i class="fa fa-plus"></i> Add Single Scrim</a></h4>
 </div>
 </div>
 </div>
-  <table class="table table-hover">
+<h3><i class="fa fa-bolt"></i> Flash Scrims - 2 Hour Validity</h3>
+  <table class="table table-hover table-bordered">
 		  <thead>
 				  <tr>
 						  <th></th>
@@ -120,7 +121,8 @@
 
 
     {% for scrim in single_scrims_list.items %}
-    <tr class="{% if nw - scrim.epoch > 432000 and nw - scrim.epoch < 604800  %}warning{% elif nw - scrim.epoch >= 604800 %}danger{% endif %}">
+    {% if nw - scrim.epoch <= 7200 and scrim.is_flash == 1 %}
+    <tr class="info">
 				  <td> <img src="{{ scrim.user.avatar_url }}"></td>
 				  <td><a href="{{url_for('user_page', steam_id=scrim.user.steam_id)}}">{{scrim.user.nickname}}</a></td>
 				  <td>{{ scrim.skill_level }}</td>
@@ -130,6 +132,42 @@
 				  <td>{{ scrim.comment }}</td>
 				  <td><a class="btn btn-info btn-xs" href="steam://friends/add/{{ scrim.user.steam_id }}"><i class="fa fa-plus"></i> Add on Steam</a></td>
 		  </tr>
+          {% endif %}
+    {% endfor %}
+    
+	</tbody>
+	</table>
+
+    <h3><i class="fa fa-clock-o"></i> Single Scrims - 3 Day Validity</h3>
+  <table class="table table-hover table-bordered">
+		  <thead>
+				  <tr>
+						  <th></th>
+						  <th>Team Leader</th>
+						  <th>Skill Level</th>
+						  <th>Type</th>
+						  <th>Time Zone</th>
+						  <th>Maps</th>
+						  <th>Comment</th>
+						  <th>Add on Steam</th>
+				  </tr>
+		  </thead>
+		  <tbody>
+
+
+    {% for scrim in single_scrims_list.items %}
+    {% if nw - scrim.epoch <= 259200 and scrim.is_flash == 0 %}
+    <tr class="{% if nw - scrim.epoch > 86400 and nw - scrim.epoch < 172800  %}warning{% elif nw - scrim.epoch >= 172800 %}danger{% endif %}">
+				  <td> <img src="{{ scrim.user.avatar_url }}"></td>
+				  <td><a href="{{url_for('user_page', steam_id=scrim.user.steam_id)}}">{{scrim.user.nickname}}</a></td>
+				  <td>{{ scrim.skill_level }}</td>
+				  <td>{{ scrim.type }}</td>
+				  <td>{{ get_time_zone_label(scrim.time_zone)  }}</td>
+				  <td>{{ scrim.maps }}</td>
+				  <td>{{ scrim.comment }}</td>
+				  <td><a class="btn btn-info btn-xs" href="steam://friends/add/{{ scrim.user.steam_id }}"><i class="fa fa-plus"></i> Add on Steam</a></td>
+		  </tr>
+          {% endif %}
     {% endfor %}
     
 	</tbody>

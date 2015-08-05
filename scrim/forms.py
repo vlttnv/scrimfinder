@@ -61,7 +61,7 @@ class CreateTeamForm(BaseScrimDay):
 
 class EditTeamForm(CreateTeamForm):
     team_type        = SelectField('team_type', choices=CHOICES_TEAM_TYPE)
-    #time_from = SelectField('time_from', 
+    #time_from = SelectField('time_from',
     #                choices=[("8:00","8:00"),("9:00","9:00"),("10:00","10:00")])
 
 class CommentTeamForm(Form):
@@ -103,7 +103,7 @@ class FilterUserForm(BaseSearchForm):
         self.is_merc.data  = False
 
 class FilterTeamForm(TeamSearchForm):
-    
+
     def reset_team_filter(self):
         super(FilterTeamForm, self).reset_team_search()
 
@@ -148,3 +148,4 @@ class AddSingleScrim(Form):
     maps        = TextField('maps', validators=[Required()])
     time_zone   = SelectField('time_zone', choices=CHOICES_ZONES)
     skill_level = SelectField('skill_level', choices=CHOICES_SKILLS)
+    is_flash    = BooleanField('is_flash')

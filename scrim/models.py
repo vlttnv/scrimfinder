@@ -164,6 +164,8 @@ class SingleScrim(db.Model):
     epoch           = db.Column(db.Integer)
     comment         = db.Column(db.Text)
     maps            = db.Column(db.String(400))
+    is_flash        = db.Column(db.Integer)
+    bumped          = db.Column(db.Integer)
 
 class Reputation(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
