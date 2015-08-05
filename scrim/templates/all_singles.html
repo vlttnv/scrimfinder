@@ -173,14 +173,12 @@
 	</tbody>
 	</table>
 	
-	<!-- Pagination stuff -->
+	<!-- 
 	<ul class="pagination" style="margin-top:0;">
-    <!-- previous page -->
     {% if single_scrims_list.has_prev %}
     <li> <a href="{{ url_for('all_singles', page=single_scrims_list.prev_num) }}">Previous</a></li>
     {% endif %}
 
-    <!-- all page numbers -->
     {% for page_num in single_scrims_list.iter_pages() %}
       {% if page_num %}
         {% if page_num != single_scrims_list.page %}
@@ -193,11 +191,10 @@
       {% endif %}
     {% endfor %}
 
-    <!-- next page -->
     {% if single_scrims_list.has_next %}
     <li><a href="{{ url_for('all_singles', page=single_scrims_list.next_num) }}">Next</a></li>
     {% endif %}
-	</ul>
+    </ul>-->
 
 		</div>
 
